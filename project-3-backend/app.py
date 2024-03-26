@@ -3,8 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, select
 import os
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 load_dotenv()
 
 # Database configuration
@@ -23,8 +25,10 @@ def get_data(name):
 
     if result is not None:
         data = {'employeename': result.employeename, 'position': result.position}
+        print(result.employeename)
         return jsonify(data)
     else:
+        print("ADJKANKLAW")
         return jsonify({'error': 'No data found'}), 404
 
 @app.route('/api/menu')
@@ -48,4 +52,4 @@ def get_menu_items():
         return jsonify({'error': 'No data found'}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
