@@ -7,8 +7,9 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import About from './pages/About';
 import Cashier from './cashier/Cashier';
+import Manager from './managers/Manager';
+import Inventory from './managers/Inventory';
 
 const router = createBrowserRouter([
   {
@@ -16,13 +17,39 @@ const router = createBrowserRouter([
     element: <App />,
     children: [],
   },
-  {
-    path: '/about',
-    element: <About name="Hello" />
-  },
+  // {
+  //   path: '/about',
+  //   element: <About name="Hello" />
+  // },
   {
     path: '/cashier',
     element: <Cashier name="Hello"/>
+  },
+  {
+    path: 'manager',
+    element: <Manager/>,
+    children: [
+      {
+        path: 'inventory',
+        element: <Inventory/>
+      },
+      // {
+      //   path: '/employees',
+      //   element: <Employees/>
+      // },
+      // {
+      //   path: '/trends',
+      //   element: <Trends/>
+      // },
+      // {
+      //   path: '/menu',
+      //   element: <Menu/>
+      // }
+    ]
+  },
+  {
+    path: '/inventory',
+    element: <Inventory/>
   },
 
 ]);
