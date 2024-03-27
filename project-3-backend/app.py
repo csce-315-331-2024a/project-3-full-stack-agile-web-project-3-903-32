@@ -53,6 +53,34 @@ def get_menu_items():
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
+    
+@app.route('/api/inventory')
+def get_inventory_items():
+    query = text("SELECT name, stock, location, capacity, supplier, minimum FROM Inventory")
+    results = db.session.execute(query).fetchall()
+    print(results)
+    if results:
+        data = []
+        for row in results:
+            item = {
+                'name' : row[0],
+                'stock' : row[1],
+                'location' : row[2],
+                'capacity' : row[3],
+                'supplier' : row[4],
+                'minimum' : row[5]
+            }
+            print(row[0])
+            print(row[1])
+            print(row[2])
+            print(row[3])
+            print(row[4])
+            print(row[5])
+            data.append(item)
+
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'No data found'}), 404
 
 # GET: Find all low stock items
 @app.route('/api/inventory/shortage', methods=['GET'])

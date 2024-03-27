@@ -8,7 +8,6 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import About from './pages/About';
-import Cashier from './cashier/Cashier';
 
 const router = createBrowserRouter([
   {
@@ -19,12 +18,7 @@ const router = createBrowserRouter([
   {
     path: '/about',
     element: <About name="Hello" />
-  },
-  {
-    path: '/cashier',
-    element: <Cashier name="Hello"/>
-  },
-
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
