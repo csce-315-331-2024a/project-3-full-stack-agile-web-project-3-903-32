@@ -2,15 +2,18 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
+  const blockStyle = `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800`; 
+
   return (
-    <aside className="w-80 h-screen" aria-label="Sidebar"> {/* Increased width to w-80 and height to h-screen */}
-      <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
-        <ul className="space-y-4"> {/* Increased spacing between buttons */}
+    <aside className="w-48 h-screen mr-3" aria-label="Sidebar"> 
+      {/* Block 1 */}
+      <div className={`${blockStyle} mt-12`}>
+        <ul className="space-y-2">
           <li>
             <NavLink
               to="/manager/inventory"
               className={({ isActive }) =>
-                `flex items-center p-3 text-lg font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                `block p-1 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
                   isActive ? 'bg-gray-200 dark:bg-gray-700' : ''
                 }`
               }
@@ -18,11 +21,16 @@ const Sidebar = () => {
               Inventory
             </NavLink>
           </li>
+        </ul>
+      </div>
+      {/* Block 2 */}
+      <div className={blockStyle}> 
+        <ul className="space-y-2">
           <li>
             <NavLink
               to="/manager/menu"
               className={({ isActive }) =>
-                `flex items-center p-3 text-lg font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                `block p-1 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
                   isActive ? 'bg-gray-200 dark:bg-gray-700' : ''
                 }`
               }
@@ -30,11 +38,16 @@ const Sidebar = () => {
               Menu
             </NavLink>
           </li>
+        </ul>
+      </div>
+      {/* Block 3 */}
+      <div className={blockStyle}> 
+        <ul className="space-y-2">
           <li>
             <NavLink
               to="/manager/trends"
               className={({ isActive }) =>
-                `flex items-center p-3 text-lg font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                `block p-1 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
                   isActive ? 'bg-gray-200 dark:bg-gray-700' : ''
                 }`
               }
@@ -42,7 +55,6 @@ const Sidebar = () => {
               Trends
             </NavLink>
           </li>
-          {/* Add more links as needed */}
         </ul>
       </div>
     </aside>
