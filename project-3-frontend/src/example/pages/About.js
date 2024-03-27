@@ -13,7 +13,7 @@ const About = (props) => {
     const [employee, setEmployee] = useState(null); //"employees", "setEmployees
 
     useEffect(() => { // call without using event handler
-      findEmployee("Oz");
+      findEmployee("Nolan");
     });
     
     async function findEmployee(name) {
