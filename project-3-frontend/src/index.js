@@ -8,8 +8,10 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import Cashier from './cashier/Cashier';
-import Manager from './managers/Manager';
-import Inventory from './managers/Inventory';
+import ManagerHome from './manager/ManagerHome';
+import Trends from './manager/Trends';
+import Inventory from './manager/Inventory';
+import Menu from './manager/Menu';
 
 const router = createBrowserRouter([
   {
@@ -17,41 +19,30 @@ const router = createBrowserRouter([
     element: <App />,
     children: [],
   },
-  // {
-  //   path: '/about',
-  //   element: <About name="Hello" />
-  // },
   {
     path: '/cashier',
     element: <Cashier name="Hello"/>
   },
   {
-    path: 'manager',
-    element: <Manager/>,
-    children: [
-      {
-        path: 'inventory',
-        element: <Inventory/>
-      },
-      // {
-      //   path: '/employees',
-      //   element: <Employees/>
-      // },
-      // {
-      //   path: '/trends',
-      //   element: <Trends/>
-      // },
-      // {
-      //   path: '/menu',
-      //   element: <Menu/>
-      // }
-    ]
+    path: '/manager',
+    element: <ManagerHome />,
+    children: [],
   },
   {
-    path: '/inventory',
-    element: <Inventory/>
+    path: '/manager/trends',
+    element: <Trends />,
+    children: [],
   },
-
+  {
+    path: '/manager/inventory',
+    element: <Inventory />,
+    children: [],
+  },
+  {
+    path: '/manager/menu',
+    element: <Menu />,
+    children: [],
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
