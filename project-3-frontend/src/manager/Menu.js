@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar'; // Import the Sidebar component
+import Sidebar from '../components/Sidebar';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
