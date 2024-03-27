@@ -7,8 +7,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import About from './pages/About';
 import Cashier from './cashier/Cashier';
+import ManagerHome from './manager/ManagerHome';
+import Trends from './manager/Trends';
+import Inventory from './manager/Inventory';
+import Menu from './manager/Menu';
 
 const router = createBrowserRouter([
   {
@@ -17,14 +20,29 @@ const router = createBrowserRouter([
     children: [],
   },
   {
-    path: '/about',
-    element: <About name="Hello" />
-  },
-  {
     path: '/cashier',
     element: <Cashier name="Hello"/>
   },
-
+  {
+    path: '/manager',
+    element: <ManagerHome />,
+    children: [],
+  },
+  {
+    path: '/manager/trends',
+    element: <Trends />,
+    children: [],
+  },
+  {
+    path: '/manager/inventory',
+    element: <Inventory />,
+    children: [],
+  },
+  {
+    path: '/manager/menu',
+    element: <Menu />,
+    children: [],
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
