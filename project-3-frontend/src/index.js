@@ -23,7 +23,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/cashier',
+<<<<<<< HEAD
     element: <Cashier />
+=======
+    element: <Cashier/>
+>>>>>>> implemented the features of payment
   },
   {
     path: '/cashier/payment',
