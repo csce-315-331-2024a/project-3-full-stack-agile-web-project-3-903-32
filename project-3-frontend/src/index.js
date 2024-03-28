@@ -12,6 +12,7 @@ import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
+import CashierPayment from './cashier/CashierPayment';
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/cashier',
-    element: <Cashier name="Hello"/>
+    element: <Cashier/>
+  },
+  {
+    path: '/cashier/payment',
+    element: <CashierPayment />
   },
   {
     path: '/manager',
