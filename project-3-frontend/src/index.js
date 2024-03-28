@@ -13,6 +13,7 @@ import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
+import CashierPayment from './cashier/CashierPayment';
 
 const router = createBrowserRouter([
   {
