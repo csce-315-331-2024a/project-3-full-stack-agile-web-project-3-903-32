@@ -28,10 +28,9 @@ def get_data(name):
 
     if result is not None:
         data = {'employeename': result.employeename, 'position': result.position}
-        print(result.employeename)
+        # print(result.employeename)
         return jsonify(data)
     else:
-        print("ADJKANKLAW")
         return jsonify({'error': 'No data found'}), 404
 
 @app.route('/api/menu')
@@ -58,7 +57,7 @@ def get_menu_items():
 def get_inventory_items():
     query = text("SELECT name, stock, location, capacity, supplier, minimum FROM Inventory")
     results = db.session.execute(query).fetchall()
-    print(results)
+    # print(results)
     if results:
         data = []
         for row in results:
@@ -70,12 +69,12 @@ def get_inventory_items():
                 'supplier' : row[4],
                 'minimum' : row[5]
             }
-            print(row[0])
-            print(row[1])
-            print(row[2])
-            print(row[3])
-            print(row[4])
-            print(row[5])
+            # print(row[0])
+            # print(row[1])
+            # print(row[2])
+            # print(row[3])
+            # print(row[4])
+            # print(row[5])
             data.append(item)
 
         return jsonify(data)
@@ -107,11 +106,19 @@ def get_inventory_shortage():
 @app.route('/api/inventory/<inventory_id>', methods=['PUT'])
 def update_inventory(inventory_id):
     if(request.method == 'PUT'):
+        if(inventory_id.isnumeric() == False):
+            query = text("SELECT id FROM Inventory WHERE name = :name")
+            result = db.session.execute(query, {'name': inventory_id}).fetchone()
+            if result is not None:
+                inventory_id = result[0]
+            else:
+                return jsonify({'error': 'No data found'}), 404
         data = request.get_json()
+        # print(data)
         query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
         db.session.execute(query, {'add_stock': data['add_stock'], 'id': inventory_id})
         db.session.commit()
-        print('Updated stock for item with ID: ' + inventory_id)
+        print('Updated stock for item with ID: ' + str(inventory_id))
         return jsonify({'message': 'Stock updated successfully'}), 200
 
 @app.route('/api/inventory/batch/', methods=['PUT'])
@@ -147,9 +154,10 @@ def update_orders():
             db.session.execute(query, {'menu_id': menu_id, 'order_id': order_id})
         db.session.commit()
         
+        # Decreasing the stock from the menu items
         for menu_id in data['menu_items']:
             query = text("SELECT itemID, itemAmount FROM MIJunc WHERE menuID = :menu_id")
-            results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
+            results = db.session.execute(query, {'menu_id': menu_id}).fetchall() #Returns it in the form of (itemID, itemAmount)
             data = []
             for inventory in results:
                 data.append({ "id": inventory[0], "amount": float(-inventory[1]) })
@@ -157,7 +165,7 @@ def update_orders():
                 put_url = f'http://localhost:5000/api/inventory/batch/'
                 res = requests.put(put_url, json=json.dumps(data)) #json.dumps turns the entire list into a JSON str(a python str)
                 if res.status_code == 200:
-                    print('Decreased stock for menu item with ID: ' + str(menu_id), str(inventory[1]))
+                    print('Decreased stock for menu item with ID: ' + str(menu_id))
         return jsonify({'message': 'Order created successfully'}), 201
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

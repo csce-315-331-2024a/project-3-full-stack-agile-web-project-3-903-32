@@ -3,9 +3,11 @@ import Sidebar from '../components/Sidebar';
 
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
+  const[shortageItems, setShortageItems] = useState([]);
 
   useEffect(() => {
     getInventory();
+    getShortage();
   }, []);
 
   async function getInventory() {
@@ -24,6 +26,48 @@ const Inventory = () => {
       console.error('Error fetching menu:', error);
     }
   }
+
+  async function getShortage() {
+    await fetch("http://localhost:5000/api/inventory/shortage", {
+        method: "GET",
+        mode: 'cors',
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        // console.log(data);
+        setShortageItems(data);
+    }).catch((err) => {
+        console.log(err);
+    });
+}
+
+  async function restockInventory(event) {
+    event.preventDefault();
+    try {
+        // console.log(document.querySelector('select[name=restock_selector]').value);
+        await fetch("http://localhost:5000/api/inventory/" + document.querySelector('select[name=restock_selector]').value, {
+            method: "PUT",
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "name": document.querySelector('select[name=restock_selector]').value,
+                "add_stock": document.querySelector('input[name=restock_input]').value,
+            })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            getInventory();
+            getShortage();
+            console.log(data['message']);
+        }).catch((err) => {
+            console.log(err);
+        });
+    } catch {
+        console.log("Error");
+    }
+}
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -69,6 +113,28 @@ const Inventory = () => {
               ))}
             </tbody>
           </table>
+          <form onSubmit={restockInventory}>
+                <select required name='restock_selector'>
+                    {
+                        inventoryItems.map((item) => (
+                            <option key={item.name} value={item.name}>{item.name}</option>
+                        ))
+                    }
+                </select>
+                <input required type="number" placeholder='how much' name='restock_input'/>
+                <button type="submit">Restock</button>
+            </form>
+            <ul>
+                {
+                    shortageItems.length > 0 ? (
+                        shortageItems.map((item) => (
+                            <li key={item.name}>{item.name} {item.stock}</li>
+                        ))
+                    ) : (
+                        <p>Loading...</p>
+                    )
+                }
+            </ul>
         </main>
       </div>
     </div>
