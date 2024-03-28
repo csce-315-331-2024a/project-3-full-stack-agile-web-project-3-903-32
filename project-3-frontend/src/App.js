@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const navigate = useNavigate();
+  
   // Initialize state variables to store input values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -17,11 +20,11 @@ function App() {
   const passwords = [
     "ozpass",
     "nolanpass",
-   "jimothypass",
+    "jimothypass",
     "rebeccapass",
     "georgepass",
     "kyliepass"
-  ]
+  ];
 
   // Function to handle login button click
   const handleLogin = () => {
@@ -30,13 +33,18 @@ function App() {
     console.log("Password:", password);
     const passwordInt = parseInt(password);
     if (passwords[passwordInt] === username){
-      console.log("Successful Login")
+      console.log("Successful Login");
+      // Redirect to inventory page
+      if(passwordInt == 0 || passwordInt == 2){
+        navigate('/Manager');
+      } else {
+        navigate('/Cashier')
+      }
     } else {
       console.log("Login Failed!");
     }
   };
 
- 
   return (
     <div className="flex flex-col items-center">
       <h1 className="bg-red-900 text-white p-10 text-center text-9xl mb-8">Rev's American Grill</h1>
