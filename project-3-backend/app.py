@@ -35,15 +35,16 @@ def get_data(name):
 
 @app.route('/api/menu')
 def get_menu_items():
-    query = text("SELECT itemName, price FROM Menu")
+    query = text("SELECT * FROM Menu")
     results = db.session.execute(query).fetchall() 
     print(results)
     if results:
         data = []
         for row in results:
             item = {
-                'itemName' : row[0],
-                'price' : row[1]
+                'id' : row[0],
+                'itemName' : row[1],
+                'price' : row[2]
             }
             print(row[0])
             print(row[1])
