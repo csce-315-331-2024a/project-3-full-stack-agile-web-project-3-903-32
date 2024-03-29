@@ -10,7 +10,7 @@ const Menu = () => {
 
   async function getMenu() {
     try {
-      const response = await fetch("http://localhost:5000/api/menu", {
+      const response = await fetch("http://127.0.0.1:5000/api/menu", {
         method: "GET",
         mode: 'cors'
       });
