@@ -12,7 +12,7 @@ const Inventory = () => {
 
   async function getInventory() {
     try {
-      const response = await fetch("http://localhost:5000/api/inventory", {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory", {
         method: "GET",
         mode: 'cors'
       });
@@ -28,7 +28,7 @@ const Inventory = () => {
   }
 
   async function getShortage() {
-    await fetch("http://localhost:5000/api/inventory/shortage", {
+    await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory/shortage", {
         method: "GET",
         mode: 'cors',
     })
@@ -45,7 +45,7 @@ const Inventory = () => {
     event.preventDefault();
     try {
         // console.log(document.querySelector('select[name=restock_selector]').value);
-        await fetch("http://localhost:5000/api/inventory/" + document.querySelector('select[name=restock_selector]').value, {
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory/" + document.querySelector('select[name=restock_selector]').value, {
             method: "PUT",
             mode: 'cors',
             headers: {
