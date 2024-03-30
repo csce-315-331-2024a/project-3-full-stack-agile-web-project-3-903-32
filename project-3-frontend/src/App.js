@@ -35,10 +35,10 @@ function App() {
     if (passwords[passwordInt] === username){
       console.log("Successful Login");
       // Redirect to inventory page
-      if(passwordInt == 0 || passwordInt == 2){
-        navigate('/Manager');
+      if(passwordInt === 0 || passwordInt === 2){
+        navigate('/manager');
       } else {
-        navigate('/Cashier')
+        navigate('/cashier')
       }
     } else {
       console.log("Login Failed!");
