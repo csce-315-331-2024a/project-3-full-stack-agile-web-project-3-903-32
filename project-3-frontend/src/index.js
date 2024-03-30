@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import Cashier from './cashier/Cashier';
+import CashierPayment from './cashier/CashierPayment';
 import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/cashier',
-    element: <Cashier name="Hello"/>
+    element: <Cashier />
+  },
+  {
+    path: '/cashier/payment',
+    element: <CashierPayment />
   },
   {
     path: '/manager',
