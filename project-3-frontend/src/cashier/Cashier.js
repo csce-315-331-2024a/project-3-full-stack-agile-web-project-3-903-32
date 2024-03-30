@@ -26,7 +26,7 @@ const Cashier = () => {
 
     async function getMenu() {
         try {
-            const response = await fetch("http://localhost:5000/api/menu", {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
                 method: "GET",
                 mode: 'cors'
             });

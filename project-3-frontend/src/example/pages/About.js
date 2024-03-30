@@ -17,7 +17,7 @@ const About = (props) => {
     });
     
     async function findEmployee(name) {
-        await fetch("http://localhost:5000/api/employee/" + name, {
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/api/employee/" + name, {
             method: "GET",
             mode: 'cors',
         })
@@ -33,7 +33,7 @@ const About = (props) => {
     }
 
     async function test_insert_order() {
-        await fetch("http://localhost:5000/api/order", {
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
             method: "POST",
             mode: 'cors',
             headers: {
