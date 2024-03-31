@@ -26,6 +26,7 @@ const Menu = () => {
     event.preventDefault();
     if (document.getElementById('newItemAmount').value !== '' 
     && document.getElementById('newItemSelect').value !== '') {
+      document.getElementById('newItemAmount').value = parseFloat(document.getElementById('newItemAmount').value).toFixed(2);
       postMenuInventory(menuId);
     }
   }
@@ -46,9 +47,12 @@ const Menu = () => {
   }
 
   const handleChangeAmount = (index, event) => {
-    event.preventDefault();
-    itemInventoryList[index].itemAmount = event.target.value;
-    putMenuInventory(menuId, index);
+    // 13 is the keycode for enter
+    if (event.keyCode === 13) {
+      document.getElementsByName('editItemAmount')[index].value = parseFloat(document.getElementsByName('editItemAmount')[index].value).toFixed(2);
+      itemInventoryList[index].itemAmount = document.getElementsByName('editItemAmount')[index].value;
+      putMenuInventory(menuId, index);
+    }
   }
 
   async function getMenu() {
@@ -186,7 +190,7 @@ const Menu = () => {
           itemInventoryList.map((item, index) => (
             <tr key={index}>
               <td>{item.itemName}</td>
-              <td><input type="number" value={item.itemAmount} onChange={e => handleChangeAmount(index, e)} /></td>
+              <td><input type="number" name='editItemAmount' defaultValue={item.itemAmount} onKeyDown={e => handleChangeAmount(index, e)} /></td>
             </tr>
           ))
         }
