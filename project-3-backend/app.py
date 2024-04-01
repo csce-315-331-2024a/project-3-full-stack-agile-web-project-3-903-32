@@ -148,6 +148,35 @@ def update_orders():
 
         db.session.commit()
         return jsonify({'message': 'Order created successfully'}), 201
+    
+@app.route('/api/weather')
+def show_Weather():
+    api_key = os.getenv('weather_api_key')
+    city_name = "College Station"
+    Weather_URL = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + api_key
+    
+    response = requests.get(Weather_URL)
+    weather_info = response.json()
+
+    if weather_info['cod'] == 200:
+        kelvin = 273
+        temp_k = weather_info['main']['temp']
+        description = weather_info['weather'][0]['description']
+        
+        # Convert temperatures from Kelvin to Fahrenheit
+        temp_f = (temp_k - kelvin) * 9/5 + 32
+        
+        # Construct the response JSON object
+        result = {
+            "temperature_fahrenheit": round(temp_f, 2),
+            "description": description
+        }
+    else:
+        result = {
+            "error": "Weather not found. COD was not 200"
+        }
+
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
