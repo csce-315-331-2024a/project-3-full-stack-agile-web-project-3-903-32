@@ -9,8 +9,7 @@ from flask_cors import CORS
 import datetime
 
 app = Flask(__name__)
-
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
 load_dotenv()
 
 # Database configuration
@@ -29,25 +28,22 @@ def get_data(name):
 
     if result is not None:
         data = {'employeename': result.employeename, 'position': result.position}
-        # print(result.employeename)
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
 
 @app.route('/api/menu')
 def get_menu_items():
-    query = text("SELECT itemName, price FROM Menu")
+    query = text("SELECT * FROM Menu")
     results = db.session.execute(query).fetchall() 
-    print(results)
     if results:
         data = []
         for row in results:
             item = {
-                'itemName' : row[0],
-                'price' : row[1]
+                'id' : row[0],
+                'itemName' : row[1],
+                'price' : row[2]
             }
-            print(row[0])
-            print(row[1])
             data.append(item)
 
         return jsonify(data)
@@ -58,7 +54,6 @@ def get_menu_items():
 def get_inventory_items():
     query = text("SELECT name, stock, location, capacity, supplier, minimum FROM Inventory")
     results = db.session.execute(query).fetchall()
-    # print(results)
     if results:
         data = []
         for row in results:
@@ -70,12 +65,6 @@ def get_inventory_items():
                 'supplier' : row[4],
                 'minimum' : row[5]
             }
-            # print(row[0])
-            # print(row[1])
-            # print(row[2])
-            # print(row[3])
-            # print(row[4])
-            # print(row[5])
             data.append(item)
 
         return jsonify(data)
@@ -115,34 +104,27 @@ def update_inventory(inventory_id):
             else:
                 return jsonify({'error': 'No data found'}), 404
         data = request.get_json()
-        # print(data)
         query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
         db.session.execute(query, {'add_stock': data['add_stock'], 'id': inventory_id})
-        db.session.commit()
         print('Updated stock for item with ID: ' + str(inventory_id))
-        return jsonify({'message': 'Stock updated successfully'}), 200
-
-@app.route('/api/inventory/batch/', methods=['PUT'])
-def update_inventory_batch():
-    if(request.method == 'PUT'):
-        data = json.loads(request.get_json()) #json.loads turns the JSON str into a python list
-        query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
-        for item in data:
-            db.session.execute(query, {'add_stock': item['amount'], 'id': item['id']})
         db.session.commit()
         return jsonify({'message': 'Stock updated successfully'}), 200
 
+def update_inventory_batch(data):
+    query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
+    params = [{'add_stock': item['amount'], 'id': item['id']} for item in data]
+    db.session.execute(query, params)
+    db.session.commit()
 
 @app.route('/api/order', methods=['POST'])
 def update_orders():
     if(request.method == 'POST'):
         data = request.get_json() #turns the JSON into a python dict
-        
+
         # Insert order
         curr_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         query = text("INSERT INTO orders (customerName, time, paid, EmployeeID) VALUES (:customer_name, :time, :paid, :employee_id);")
         db.session.execute(query, {'customer_name': data['customer_name'], 'time': curr_time, 'paid': data['paid'], 'employee_id': data['employee_id']})
-        db.session.commit()
         
         # Get the order id
         query = text("SELECT * FROM orders WHERE :customer_name = customerName AND :time = time AND :paid = paid AND :employee_id = EmployeeID")
@@ -153,20 +135,48 @@ def update_orders():
         for menu_id in data['menu_items']:
             query = text("INSERT INTO OMJunc (menuID, orderID) VALUES (:menu_id, :order_id)")
             db.session.execute(query, {'menu_id': menu_id, 'order_id': order_id})
-        db.session.commit()
-        
+
         # Decreasing the stock from the menu items
-        for menu_id in data['menu_items']:
-            query = text("SELECT itemID, itemAmount FROM MIJunc WHERE menuID = :menu_id")
-            results = db.session.execute(query, {'menu_id': menu_id}).fetchall() #Returns it in the form of (itemID, itemAmount)
-            data = []
-            for inventory in results:
-                data.append({ "id": inventory[0], "amount": float(-inventory[1]) })
-            if(data is not None):
-                put_url = f'http://localhost:5000/api/inventory/batch/'
-                res = requests.put(put_url, json=json.dumps(data)) #json.dumps turns the entire list into a JSON str(a python str)
-                if res.status_code == 200:
-                    print('Decreased stock for menu item with ID: ' + str(menu_id))
+        query = text("SELECT itemID, itemAmount FROM MIJunc WHERE menuID IN :menu_items")
+        results = db.session.execute(query, {'menu_items': tuple(data['menu_items'])}).fetchall() #Returns it in the form of (itemID, itemAmount)
+        data = []
+        for inventory in results:
+            data.append({ "id": inventory[0], "amount": float(-inventory[1]) })
+        if data is not None:
+            update_inventory_batch(data)
+            print('Decreased stock for menu item with ID: ' + str(menu_id))
+
+        db.session.commit()
         return jsonify({'message': 'Order created successfully'}), 201
+    
+@app.route('/api/weather')
+def show_Weather():
+    api_key = os.getenv('weather_api_key')
+    city_name = "College Station"
+    Weather_URL = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + api_key
+    
+    response = requests.get(Weather_URL)
+    weather_info = response.json()
+
+    if weather_info['cod'] == 200:
+        kelvin = 273
+        temp_k = weather_info['main']['temp']
+        description = weather_info['weather'][0]['description']
+        
+        # Convert temperatures from Kelvin to Fahrenheit
+        temp_f = (temp_k - kelvin) * 9/5 + 32
+        
+        # Construct the response JSON object
+        result = {
+            "temperature_fahrenheit": round(temp_f, 2),
+            "description": description
+        }
+    else:
+        result = {
+            "error": "Weather not found. COD was not 200"
+        }
+
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

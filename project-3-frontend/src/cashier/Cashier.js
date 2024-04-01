@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const Cashier = (props) => {
+const Cashier = () => {
     const [buttons, setButtons] = useState([]);
+    const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handlePaymentClick = () => {
+        navigate('/cashier/payment', { state: { order, total, itemIds } });
+    };
+
     useEffect(() => {
         getMenu();
-    }, []);
+        if (location.state) {
+            const { orderBack, totalBack, itemIdsBack } = location.state;
+            setOrder(orderBack);
+            setTotal(totalBack);
+            setItemIds(itemIdsBack);
+        }
+    }, [location.state]);
 
     async function getMenu() {
         try {
-            const response = await fetch("http://127.0.0.1:5000/api/menu", {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
                 method: "GET",
                 mode: 'cors'
             });
@@ -34,22 +49,56 @@ const Cashier = (props) => {
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
             setTotal((total) => round(total + price, 2));
+            setItemIds((itemIds) => [...itemIds, item.id]); 
             setOrder((order) => {
-                return [...order, { ...item, price }];
-            });
+                const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
+                if (existIndex > -1) {
+                    return order.map((orderItem, idx) =>
+                        idx === existIndex
+                            ? { ...orderItem, quantity: orderItem.quantity + 1 }
+                            : orderItem
+                    );
+                } else {
+                    return [...order, { ...item, price, quantity: 1 }];
+                }
+            });  
         } else {
             console.error('item.price is not a valid number', item);
         }
     };
 
-    const removeFromOrder = (index, order) => {
+    const removeFromOrder = (index) => {
         if (index >= 0 && index < order.length) {
             const item = order[index];
             if (item) {
                 const price = parseFloat(item.price);
                 if (!isNaN(price)) { 
                     setTotal((total) => round(total - price, 2));
-                    setOrder((order) => order.filter((_, i) => i !== index));
+                    
+                    setOrder((order) => {
+                        if (item.quantity > 1) {
+                            return order.map((orderItem, idx) =>
+                                idx === index
+                                    ? { ...orderItem, quantity: orderItem.quantity - 1 }
+                                    : orderItem
+                            );
+                        } else {
+                            return order.filter((_, idx) => idx !== index);
+                        }
+                    });
+
+                    setItemIds((itemIds) => {
+                        const item = order[index];
+                        if (item) {
+                            const lastIndex = itemIds.lastIndexOf(item.id);
+                            if (lastIndex > -1) {
+                                const newItemIds = [...itemIds];
+                                newItemIds.splice(lastIndex, 1);
+                                return newItemIds;
+                            }
+                        }
+                        return itemIds;
+                    });            
                 } else {
                     console.error('item.price is not a valid number', item);
                 }
@@ -59,6 +108,7 @@ const Cashier = (props) => {
         } else {
             console.error('Invalid index', index);
         }
+        return order;
     };
 
     return (
@@ -81,9 +131,9 @@ const Cashier = (props) => {
                 {order.length > 0 ? (
                     <ul>
                         {order.map((item, index) => (
-                            <li key={index}>
-                                {item.itemName} - ${item.price.toFixed(2)}
-                                <button onClick={() => removeFromOrder(index, order)}>
+                            <li key={item.id}>
+                                {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                                <button onClick={() => removeFromOrder(index)}>
                                     <p className="ml-4">Remove</p>
                                 </button>
                             </li>
@@ -93,6 +143,7 @@ const Cashier = (props) => {
                     <p>No items in order.</p>
                 )}
                 <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
+                <button onClick={handlePaymentClick}>Go to Payment</button>
             </div>
         </div>
     );
