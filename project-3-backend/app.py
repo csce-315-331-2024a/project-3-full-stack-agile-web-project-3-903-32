@@ -32,33 +32,35 @@ def get_data(name):
     else:
         return jsonify({'error': 'No data found'}), 404
 
-@app.route('/api/menu')
+@app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
-    query = text("SELECT * FROM Menu")
-    results = db.session.execute(query).fetchall() 
-    if results:
-        data = []
-        for row in results:
-            item = {
-                'id' : row[0],
-                'itemName' : row[1],
-                'price' : row[2]
-            }
-            data.append(item)
+    if request.method == 'GET':
+        query = text("SELECT * FROM Menu")
+        results = db.session.execute(query).fetchall() 
+        if results:
+            data = []
+            for row in results:
+                item = {
+                    'id' : row[0],
+                    'itemName' : row[1],
+                    'price' : row[2]
+                }
+                data.append(item)
 
-        return jsonify(data)
-    else:
-        return jsonify({'error': 'No data found'}), 404
-    
-@app.route('/api/menu/<menu_id>', methods=['POST', 'PUT', 'DELETE'])
-def get_menu_item(menu_id):
-    if request.method == 'POST':
+            return jsonify(data)
+        else:
+            return jsonify({'error': 'No data found'}), 404
+    elif request.method == 'POST':
         data = request.get_json()
-        query = text("INSERT INTO Menu (itemName, price) VALUES (:itemName, :price)")
-        db.session.execute(query, {'itemName': data['itemName'], 'price': data['price']})
+        res = db.session.execute(text("SELECT MAX(id) FROM Menu")).fetchone()[0] + 1
+        query = text("INSERT INTO menu (id, itemname, price) VALUES (:id, :itemName, :price);")
+        db.session.execute(query, {'id': res, 'itemName': data['itemName'], 'price': data['price']})
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
-    elif request.method == 'PUT':
+    
+@app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
+def get_menu_item(menu_id):
+    if request.method == 'PUT':
         data = request.get_json()
         query = text("UPDATE Menu SET itemName = :itemName, price = :price WHERE id = :id")
         db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'id': menu_id})
@@ -166,8 +168,8 @@ def update_inventory_batch(data):
 def get_menu_inventory(menu_id):
     if(request.method == 'GET'):
         query = text("SELECT m.itemid, i.name, m.itemamount FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id")
-        results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
-        if results:
+        try:
+            results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
             data = []
             print(results)
             for row in results:
@@ -179,8 +181,8 @@ def get_menu_inventory(menu_id):
                 data.append(item)
 
             return jsonify(data)
-        else:
-            return jsonify({'error': 'No data found'}), 404
+        except Exception as e:
+            return jsonify({'error': 'No data found' + e}), 404
     elif(request.method == 'DELETE'):
         data = request.get_json()
         query = text("DELETE FROM MIJunc WHERE menuid = :menu_id AND itemid = :item_id")
@@ -204,8 +206,8 @@ def get_menu_inventory(menu_id):
 @app.route('/api/mijunc/outside/<menu_id>', methods=['GET'])
 def get_outside_menu_inventory(menu_id):
     query = text("SELECT DISTINCT inv.id, inv.name FROM Inventory as inv WHERE inv.id NOT IN (SELECT i.id FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id);")
-    results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
-    if results:
+    try:
+        results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
         data = []
         print(results)
         for row in results:
@@ -214,10 +216,9 @@ def get_outside_menu_inventory(menu_id):
                 'itemName' : row.name,
             }
             data.append(item)
-
         return jsonify(data)
-    else:
-        return jsonify({'error': 'No data found'}), 404
+    except Exception as e:
+        return jsonify({'error': 'No data found' + e}), 404
 
 @app.route('/api/order', methods=['POST'])
 def update_orders():

@@ -9,17 +9,51 @@ const Menu = () => {
   const [menuId, setMenuId] = useState('');
   const [itemInventoryList, setItemInventoryList] = useState([]);
   const [itemOutsideInventoryList, setItemOutsideInventoryList] = useState([]);
+  const [addMenuModal, setAddMenuModal] = useState(false);
 
   useEffect(() => {
     getMenu();
   }, []);
 
-  const handleAddMenu = (event) => {
+  useEffect(() => {
+    if (addMenuModal) {
+      validateAddMenu();
+      const curr_name = document.getElementsByName('add_menu_name')[0];
+      curr_name.addEventListener('input', validateAddMenu);
+      const curr_price = document.getElementsByName('add_menu_price')[0];
+      curr_price.addEventListener('input', validateAddMenu);
+    }
+  }, [addMenuModal]);
+
+
+  const handleCloseModal = (event) => {
     event.preventDefault();
+    setMenuModal(false);
     setMenuId('');
     setMenuName('');
     setMenuPrice('');
-    setMenuModal(true);
+    setItemInventoryList([]);
+    setItemOutsideInventoryList([]);
+  }
+
+  const handleAddMenu = (event) => {
+    event.preventDefault();
+    const curr_name = document.getElementsByName('add_menu_name')[0].value;
+    const curr_price = parseFloat(document.getElementsByName('add_menu_price')[0].value).toFixed(2);
+    postMenu(curr_name, curr_price);
+  }
+
+  const validateAddMenu = () => {
+    const curr_name = document.getElementsByName('add_menu_name')[0].value;
+    const curr_price = document.getElementsByName('add_menu_price')[0].value;
+    const add_button = document.getElementsByName('add_menu_button')[0];
+    if (curr_name === '' || curr_price === '') {
+      add_button.style.color = 'gray';
+      add_button.disabled = true;
+    } else {
+      add_button.style.color = 'black';
+      add_button.disabled = false;
+    }
   }
 
   const handleAddItem = (event) => {
@@ -64,6 +98,26 @@ const Menu = () => {
       if (response.ok) {
         const data = await response.json();
         setMenuItems(data);
+      } else {
+        console.error('Failed to fetch menu:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+    }
+  }
+
+  async function postMenu(menu_name, menu_price) {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
+        method: "POST",
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "itemName" : menu_name, "price": menu_price})
+      });
+      if (response.ok) {
+        getMenu();
       } else {
         console.error('Failed to fetch menu:', response.status, response.statusText);
       }
@@ -124,6 +178,7 @@ const Menu = () => {
       });
       if (response.ok) {
         getMenuInventory(menu_id);
+        getOutsideMenuInventory(menu_id);
       } else {
         console.error('Failed to delete menu inventory:', response.status, response.statusText);
       }
@@ -170,19 +225,26 @@ const Menu = () => {
     }
   }
 
-  const Modal = () => (
-    (<div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-400 flex flex-col'>
+  const EditMenuModal = () => (
+    (<div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
     <div className='p-4'>
-      <label htmlFor='item_name'>Item Name:</label>
-      <input type='text' name='item_name' value={menuName} onChange={(e) => setMenuName(e.target.value)} />
-      <label htmlFor='item_price'>Item Price:</label>
-      <input type='text' name='item_price' value={menuPrice} onChange={(e) => setMenuPrice(e.target.value)} />
+      <label htmlFor='item_name'>Menu Name:</label>
+      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' name='item_name' value={menuName} onChange={(e) => setMenuName(e.target.value)} />
+      <label htmlFor='item_price'>Menu Price:</label>
+      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' name='item_price' value={menuPrice} onChange={(e) => setMenuPrice(e.target.value)} />
+      <button onClick={handleCloseModal}>Close</button>
     </div>
-    <table>
+    <div className='mx-4 flex justify-between'>
+      <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600'>Save New Name and Price</button>
+      <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700'>Delete Menu Item</button>
+    </div>
+    <h1 className='text-center font-bold'>Menu Ingredients</h1>
+    <table className='mx-4'>
       <thead>
-        <tr>
+        <tr className='text-left'>
           <th>Inventory Name</th>
           <th>Amount</th>
+          <th>Remove</th>
         </tr>
       </thead>
       <tbody>
@@ -190,13 +252,14 @@ const Menu = () => {
           itemInventoryList.map((item, index) => (
             <tr key={index}>
               <td>{item.itemName}</td>
-              <td><input type="number" name='editItemAmount' defaultValue={item.itemAmount} onKeyDown={e => handleChangeAmount(index, e)} /></td>
+              <td ><input className='px-2 bg-gray-200 rounded' type="number" name='editItemAmount' defaultValue={item.itemAmount} onKeyDown={e => handleChangeAmount(index, e)} /></td>
+              <td><button id={index} onClick={handleDeleteItem}>Remove</button></td>
             </tr>
           ))
         }
         <tr>
           <td>
-            <select id='newItemSelect'>
+            <select id='newItemSelect' className='px-2 bg-gray-200 rounded'>
               {
                 itemOutsideInventoryList.map((item, index) => (
                   <option key={index} value={item.itemID}>{item.itemName}</option>
@@ -205,17 +268,29 @@ const Menu = () => {
             </select>
           </td>
           <td>
-            <label htmlFor='inventory_amount'>Inventory Amount:</label>
-            <input type='number' id='newItemAmount'/>
+            {/* <label htmlFor='inventory_amount'>Inventory Amount:</label> */}
+            <input className='px-2 bg-gray-200 rounded' type='number' id='newItemAmount'/>
+          </td>
+          <td>
+            <button onClick={handleAddItem}>Add</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div className='p-4'>
-      <button onClick={handleAddItem}>Add</button>
-    </div>
   </div>)
-  )
+  );
+
+  const AddMenuModal = () => (
+    ( <tr >
+        <td className='p-4'><label htmlFor='add_menu_name'>Menu Name:</label>
+        <input className='bg-gray-200 rounded px-2 ml-2' type='text' name='add_menu_name'/>
+        </td>
+        <td className='p-4'><label htmlFor='add_menu_price'>Price: </label>
+        <input className='bg-gray-200 rounded px-2 ml-2' type='number' name='add_menu_price'/>
+        </td>
+        <td className='p-4'><button name='add_menu_button' onClick={handleAddMenu}>Add</button></td>
+      </tr>)
+  );
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -247,15 +322,19 @@ const Menu = () => {
                   <td className="p-4 text-base text-gray-700"><button id={index} onClick={handleEditItem}>Edit</button></td>
                 </tr>
               ))}
-              <tr key={-1} className="bg-white border-b" onClick={handleAddItem}>
+              {
+                addMenuModal ?
+                <AddMenuModal /> :
+                <tr key={-1} className="bg-white border-b" onClick={() => setAddMenuModal(true)}>
                 <td className="text-center w-full text-base border-gray-700 border-dotted border-2 border-r-0 text-gray-700"><button className='text-2xl p-4 w-full'>+</button></td>
                 <td className="text-center w-full text-base border-gray-700 border-dotted border-2 border-l-0 text-gray-700"><button className='text-2xl p-4 w-full'></button></td>
               </tr>
+              }
             </tbody>
           </table>
           {
             menuModal &&
-            <Modal />
+            <EditMenuModal />
           }
         </main>
       </div>
