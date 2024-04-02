@@ -74,7 +74,7 @@ def get_menu_item(menu_id):
         db.session.commit()
         return jsonify({'message': 'Menu item updated successfully'}), 200
     elif request.method == 'DELETE':
-        delete_menu_inventory_batch(menu_id)
+        delete_menu_mijunc_batch(menu_id)
         delete_menu_omjunc_batch(menu_id)
         query = text("DELETE FROM Menu WHERE id = :id")
         db.session.execute(query, {'id': menu_id})
@@ -91,7 +91,7 @@ def delete_menu_omjunc_batch(menu_id):
         return jsonify({'error': 'Issue with deletion' + e}), 404
 
 #Deleting all inventory items attached to the menu item
-def delete_menu_inventory_batch(menu_id):
+def delete_menu_mijunc_batch(menu_id):
     try:
         query = text("DELETE FROM MIJunc WHERE menuid = :menu_id")
         db.session.execute(query, {'menu_id': menu_id})
@@ -258,7 +258,7 @@ def get_outside_menu_inventory(menu_id):
 ###################################
 #             Ordering API        #
 ###################################
-@app.route('/api/order', methods=['POST'])
+@app.route('/api/order', methods=['POST', 'GET'])
 def update_orders():
     if(request.method == 'POST'):
         data = request.get_json() #turns the JSON into a python dict
@@ -291,6 +291,46 @@ def update_orders():
         db.session.commit()
         return jsonify({'message': 'Order created successfully'}), 201
     
+    elif request.method == 'GET':
+        try:
+            data = request.json()
+            #START AND END TIME NEED TO BE IN THE FORMAT 'YYYY-MM-DD HH:MM:SS'
+            query = text("SELECT * FROM Orders WHERE time BETWEEN :start_time AND :end_time LIMIT 100")
+            results = db.session.execute(query, {'start_time': data['start_time'], 'end_time': data['end_time']}).fetchall()
+            data = []
+            for row in results:
+                item = {
+                    'id' : row.id,
+                    'customerName' : row.customername,
+                    'time' : row.time,
+                    'paid' : row.paid,
+                    'employeeID' : row.employeeid
+                }
+                data.append(item)
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({'error': 'No data found' + e}), 404
+
+@app.route('/api/order/<order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    #Deletes the order menu junction
+    delete_order_omjunc_batch(order_id)
+    
+    #Deletes the order
+    query = text("DELETE FROM Orders WHERE id = :order_id")
+    db.session.execute(query, {'order_id': order_id})
+    db.session.commit()
+    return jsonify({'message': 'Order deleted successfully'}), 200
+
+def delete_order_omjunc_batch(order_id):
+    try:
+        query = text("DELETE FROM OMJunc WHERE orderid = :order_id")
+        db.session.execute(query, {'order_id': order_id})
+        db.session.commit()
+        return jsonify({'message': 'Order menu deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Issue with deletion' + e}), 404
+
 @app.route('/api/weather')
 def show_Weather():
     api_key = os.getenv('weather_api_key')
