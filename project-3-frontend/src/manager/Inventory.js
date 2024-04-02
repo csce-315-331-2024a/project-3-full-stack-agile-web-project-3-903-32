@@ -12,11 +12,7 @@ const Inventory = () => {
 
   async function getInventory() {
     try {
-<<<<<<< HEAD
-      const response = await fetch("http://127.0.0.1:5000/api/inventory", {
-=======
       const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory", {
->>>>>>> origin
         method: "GET",
         mode: 'cors'
       });
