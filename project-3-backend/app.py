@@ -21,6 +21,9 @@ db = SQLAlchemy(app)
 def hello_world():
     return 'Hello, World!'
 
+###################################
+#             Employee API        #
+###################################
 @app.route('/api/employee/<name>')
 def get_data(name):
     query = text("SELECT * FROM Employees WHERE employeename = :name LIMIT 1")
@@ -32,6 +35,9 @@ def get_data(name):
     else:
         return jsonify({'error': 'No data found'}), 404
 
+###################################
+#             MENU API            #
+###################################
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
     if request.method == 'GET':
@@ -94,6 +100,9 @@ def delete_menu_inventory_batch(menu_id):
     except Exception as e:
         return jsonify({'error': 'Issue with deletion' + e}), 404
 
+###################################
+#             Inventory API       #
+###################################
 @app.route('/api/inventory')
 def get_inventory_items():
     query = text("SELECT * FROM Inventory")
@@ -185,7 +194,10 @@ def update_inventory_batch(data):
     params = [{'add_stock': item['amount'], 'id': item['id']} for item in data]
     db.session.execute(query, params)
     db.session.commit()
-    
+
+###################################
+#             MIJUNC API          #
+###################################
 @app.route('/api/mijunc/<menu_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
 def get_menu_inventory(menu_id):
     if(request.method == 'GET'):
@@ -242,6 +254,10 @@ def get_outside_menu_inventory(menu_id):
     except Exception as e:
         return jsonify({'error': 'No data found' + e}), 404
 
+
+###################################
+#             Ordering API        #
+###################################
 @app.route('/api/order', methods=['POST'])
 def update_orders():
     if(request.method == 'POST'):
