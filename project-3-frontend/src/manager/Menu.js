@@ -10,6 +10,8 @@ const Menu = () => {
   const [itemInventoryList, setItemInventoryList] = useState([]);
   const [itemOutsideInventoryList, setItemOutsideInventoryList] = useState([]);
   const [addMenuModal, setAddMenuModal] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [shouldRun, setShouldRun] = useState(false);
 
   useEffect(() => {
     getMenu();
@@ -25,6 +27,18 @@ const Menu = () => {
     }
   }, [addMenuModal]);
 
+  useEffect(() => {
+    if(confirmDelete) {
+      const timeout_id = setTimeout(() => {
+        if(confirmDelete) {
+          setConfirmDelete(false);
+        }
+      }, 2500);
+
+      return () => clearTimeout(timeout_id);
+    }
+  } , [confirmDelete]);
+
 
   const handleCloseModal = (event) => {
     event.preventDefault();
@@ -34,6 +48,20 @@ const Menu = () => {
     setMenuPrice('');
     setItemInventoryList([]);
     setItemOutsideInventoryList([]);
+  }
+
+  const handleSaveMenu = (event) => {
+  }
+
+  const handleDeleteMenu = (event) => {
+    event.preventDefault();
+    if(confirmDelete) {
+      setMenuModal(false);
+      setConfirmDelete(false);
+      deleteMenu(menuId);
+    } else {
+      setConfirmDelete(true);
+    }
   }
 
   const handleAddMenu = (event) => {
@@ -115,6 +143,22 @@ const Menu = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ "itemName" : menu_name, "price": menu_price})
+      });
+      if (response.ok) {
+        getMenu();
+      } else {
+        console.error('Failed to fetch menu:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+    }
+  }
+
+  async function deleteMenu(menu_id) {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu/" + menu_id, {
+        method: "DELETE",
+        mode: 'cors'
       });
       if (response.ok) {
         getMenu();
@@ -235,8 +279,8 @@ const Menu = () => {
       <button onClick={handleCloseModal}>Close</button>
     </div>
     <div className='mx-4 flex justify-between'>
-      <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600'>Save New Name and Price</button>
-      <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700'>Delete Menu Item</button>
+      <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600' onClick={handleSaveMenu}>Save New Name and Price</button>
+      <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700' onClick={handleDeleteMenu}>{confirmDelete ? "Confirm" : "Delete Menu Item"}</button>
     </div>
     <h1 className='text-center font-bold'>Menu Ingredients</h1>
     <table className='mx-4'>
