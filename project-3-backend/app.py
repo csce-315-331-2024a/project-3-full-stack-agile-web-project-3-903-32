@@ -62,16 +62,27 @@ def get_menu_items():
 def get_menu_item(menu_id):
     if request.method == 'PUT':
         data = request.get_json()
+        print(data)
         query = text("UPDATE Menu SET itemName = :itemName, price = :price WHERE id = :id")
         db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'id': menu_id})
         db.session.commit()
         return jsonify({'message': 'Menu item updated successfully'}), 200
     elif request.method == 'DELETE':
         delete_menu_inventory_batch(menu_id)
+        delete_menu_omjunc_batch(menu_id)
         query = text("DELETE FROM Menu WHERE id = :id")
         db.session.execute(query, {'id': menu_id})
         db.session.commit()
         return jsonify({'message': 'Menu item deleted successfully'}), 200
+    
+def delete_menu_omjunc_batch(menu_id):
+    try:
+        query = text("DELETE FROM OMJunc WHERE menuid = :menu_id")
+        db.session.execute(query, {'menu_id': menu_id})
+        db.session.commit()
+        return jsonify({'message': 'Menu order deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Issue with deletion' + e}), 404
 
 #Deleting all inventory items attached to the menu item
 def delete_menu_inventory_batch(menu_id):

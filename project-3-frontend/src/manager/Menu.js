@@ -11,7 +11,6 @@ const Menu = () => {
   const [itemOutsideInventoryList, setItemOutsideInventoryList] = useState([]);
   const [addMenuModal, setAddMenuModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [shouldRun, setShouldRun] = useState(false);
 
   useEffect(() => {
     getMenu();
@@ -51,6 +50,9 @@ const Menu = () => {
   }
 
   const handleSaveMenu = (event) => {
+    event.preventDefault();
+    setMenuModal(false);
+    putMenu(menuId, document.getElementById('item_name').value, parseFloat(document.getElementById('item_price').value).toFixed(2));
   }
 
   const handleDeleteMenu = (event) => {
@@ -138,6 +140,26 @@ const Menu = () => {
     try {
       const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
         method: "POST",
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "itemName" : menu_name, "price": menu_price})
+      });
+      if (response.ok) {
+        getMenu();
+      } else {
+        console.error('Failed to fetch menu:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+    }
+  }
+
+  async function putMenu(menu_id, menu_name, menu_price) {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu/" + menu_id, {
+        method: "PUT",
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json'
@@ -269,17 +291,17 @@ const Menu = () => {
     }
   }
 
-  const EditMenuModal = () => (
+  const EditMenuModal = (props) => (
     (<div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
     <div className='p-4'>
       <label htmlFor='item_name'>Menu Name:</label>
-      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' name='item_name' value={menuName} onChange={(e) => setMenuName(e.target.value)} />
+      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
       <label htmlFor='item_price'>Menu Price:</label>
-      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' name='item_price' value={menuPrice} onChange={(e) => setMenuPrice(e.target.value)} />
+      <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_price' defaultValue={menuPrice} />
       <button onClick={handleCloseModal}>Close</button>
     </div>
     <div className='mx-4 flex justify-between'>
-      <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600' onClick={handleSaveMenu}>Save New Name and Price</button>
+      <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600' id='button_save_menu' onClick={handleSaveMenu}>Save New Name and Price</button>
       <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700' onClick={handleDeleteMenu}>{confirmDelete ? "Confirm" : "Delete Menu Item"}</button>
     </div>
     <h1 className='text-center font-bold'>Menu Ingredients</h1>
