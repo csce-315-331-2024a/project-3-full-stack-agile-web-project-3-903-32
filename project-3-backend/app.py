@@ -34,7 +34,6 @@ def get_data(name):
 
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
-<<<<<<< HEAD
     if request.method == 'GET':
         query = text("SELECT * FROM Menu")
         results = db.session.execute(query).fetchall() 
@@ -47,22 +46,6 @@ def get_menu_items():
                     'price' : row[2]
                 }
                 data.append(item)
-=======
-    query = text("SELECT * FROM Menu")
-    results = db.session.execute(query).fetchall() 
-    print(results)
-    if results:
-        data = []
-        for row in results:
-            item = {
-                'id' : row[0],
-                'itemName' : row[1],
-                'price' : row[2]
-            }
-            print(row[0])
-            print(row[1])
-            data.append(item)
->>>>>>> implemented the features of payment
 
             return jsonify(data)
         else:

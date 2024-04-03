@@ -1,20 +1,11 @@
-
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { useNavigate, useLocation } from 'react-router-dom';
-=======
-import { useLocation } from "react-router";
-
-// Exporting the total value without a constant object
-export let total = 0;
->>>>>>> implemented the features of payment
 
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
-    const [id, setId] = useState([]);
-    const location = useLocation();
+    const [total, setTotal] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -25,7 +16,6 @@ const Cashier = () => {
 
     useEffect(() => {
         getMenu();
-<<<<<<< HEAD
         if (location.state) {
             const { orderBack, totalBack, itemIdsBack } = location.state;
             setOrder(orderBack);
@@ -33,22 +23,6 @@ const Cashier = () => {
             setItemIds(itemIdsBack);
         }
     }, [location.state]);
-=======
-        const searchParams = new URLSearchParams(location.search);
-        const totalParam = searchParams.get('total');
-        if (totalParam) {
-            total = (parseFloat(totalParam));
-        }
-        const orderParam = searchParams.get(`order`);
-        if (orderParam) {
-            setOrder(JSON.parse(decodeURIComponent(orderParam)));
-        }
-        const idParam = searchParams.get(`id`);
-        if (orderParam) {
-            setId(JSON.parse(decodeURIComponent(idParam)));
-        }
-    }, [location.search]);
->>>>>>> implemented the features of payment
 
     async function getMenu() {
         try {
@@ -69,12 +43,11 @@ const Cashier = () => {
 
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-    }
+      }
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
-<<<<<<< HEAD
             setTotal((total) => round(total + price, 2));
             setItemIds((itemIds) => [...itemIds, item.id]); 
             setOrder((order) => {
@@ -89,14 +62,6 @@ const Cashier = () => {
                     return [...order, { ...item, price, quantity: 1 }];
                 }
             });  
-=======
-            total = round(total + price, 2);
-            setId((orderIds) => [...orderIds,item.id])
-            setOrder((order) => {
-                return [...order, { ...item, price }];
-            });
-            
->>>>>>> implemented the features of payment
         } else {
             console.error('item.price is not a valid number', item);
         }
@@ -108,7 +73,6 @@ const Cashier = () => {
             if (item) {
                 const price = parseFloat(item.price);
                 if (!isNaN(price)) { 
-<<<<<<< HEAD
                     setTotal((total) => round(total - price, 2));
                     
                     setOrder((order) => {
@@ -135,11 +99,6 @@ const Cashier = () => {
                         }
                         return itemIds;
                     });            
-=======
-                    total = round(total - price, 2);
-                    setOrder((order) => order.filter((_, i) => i !== index));
-                    setId((orderIds) => order.filter((_,i) => i !== index));
->>>>>>> implemented the features of payment
                 } else {
                     console.error('item.price is not a valid number', item);
                 }
@@ -149,25 +108,7 @@ const Cashier = () => {
         } else {
             console.error('Invalid index', index);
         }
-<<<<<<< HEAD
         return order;
-=======
-
-        
-        
-    };
-
-    const toCashierPayment = () => {
-        if(total > 0){
-            const encodedTotal = encodeURIComponent(JSON.stringify(total));
-            const encodedOrder = encodeURIComponent(JSON.stringify(order));
-            const encodedId = encodeURIComponent(JSON.stringify(id));
-            window.location.href = `/cashier/payment?total=${encodedTotal}&order=${encodedOrder}&id=${encodedId}`;
-        } else {
-            console.error('price cannot be less than or equal to zero');
-        }
-            
->>>>>>> implemented the features of payment
     };
 
     return (
@@ -204,11 +145,7 @@ const Cashier = () => {
                 <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
                 <button onClick={handlePaymentClick}>Go to Payment</button>
             </div>
-            <div>
-                <button onClick = {toCashierPayment}>Go to Another Page</button>
-            </div>
         </div>
-
     );
 };
 
