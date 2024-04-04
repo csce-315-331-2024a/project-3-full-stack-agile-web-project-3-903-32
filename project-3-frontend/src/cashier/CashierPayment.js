@@ -47,7 +47,7 @@ const CashierPayment = () => {
 
             const data = await response.json();
             console.log(data['message']);
-            navigate('/cashier'); // Navigating back to the cashier page
+            navigate('/cashier/confirm'); // Navigating back to the payment confirmation then back to cashier page
         } catch (err) {
             console.error(err);
         }
@@ -71,8 +71,9 @@ const CashierPayment = () => {
     };
 
     return (
-        <div>
-            <h1 className='text-lg'>Payment</h1>
+        <div className='flext h-screen bg-customMaroon'>
+            <h1 className='text-6xl text-white'>Payment</h1>
+            <hr className="w-1/2 border-gray-300 mb-4" />
             <div style={{ flex: 1 }}>
                 <h2 className='mt-4'>Order List</h2>
                 {order.length > 0 ? (
