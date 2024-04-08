@@ -22,7 +22,7 @@ const CashierConfirm = () => {
     return (
         <div className='flex h-screen bg-customMaroon justify-center items-center'>
             <div className='text-center'>
-                <h1 className='text-8xl font-semibold text-white mb-4'> Thank You for your purchase!</h1>
+                <h1 className='text-8xl font-bold text-white mb-4'> Thank You for your purchase!</h1>
                 <div>
                     <h2 className='text-5xl font-semibold text-white mb-4'> Please give us a moment while we prepare you order</h2>
                 </div>
