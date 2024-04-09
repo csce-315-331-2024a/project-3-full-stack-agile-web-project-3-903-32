@@ -9,7 +9,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
+CORS(app)
 load_dotenv()
 
 # Database configuration
@@ -446,13 +446,13 @@ def product_usage_report():
                         + "WHERE O.time >= :start_time AND O.time <= :end_time "
                         + "GROUP BY I.name;")
     
-    result = db.session.execute(sql_stmt, {'start_time': '2024-03-01 00:00:00', 'end_time': '2024-04-01 00:00:00'}).fetchall()
+    result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
     print(result)
 
     # Process result into a dictionary {menuID: frequency}
     menu_names_list = {row[0]: row[1] for row in result}
     
     return jsonify(menu_names_list)
-
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
