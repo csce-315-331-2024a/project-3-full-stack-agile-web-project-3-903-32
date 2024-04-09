@@ -9,7 +9,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
 load_dotenv()
 
 # Database configuration
@@ -453,6 +453,6 @@ def product_usage_report():
     menu_names_list = {row[0]: row[1] for row in result}
     
     return jsonify(menu_names_list)
-    
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
