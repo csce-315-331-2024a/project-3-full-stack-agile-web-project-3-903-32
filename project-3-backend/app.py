@@ -264,7 +264,7 @@ def update_orders():
         data = request.get_json() #turns the JSON into a python dict
 
         # Insert order
-        curr_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        curr_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         query = text("INSERT INTO orders (customerName, time, paid, EmployeeID) VALUES (:customer_name, :time, :paid, :employee_id);")
         db.session.execute(query, {'customer_name': data['customer_name'], 'time': curr_time, 'paid': data['paid'], 'employee_id': data['employee_id']})
         
