@@ -9,7 +9,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
+CORS(app)
 load_dotenv()
 
 # Database configuration
@@ -490,8 +490,6 @@ def what_sells_together():
                 inner_dict = pair_frequency.setdefault(menu_items[i], {})
                 inner_dict[menu_items[j]] = inner_dict.get(menu_items[j], 0) + 1
                 pair_frequency[menu_items[i]] = inner_dict
-
-    print(pair_frequency)
     
     pair_item_list = []
     for name1, inner_map in pair_frequency.items():
