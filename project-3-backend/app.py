@@ -183,6 +183,7 @@ def show_Weather():
 Usage: /api/sales_by_time?start_time=2023-01-01%2000:00:00&end_time=2023-01-01%2023:59:59
 %20 is used as a space in the URL so, the above start time is: 2023-01-01 00:00:00
 End time is: 2023-01-01 23:59:59
+Returns menu id : number of times ordered
 '''
 @app.route('/api/sales_by_time')
 def sales_by_time():
@@ -209,6 +210,7 @@ def sales_by_time():
     # Return JSON response
     return jsonify(menu_id_frequencies)
 
+# Returns excess menu ids
 @app.route('/api/excess_report')
 def excess_report():
     start_time = request.args.get('start_time')  # Example format: '2023-01-01 00:00:00'
@@ -233,29 +235,18 @@ def excess_report():
             }
             data.append(item)
     item_amount_map = {row[0]: row[1] for row in result}
-    print('ITEM AMOUNT MAP', item_amount_map)
     # Adjusted for direct access without assuming dictionary-like access
     sql_inventory = text("SELECT id, stock FROM Inventory;")
     inventory_result = db.session.execute(sql_inventory).fetchall()
     excess_item_ids = [row.id for row in inventory_result if item_amount_map.get(row.id, 0) * 10 < row.stock]
-    print('EXCESS items:', excess_item_ids)
     # Generate menuIDs for the identified excess items
     if excess_item_ids:
         # This step requires dynamically generating SQL, be cautious of SQL injection
         excess_item_ids_str = ', '.join(str(item_id) for item_id in excess_item_ids)
-        print('Excess_item_ids in string', excess_item_ids_str)
-        sql_TEST = text(f"SELECT menuID FROM MIJunc WHERE itemID = 12;")
-        sql_TEST_result = db.session.execute(sql_TEST).fetchall()
-        print('SQL TEST:', sql_TEST_result)
-
-        sql_menu_ids = text(f"SELECT menuID FROM MIJunc WHERE itemID IN ({excess_item_ids_str});") #Issue here
+        sql_menu_ids = text(f"SELECT DISTINCT menuID FROM MIJunc WHERE itemID IN ({excess_item_ids_str});")
         menu_ids_result = db.session.execute(sql_menu_ids).fetchall()
-        print('Menu_ids_result:', menu_ids_result) #why is this blank
-        menu_ids_list = [row.menuID for row in menu_ids_result]
-        print('Menu IDS LIST:', menu_ids_list)
-        print('Should be returned')
+        menu_ids_list = [row[0] for row in menu_ids_result]
     else:
-        print('Cooked')
         menu_ids_list = []
 
     return jsonify(menu_ids_list)
