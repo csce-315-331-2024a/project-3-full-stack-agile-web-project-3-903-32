@@ -14,6 +14,8 @@ import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
 import CashierConfirm from './cashier/CashierConfirm';
+import Customer from './customer/Customer';
+import CustomerPayment from './customer/CustomerPayment';
 
 const router = createBrowserRouter([
   {
@@ -52,6 +54,14 @@ const router = createBrowserRouter([
     path: '/manager/menu',
     element: <Menu />,
     children: [],
+  },
+  {
+    path: '/customer',
+    element: <Customer />,
+  },
+  {
+    path: '/customer/payment',
+    element: <CustomerPayment />,
   }
 ]);
 
