@@ -454,5 +454,55 @@ def product_usage_report():
     
     return jsonify(menu_names_list)
 
+@app.route('/api/sells_together')
+def what_sells_together():
+    # Parse start_time and end_time from request arguments
+    start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
+    end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
+
+    sql_stmt = text("SELECT O.id, M.itemName FROM Orders O "
+                        + "JOIN OMJunc OM ON O.id = OM.orderID "
+                        + "JOIN Menu M ON OM.menuID = M.id "
+                        + "WHERE O.time >= :start_time AND O.time <= :end_time ORDER BY O.time;")
+        
+    result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
+        
+
+    menu_items_by_order_id = {}
+
+    for row in result:
+        order_id = row[0]
+        menu_item = row[1]
+
+        if order_id in menu_items_by_order_id:
+            menu_items_by_order_id[order_id].append(menu_item)
+        else:
+            menu_items_by_order_id[order_id] = [menu_item]
+
+    pair_frequency = {}
+
+    for order_id, menu_items in menu_items_by_order_id.items():
+        menu_items.sort()
+        for i in range(len(menu_items)):
+            for j in range(i + 1, len(menu_items)):
+                if menu_items[i] == menu_items[j]:
+                    continue
+                inner_dict = pair_frequency.setdefault(menu_items[i], {})
+                inner_dict[menu_items[j]] = inner_dict.get(menu_items[j], 0) + 1
+                pair_frequency[menu_items[i]] = inner_dict
+
+    print(pair_frequency)
+    
+    pair_item_list = []
+    for name1, inner_map in pair_frequency.items():
+        for name2, frequency in inner_map.items():
+            pair_with_frequency = [name1, name2, frequency]
+            pair_item_list.append(pair_with_frequency)
+
+    pair_item_list.sort(key=lambda x: x[2], reverse=True)
+                        
+    return jsonify(pair_item_list)
+    
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
