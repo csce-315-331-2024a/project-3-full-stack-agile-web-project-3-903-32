@@ -9,7 +9,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
 load_dotenv()
 
 # Database configuration
@@ -41,18 +41,17 @@ def get_data(name):
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
     if request.method == 'GET':
-        if request.method == 'GET':
-            query = text("SELECT * FROM Menu")
-            results = db.session.execute(query).fetchall() 
-            if results:
-                data = []
-                for row in results:
-                    item = {
-                        'id' : row[0],
-                        'itemName' : row[1],
-                        'price' : row[2]
-                    }
-                    data.append(item)
+        query = text("SELECT * FROM Menu")
+        results = db.session.execute(query).fetchall() 
+        if results:
+            data = []
+            for row in results:
+                item = {
+                    'id' : row[0],
+                    'itemName' : row[1],
+                    'price' : row[2]
+                }
+                data.append(item)
 
             return jsonify(data)
         else:
@@ -148,7 +147,7 @@ def get_inventory_shortage():
     else:
         return jsonify({'error': 'No data found'}), 404
 
-@app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET", "GET"])
+@app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET"])
 def update_inventory(inventory_id):
     if request.method == 'GET':
         data = []
@@ -265,7 +264,7 @@ def update_orders():
         data = request.get_json() #turns the JSON into a python dict
 
         # Insert order
-        curr_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        curr_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         query = text("INSERT INTO orders (customerName, time, paid, EmployeeID) VALUES (:customer_name, :time, :paid, :employee_id);")
         db.session.execute(query, {'customer_name': data['customer_name'], 'time': curr_time, 'paid': data['paid'], 'employee_id': data['employee_id']})
         

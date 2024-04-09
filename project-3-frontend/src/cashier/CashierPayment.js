@@ -83,7 +83,7 @@ const CashierPayment = () => {
             
             <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <div className='absolute top-24 left-48 p-4 text-white text-6xl font-bold'> {/*This determinds the location of Payment text*/}
-                <h1>Payment</h1>
+                {/* <h1>Payment</h1> */}
             </div>
 
                 <div className="w-1/2 p-4 bg-white rounded-lg shadow-md h-96 overflow-auto mr-80"> {/*This determinds the location */}
