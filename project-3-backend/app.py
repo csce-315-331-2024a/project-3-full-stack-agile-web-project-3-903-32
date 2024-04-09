@@ -447,7 +447,7 @@ def product_usage_report():
                         + "WHERE O.time >= :start_time AND O.time <= :end_time "
                         + "GROUP BY I.name;")
     
-    result = db.session.execute(sql_stmt, {'start_time': '2024-03-01 00:00:00', 'end_time': '2024-04-01 00:00:00'}).fetchall()
+    result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
     print(result)
 
     # Process result into a dictionary {menuID: frequency}
