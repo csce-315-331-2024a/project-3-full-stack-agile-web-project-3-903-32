@@ -81,10 +81,15 @@ const CashierPayment = () => {
         <div className='h-screen overflow-hidden bg-customMaroon'> {/* This set Background Color */}
             
             
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className='absolute top-24 left-48 p-4 text-white text-6xl font-bold'> {/*This determinds the location of Payment text*/}
-                {/* <h1>Payment</h1> */}
-            </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
+                
+
+                <div className='w-full ml-64'>
+
+                <div className=' p-4 text-white text-6xl font-bold'> {/*This determinds the location of Payment text*/}
+                    <h1>Payment</h1>
+                </div>
+
 
                 <div className="w-1/2 p-4 bg-white rounded-lg shadow-md h-96 overflow-auto mr-80"> {/*This determinds the location */}
                     <div className="flex flex-col items-right">
@@ -106,8 +111,10 @@ const CashierPayment = () => {
                         </div>
                     </div>
                 </div>
+                
+            </div>
 
-            <div className='absolute bottom-22 right-10 mb-4 mr-8 '>
+            <div className='absolute overflow-hidden bottom-22 right-10 mb-4 mr-8'>
                 <div className='flex flex-col items-center w-full'>
                 <div className='p-4 text-white text-3xl font-semibold'>
                     <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
