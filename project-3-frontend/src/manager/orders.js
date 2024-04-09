@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from '../components/Sidebar'; 
 import Navbar from '../components/Navbar';
 
-const Trends = () => {
+const Orders = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <Navbar /> 
@@ -13,4 +13,4 @@ const Trends = () => {
   );
 };
 
-export default Trends;
+export default Orders;
