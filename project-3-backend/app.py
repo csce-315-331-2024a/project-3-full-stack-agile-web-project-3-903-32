@@ -449,7 +449,7 @@ def product_usage_report():
     result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
     print(result)
 
-    # Process result into a dictionary {menuID: frequency}
+    # Process result into a dictionary {name: quantity}
     menu_names_list = {row[0]: row[1] for row in result}
     
     return jsonify(menu_names_list)
