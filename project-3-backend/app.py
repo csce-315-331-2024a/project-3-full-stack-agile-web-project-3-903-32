@@ -433,5 +433,26 @@ def excess_report():
 
     return jsonify(menu_ids_list)
 
+@app.route('/api/product_usage')
+def product_usage_report():
+    # Parse start_time and end_time from request arguments
+    start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
+    end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
+
+    sql_stmt = text("SELECT I.name, SUM(MI.itemAmount) as sumAmount FROM OMJunc OM "
+                        + "JOIN MIJunc MI ON OM.menuID = MI.menuID "
+                        + "JOIN Orders O ON OM.orderID = O.id " 
+                        + "JOIN Inventory I ON MI.itemID = I.id "
+                        + "WHERE O.time >= :start_time AND O.time <= :end_time "
+                        + "GROUP BY I.name;")
+    
+    result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
+    print(result)
+
+    # Process result into a dictionary {name: quantity}
+    menu_names_list = {row[0]: row[1] for row in result}
+    
+    return jsonify(menu_names_list)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
