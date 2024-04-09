@@ -6,7 +6,7 @@ from sqlalchemy import text, select
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
-from datetime from datetime import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -38,10 +38,7 @@ def get_data(name):
 ###################################
 #             MENU API            #
 ###################################
-###################################
-#             MENU API            #
-###################################
-@app.route('/api/menu', methods=['GET', 'POST'], methods=['GET', 'POST'])
+@app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
     if request.method == 'GET':
         if request.method == 'GET':
@@ -436,6 +433,27 @@ def excess_report():
         menu_ids_list = []
 
     return jsonify(menu_ids_list)
+
+@app.route('/api/product_usage')
+def product_usage_report():
+    # Parse start_time and end_time from request arguments
+    start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
+    end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
+
+    sql_stmt = text("SELECT I.name, SUM(MI.itemAmount) as sumAmount FROM OMJunc OM "
+                        + "JOIN MIJunc MI ON OM.menuID = MI.menuID "
+                        + "JOIN Orders O ON OM.orderID = O.id " 
+                        + "JOIN Inventory I ON MI.itemID = I.id "
+                        + "WHERE O.time >= :start_time AND O.time <= :end_time "
+                        + "GROUP BY I.name;")
+    
+    result = db.session.execute(sql_stmt, {'start_time': '2024-03-01 00:00:00', 'end_time': '2024-04-01 00:00:00'}).fetchall()
+    print(result)
+
+    # Process result into a dictionary {menuID: frequency}
+    menu_names_list = {row[0]: row[1] for row in result}
+    
+    return jsonify(menu_names_list)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
