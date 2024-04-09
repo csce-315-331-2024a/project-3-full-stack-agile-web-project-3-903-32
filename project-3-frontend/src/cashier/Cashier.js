@@ -112,7 +112,7 @@ const Cashier = () => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
             <div>
                 <h1>Menu</h1>
                 {buttons.length > 0 ? (
