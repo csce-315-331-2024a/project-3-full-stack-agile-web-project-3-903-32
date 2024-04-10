@@ -13,7 +13,7 @@ import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
-import Orders from './manager/orders';
+import Orders from './manager/Orders';
 import CashierConfirm from './cashier/CashierConfirm';
 import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
