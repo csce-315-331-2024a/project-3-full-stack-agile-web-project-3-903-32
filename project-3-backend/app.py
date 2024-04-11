@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from flask_cors import CORS
 from datetime import datetime
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
@@ -458,6 +459,39 @@ def order_history():
 '''
 
 
+# @app.route('/api/order_history')
+# def order_history():
+#     sql_stmt = text("""
+#         SELECT 
+#             OMJunc.orderID, 
+#             Menu.itemName, 
+#             Menu.price, 
+#             Orders.customerName, 
+#             Orders.EmployeeID
+#         FROM 
+#             OMJunc
+#         INNER JOIN 
+#             Menu ON OMJunc.menuID = Menu.id
+#         INNER JOIN 
+#             Orders ON OMJunc.orderID = Orders.id
+#         LIMIT 
+#             300;
+#     """)
+#     result = db.session.execute(sql_stmt).fetchall()
+#     print(result)
+#     data = []
+#     if result:
+#         for row in result:
+#             item = {
+#                 'orderID': row[0],
+#                 'itemName': row[1],
+#                 'price': float(row[2]),  # Ensuring price is returned as a float
+#                 'customerName': row[3],
+#                 'employeeID': row[4]
+#             }
+#             data.append(item)
+#     return jsonify(data)
+
 @app.route('/api/order_history')
 def order_history():
     sql_stmt = text("""
@@ -478,17 +512,36 @@ def order_history():
     """)
     result = db.session.execute(sql_stmt).fetchall()
     print(result)
-    data = []
-    if result:
-        for row in result:
-            item = {
-                'orderID': row[0],
-                'itemName': row[1],
-                'price': float(row[2]),  # Ensuring price is returned as a float
-                'customerName': row[3],
-                'employeeID': row[4]
-            }
-            data.append(item)
+
+    # Use a dictionary to aggregate orders
+    orders = defaultdict(lambda: {
+        'customerName': '',
+        'employeeID': None,
+        'items': [],
+        'totalPrice': 0.0
+    })
+
+    # Process each row in the result
+    for row in result:
+        order_id = row[0]
+        order = orders[order_id]
+        order['customerName'] = row[3]
+        order['employeeID'] = row[4]
+        order['items'].append({
+            'itemName': row[1],
+            'price': float(row[2])
+        })
+        order['totalPrice'] += float(row[2])
+
+    # Convert aggregated orders into a list
+    data = [{
+        'orderID': order_id,
+        'customerName': info['customerName'],
+        'employeeID': info['employeeID'],
+        'items': info['items'],
+        'totalPrice': round(info['totalPrice'], 2)  # Round total price to 2 decimal places
+    } for order_id, info in orders.items()]
+
     return jsonify(data)
 
 
