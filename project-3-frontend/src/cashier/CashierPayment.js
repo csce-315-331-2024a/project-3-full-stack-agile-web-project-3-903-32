@@ -33,7 +33,10 @@ const CashierPayment = () => {
                 return;
             }
             if(!paymentSumbitted){
-                setSubmitted(true);
+                if(total > 0.0){
+                    setSubmitted(true);
+                }
+                
                 const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
                     method: "POST",
                     mode: 'cors',
@@ -99,8 +102,8 @@ const CashierPayment = () => {
                         <div className="overflow-auto">
                             {order.length > 0 ? (
                                 <ul>
-                                    {order.map((item) => (
-                                        <li key={item.id} className='text-xl'>
+                                    {order.map((item,index) => (
+                                        <li key={item.id} className={`text-xl font-semibold mt-2 mb-2' ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
                                             {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
                                         </li>
                                     ))}
