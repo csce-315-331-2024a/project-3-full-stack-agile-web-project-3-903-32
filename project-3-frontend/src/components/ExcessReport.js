@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 const ExcessReport = () => {
   const [excessData, setExcessData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [startTime, setStartTime] = useState('');
 
   useEffect(() => {
     const fetchExcessData = async () => {
       if (startTime) {
-        setIsLoading(true);
         try {
           const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/excess_report?start_time=${encodeURIComponent(startTime)}`);
           if (!response.ok) throw new Error('Network response was not ok');
@@ -17,9 +15,7 @@ const ExcessReport = () => {
           setExcessData(data);
         } catch (error) {
           setError(error.message);
-        } finally {
-          setIsLoading(false);
-        }
+        } 
       }
     };
 
@@ -30,7 +26,6 @@ const ExcessReport = () => {
     setStartTime(event.target.value);
   };
 
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -57,9 +52,9 @@ const ExcessReport = () => {
           </thead>
           <tbody>
             {excessData.map((item) => (
-              <tr key={item}>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{"Menu Name"}</td>
+              <tr key={item.menuID}>
+                <td className="border border-gray-400 px-4 py-2 text-center">{item.menuID}</td>
+                <td className="border border-gray-400 px-4 py-2 text-center">{item.menuName}</td>
               </tr>
             ))}
           </tbody>

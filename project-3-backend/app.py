@@ -425,13 +425,19 @@ def excess_report():
     if excess_item_ids:
         # This step requires dynamically generating SQL, be cautious of SQL injection
         excess_item_ids_str = ', '.join(str(item_id) for item_id in excess_item_ids)
-        sql_menu_ids = text(f"SELECT DISTINCT menuID FROM MIJunc WHERE itemID IN ({excess_item_ids_str});")
+        sql_menu_ids = text(f"""
+            SELECT DISTINCT MI.menuID, M.itemName
+            FROM MIJunc MI
+            JOIN MENU M ON MI.menuID = M.id
+            WHERE MI.itemID IN ({excess_item_ids_str})
+        """)
         menu_ids_result = db.session.execute(sql_menu_ids).fetchall()
-        menu_ids_list = [row[0] for row in menu_ids_result]
+        menu_ids_result.sort()
+        menu_data = [{'menuID': row[0], 'menuName': row[1]} for row in menu_ids_result]
     else:
-        menu_ids_list = []
+        menu_data = []
 
-    return jsonify(menu_ids_list)
+    return jsonify(menu_data)
 '''
 @app.route('/api/order_history')
 def order_history():
@@ -502,8 +508,10 @@ def product_usage_report():
     result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
     print(result)
 
-    # Process result into a dictionary {name: quantity}
-    menu_names_list = {row[0]: row[1] for row in result}
+    total_amount = sum(row[1] for row in result)
+
+    # Process result into a dictionary {name: quantity, percentage}
+    menu_names_list = {row[0]: {'amount': row[1], 'percentage': round((row[1] / total_amount * 100), 2)} for row in result}
     
     return jsonify(menu_names_list)
 
