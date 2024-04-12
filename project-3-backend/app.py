@@ -458,40 +458,6 @@ def order_history():
     return jsonify(data)
 '''
 
-
-# @app.route('/api/order_history')
-# def order_history():
-#     sql_stmt = text("""
-#         SELECT 
-#             OMJunc.orderID, 
-#             Menu.itemName, 
-#             Menu.price, 
-#             Orders.customerName, 
-#             Orders.EmployeeID
-#         FROM 
-#             OMJunc
-#         INNER JOIN 
-#             Menu ON OMJunc.menuID = Menu.id
-#         INNER JOIN 
-#             Orders ON OMJunc.orderID = Orders.id
-#         LIMIT 
-#             300;
-#     """)
-#     result = db.session.execute(sql_stmt).fetchall()
-#     print(result)
-#     data = []
-#     if result:
-#         for row in result:
-#             item = {
-#                 'orderID': row[0],
-#                 'itemName': row[1],
-#                 'price': float(row[2]),  # Ensuring price is returned as a float
-#                 'customerName': row[3],
-#                 'employeeID': row[4]
-#             }
-#             data.append(item)
-#     return jsonify(data)
-
 @app.route('/api/order_history')
 def order_history():
     sql_stmt = text("""
