@@ -604,8 +604,6 @@ def what_sells_together():
                 inner_dict = pair_frequency.setdefault(menu_items[i], {})
                 inner_dict[menu_items[j]] = inner_dict.get(menu_items[j], 0) + 1
                 pair_frequency[menu_items[i]] = inner_dict
-
-    print(pair_frequency)
     
     pair_item_list = []
     for name1, inner_map in pair_frequency.items():

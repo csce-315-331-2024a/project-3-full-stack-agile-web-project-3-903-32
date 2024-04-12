@@ -27,6 +27,23 @@ const Orders = () => {
     }
   }
 
+  const deleteOrder = async (orderId) => {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/order/${orderId}`, {
+        method: "DELETE",
+        mode: 'cors'
+      });
+      if (response.ok) {
+        deleteOrder(orderId);
+        getOrders();
+      } else {
+        console.error('Failed to delete order:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error);
+    }
+  };
+
   const toggleItemsView = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
@@ -55,6 +72,9 @@ const Orders = () => {
                 <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Items
                 </th>
+                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -72,6 +92,15 @@ const Orders = () => {
                         onClick={() => toggleItemsView(order.orderID)}
                       >
                         {expandedOrderId === order.orderID ? 'Hide Items' : 'View Items'}
+                      </button>
+                    </td>
+                    <td className="p-4 text-base text-gray-700">
+                      <button
+                        type="button"
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => deleteOrder(order.orderID)}
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
