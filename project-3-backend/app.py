@@ -376,10 +376,11 @@ def sales_by_time():
 
     # Adjust SQL to count occurrences of each menuID
     sql = text("""
-        SELECT OM.menuID, COUNT(*) as frequency FROM Orders O
+        SELECT M.itemName, OM.menuID, COUNT(*) as frequency FROM Orders O
         JOIN OMJunc OM ON O.id = OM.orderID
+        JOIN menu M ON M.id = OM.menuID
         WHERE O.time >= :start_time AND O.time <= :end_time
-        GROUP BY OM.menuID
+        GROUP BY M.itemName, OM.menuID
         ORDER BY OM.menuID;
     """)
 
@@ -388,10 +389,11 @@ def sales_by_time():
     print(result)
 
     # Process result into a dictionary {menuID: frequency}
-    menu_id_frequencies = {row[0]: row[1] for row in result}
+    
+    menu_sales_data = [{'menuName': row[0], 'menuID': row[1], 'frequency': row[2]} for row in result]
 
     # Return JSON response
-    return jsonify(menu_id_frequencies)
+    return jsonify(menu_sales_data)
 
 # Returns excess menu ids
 @app.route('/api/excess_report')
