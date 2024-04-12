@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from flask_cors import CORS
 from datetime import datetime
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
@@ -425,13 +426,124 @@ def excess_report():
     if excess_item_ids:
         # This step requires dynamically generating SQL, be cautious of SQL injection
         excess_item_ids_str = ', '.join(str(item_id) for item_id in excess_item_ids)
-        sql_menu_ids = text(f"SELECT DISTINCT menuID FROM MIJunc WHERE itemID IN ({excess_item_ids_str});")
+        sql_menu_ids = text(f"""
+            SELECT DISTINCT MI.menuID, M.itemName
+            FROM MIJunc MI
+            JOIN MENU M ON MI.menuID = M.id
+            WHERE MI.itemID IN ({excess_item_ids_str})
+        """)
         menu_ids_result = db.session.execute(sql_menu_ids).fetchall()
-        menu_ids_list = [row[0] for row in menu_ids_result]
+        menu_ids_result.sort()
+        menu_data = [{'menuID': row[0], 'menuName': row[1]} for row in menu_ids_result]
     else:
-        menu_ids_list = []
+        menu_data = []
 
-    return jsonify(menu_ids_list)
+    return jsonify(menu_data)
+'''
+@app.route('/api/order_history')
+def order_history():
+    sql_stmt = text("""
+        SELECT * FROM OMJunc Limit 300;
+    """)
+    result = db.session.execute(sql_stmt).fetchall()
+    print(result)
+    data = []
+    if result:
+        for row in result:
+            item = {
+                'orderID' : row[2],
+                'menuId' : row[1],
+            }
+            data.append(item)
+    return jsonify(data)
+'''
+
+
+# @app.route('/api/order_history')
+# def order_history():
+#     sql_stmt = text("""
+#         SELECT 
+#             OMJunc.orderID, 
+#             Menu.itemName, 
+#             Menu.price, 
+#             Orders.customerName, 
+#             Orders.EmployeeID
+#         FROM 
+#             OMJunc
+#         INNER JOIN 
+#             Menu ON OMJunc.menuID = Menu.id
+#         INNER JOIN 
+#             Orders ON OMJunc.orderID = Orders.id
+#         LIMIT 
+#             300;
+#     """)
+#     result = db.session.execute(sql_stmt).fetchall()
+#     print(result)
+#     data = []
+#     if result:
+#         for row in result:
+#             item = {
+#                 'orderID': row[0],
+#                 'itemName': row[1],
+#                 'price': float(row[2]),  # Ensuring price is returned as a float
+#                 'customerName': row[3],
+#                 'employeeID': row[4]
+#             }
+#             data.append(item)
+#     return jsonify(data)
+
+@app.route('/api/order_history')
+def order_history():
+    sql_stmt = text("""
+        SELECT 
+            OMJunc.orderID, 
+            Menu.itemName, 
+            Menu.price, 
+            Orders.customerName, 
+            Orders.EmployeeID
+        FROM 
+            OMJunc
+        INNER JOIN 
+            Menu ON OMJunc.menuID = Menu.id
+        INNER JOIN 
+            Orders ON OMJunc.orderID = Orders.id
+        LIMIT 
+            300;
+    """)
+    result = db.session.execute(sql_stmt).fetchall()
+    print(result)
+
+    # Use a dictionary to aggregate orders
+    orders = defaultdict(lambda: {
+        'customerName': '',
+        'employeeID': None,
+        'items': [],
+        'totalPrice': 0.0
+    })
+
+    # Process each row in the result
+    for row in result:
+        order_id = row[0]
+        order = orders[order_id]
+        order['customerName'] = row[3]
+        order['employeeID'] = row[4]
+        order['items'].append({
+            'itemName': row[1],
+            'price': float(row[2])
+        })
+        order['totalPrice'] += float(row[2])
+
+    # Convert aggregated orders into a list
+    data = [{
+        'orderID': order_id,
+        'customerName': info['customerName'],
+        'employeeID': info['employeeID'],
+        'items': info['items'],
+        'totalPrice': round(info['totalPrice'], 2)  # Round total price to 2 decimal places
+    } for order_id, info in orders.items()]
+
+    return jsonify(data)
+
 
 @app.route('/api/product_usage')
 def product_usage_report():
@@ -449,8 +561,10 @@ def product_usage_report():
     result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
     print(result)
 
-    # Process result into a dictionary {name: quantity}
-    menu_names_list = {row[0]: row[1] for row in result}
+    total_amount = sum(row[1] for row in result)
+
+    # Process result into a dictionary {name: quantity, percentage}
+    menu_names_list = {row[0]: {'amount': row[1], 'percentage': round((row[1] / total_amount * 100), 2)} for row in result}
     
     return jsonify(menu_names_list)
 
@@ -503,4 +617,4 @@ def what_sells_together():
     
     
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
