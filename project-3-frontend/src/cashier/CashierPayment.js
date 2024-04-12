@@ -11,7 +11,6 @@ const CashierPayment = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    
     // Extracts query parameters and sets state
     useEffect(() => {
         if (location.state) {
