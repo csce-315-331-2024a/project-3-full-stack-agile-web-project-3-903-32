@@ -1,7 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginButton from "./components/login.js";
+import LogoutButton from "./components/logout.js";
+import { gapi } from 'gapi-script';
+
+const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
 
 function App() {
+
+  useEffect(() => {
+    function start(){
+    gapi.client.init({
+      clientId: clientId,
+      scope: ""
+    })
+  };
+  
+  gapi.load('client:auth2',start);
+  })
+
+
   const navigate = useNavigate();
   
   // Initialize state variables to store input values
@@ -46,6 +64,7 @@ function App() {
   };
 
   return (
+    
     <div className="flex flex-col items-center">
       <h1 className="bg-red-900 text-white p-10 text-center text-9xl mb-8">Rev's American Grill</h1>
       <div className="bg-gray-200 p-4 rounded-lg mb-4">
@@ -70,6 +89,7 @@ function App() {
       >
         Login
       </button>
+      <LoginButton />
     </div>
   );
 }
