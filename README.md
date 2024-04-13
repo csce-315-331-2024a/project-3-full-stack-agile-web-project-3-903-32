@@ -1,77 +1,38 @@
-\documentclass{article}
-\usepackage{enumitem}
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/ttC5_kKh)
 
-\begin{document}
-
-\section*{Appendix 1: SCRUM Meeting Agendas and Minutes}
-
-\subsection*{SCRUM Meeting 1 for Project 3}
-\begin{itemize}[leftmargin=*, label={}]
-    \item Prepared by: Ryan Mohammadian
-    \item Meeting Date: 03/26
-    \item \textbf{Meeting Attendees:}
-    \begin{itemize}[leftmargin=*]
-        \item Ryan Mohammadian
-        \item Zo Abbasi
-        \item Jordan Daryanani
-        \item Vincent Tran
-        \item Cameron Le
-        \item Kha Le
-    \end{itemize}
-    \item \textbf{Meeting Agenda Items:}
-    \begin{enumerate}[leftmargin=*]
-        \item Discuss Sprint goal and task completion
-        \item Address any blockers and plans to overcome them
-    \end{enumerate}
-    \item \textbf{Status Update Since Last Meeting:}
-    \begin{itemize}[leftmargin=*]
-        \item \textbf{Accomplishments:}
-        \begin{itemize}[leftmargin=*]
-            \item Created and organized GitHub repository
-            \item Pushed skeleton code for front and back end
-            \item Familiarized with React and Flask frameworks
-        \end{itemize}
-        \item \textbf{Tasks Completed:}
-        \begin{tabular}{|p{6cm}|c|c|}
-            \hline
-            \textbf{Task Description} & \textbf{Assigned to} & \textbf{Completed? (yes/no)} \\
-            \hline
-            Backend: Retrieve menu data from database & Zo & yes \\
-            Backend: Retrieve data of inventory list from database & Ryan & yes \\
-            \hline
-        \end{tabular}
-    \end{itemize}
-    \item \textbf{Before The Next Meeting:}
-    \begin{itemize}[leftmargin=*]
-        \item Prioritize tasks involving ordering functionality
-        \item Ensure sprint goal realism and task preparedness
-    \end{itemize}
-    \item \textbf{Task Assignments:}
-    \begin{tabular}{|p{6cm}|p{4cm}|}
-        \hline
-        \textbf{Task Description} & \textbf{Assigned to} \\
-        \hline
-        Frontend: Implement cashier payment page & Vincent \\
-        Frontend: Implement cashier order page & Vincent \\
-        % Other tasks...
-        \hline
-    \end{tabular}
-    \item \textbf{Minutes from Previous Meeting:}
-    \begin{itemize}[leftmargin=*]
-        \item Discussed Sprint Goal and task distribution
-        \item Focused on frontend tasks due to complexity
-    \end{itemize}
-\end{itemize}
-
-% SCRUM Meeting 2
-\subsection*{SCRUM Meeting 2 for Project 3}
-% Copy and paste structure from Meeting 1, updating relevant information
-
-% SCRUM Meeting 3
-\subsection*{SCRUM Meeting 3 for Project 3}
-% Copy and paste structure from Meeting 1, updating relevant information
-
-\end{document}
+Sprint 1 Planning Meeting:
+Sprint Goal
+Get the minimum viable product ready with order functionality and basic manager functionality.
 
 
+Sprint 1 Meeting 1:
+In this, we first discussed how we were feeling completing the sprint goal. Most responses were between 3 & 4 out of 5 and those that answered with a three seemed unsure on if we would be able to complete our goal. It was then brought up that because of our lack of familiarity with the frameworks that we are using, it will be a challenge getting our minimum viable product done. We then discussed focusing more on the ordering functionality and seeing how quickly we are able to make progress by the next few meetings.
 
+Sprint 1 Meeting 2:
+In this meeting, we discussed our trajectory for Sprint 1 and how likely we were to get all of the tasks done in time. Previously, we were all on an average of a 3/5 on how confident we were on reaching our Sprint Goal; however, this has increased greatly to 5/5 now that we have gotten into the thick of it. We had a couple of issues with communication since some tasks rely on others, so we took note of that for any future planning. Additionally, we reviewed the remaining tasks and evaluated whether or not they were fairly distributed.
+
+Sprint 1 Meeting 3:
+In this meeting, we discussed all of the components that each team member had completed. Most of us were confident in finishing our tasks, but there were two tasks that seemed too out of the scope for our sprint goal that could not be completed by the Sprint 1 deadline. We then discussed how we could improve on this oversight for the future.
+
+Sprint 1 Retrospective:
+What went right and wrong during the previous sprint?
+Right - we got all of our work done early, 
+Wrong - for the backend, trying to create a database model in python was difficult so we didn't do it.
+What changes (if any) need to be made regarding procedure?
+Our procedures worked well, we didn't have any issues and finished our goal well before
+what adjustments might need to be made to the product backlog.
+More evenly splitting of tasks, backend could do some more of the frontend work since there was more to do.
+
+
+Sprint 2 Planning Meeting:
+Sprint Goal
+Implement basic functionality for all required pages including manager ordering and trends customer screens, and the menu board
+
+Sprint 2 Meeting 1:
+In this meeting, we discussed our remaining tasks for the Sprint and how likely we would be to completing it. Most team members felt very confident about completing this Sprint, with almost everybody giving a 5/5 and one team member giving a 4/5 on how likely we are to complete our tasks. Some team members finished all of their tasks early and we discussed what they could do with their time.
+
+Sprint 2 Meeting 2:
+In this meeting, we discussed how the first week of sprint 2 went for us and whether or not there were any difficulties. For the first week, many team members had finished all of their tasks, but we were still slightly behind our goal according to the product burn-down chart. Additionally, some team members had not started, so we made sure they were on track.
+
+Sprint 2 Meeting 3:
+In this meeting, we did our final check-ins for the sprint with each team member and discussed when we could do some final testing. Finally, we got the fist to five, getting all 5s since we have completed nearly all of the tasks with a day to spare.
