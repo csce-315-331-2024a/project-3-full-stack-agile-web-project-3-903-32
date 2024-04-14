@@ -13,7 +13,10 @@ import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
+import Orders from './manager/Orders';
 import CashierConfirm from './cashier/CashierConfirm';
+import Customer from './customer/Customer';
+import CustomerPayment from './customer/CustomerPayment';
 import TranslateInput, { TranslateExample } from './components/Translate';
 
 const router = createBrowserRouter([
@@ -58,6 +61,19 @@ const router = createBrowserRouter([
     path: '/translate',
     element: <TranslateExample />,
     children: [],
+  },
+  {
+    path: '/manager/orders',
+    element: <Orders />,
+    children: [],
+  },
+  {
+    path: '/customer',
+    element: <Customer />,
+  },
+  {
+    path: '/customer/payment',
+    element: <CustomerPayment />,
   }
 ]);
 
