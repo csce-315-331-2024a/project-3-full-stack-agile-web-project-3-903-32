@@ -14,6 +14,7 @@ import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
 import CashierConfirm from './cashier/CashierConfirm';
+import TranslateInput, { TranslateExample } from './components/Translate';
 
 const router = createBrowserRouter([
   {
@@ -52,13 +53,18 @@ const router = createBrowserRouter([
     path: '/manager/menu',
     element: <Menu />,
     children: [],
+  },
+  {
+    path: '/translate',
+    element: <TranslateExample />,
+    children: [],
   }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+      <RouterProvider router={router}/>
   </React.StrictMode>
 );
 

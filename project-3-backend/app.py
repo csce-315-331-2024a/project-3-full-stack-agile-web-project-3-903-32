@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from flask_cors import CORS
 from datetime import datetime
+import deepl
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
@@ -432,6 +433,54 @@ def excess_report():
         menu_ids_list = []
 
     return jsonify(menu_ids_list)
+
+auth_key = os.getenv('DEEPL_API_KEY')
+translator = deepl.Translator(auth_key)
+class Language:
+    def __init__(self, name, code):
+        self.code = code
+        self.name = name
+    
+    def getName(self):
+        return self.name
+    
+    def getCode(self):
+        return self.code
+
+# target_lang = Language('English', 'EN')
+
+@app.route('/api/translate', methods=['POST', 'GET'])
+def translate_text():
+    if request.method == 'GET':
+        data = []
+        for lang in translator.get_source_languages():
+            item = {
+                'name' : lang.name,
+                'code' : lang.code
+            }
+            data.append(item)
+        return jsonify(data), 200
+    elif request.method == 'POST':
+        try:
+            data = request.get_json()
+            text = data['text']
+            res_lang = data['target_language']
+            # res_lang = target_lang.getCode()
+            if res_lang == 'EN':
+                res_lang = 'EN-US'
+            transformed_text = translator.translate_text(text=text, target_lang=res_lang)
+            print("Transformed Text", transformed_text.text, res_lang)
+            return jsonify({'translated_text': transformed_text.text}), 200
+        except Exception as e:
+            print("Bad Request", e)
+            return jsonify({'error': 'Translation failed'}), 404
+
+# @app.route('/api/translate/language', methods=['POST'])
+# def translate_language():
+#     data = request.get_json()
+#     target_lang.code = data['language']
+#     print(target_lang.code)
+#     return jsonify({'message': 'Language set successfully'})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

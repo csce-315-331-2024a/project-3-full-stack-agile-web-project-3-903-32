@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
+import TranslateInput, { TranslateText } from "../components/Translate";
 
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
@@ -113,12 +114,13 @@ const Cashier = () => {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
+            <TranslateInput />
             <div>
                 <h1>Menu</h1>
                 {buttons.length > 0 ? (
                     buttons.map((button, index) => (
                         <div key={index}>
-                            <button onClick={() => addToOrder(button)}>{button.itemName}</button>
+                            <button onClick={() => addToOrder(button)}><TranslateText text={button.itemName}/></button>
                             <span className="ml-4">Price: ${button.price}</span>
                         </div>
                     ))
@@ -140,7 +142,7 @@ const Cashier = () => {
                         ))}
                     </ul>
                 ) : (
-                    <p>No items in order.</p>
+                    <p><TranslateText text="No items in order." /></p>
                 )}
                 <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
                 <button onClick={handlePaymentClick}>Go to Payment</button>
