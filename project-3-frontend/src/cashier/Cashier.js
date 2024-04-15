@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TranslateText } from "../components/Translate";
 
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
@@ -140,7 +139,7 @@ const Cashier = () => {
                                             <div key={index}>
                                                 <button onClick={() => addToOrder(button)}>
                                                 <div style={{ width: "150px" , height: "150px"}} className="flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
-                                                    <TranslateText text={button.itemName}/>
+                                                    {button.itemName}
                                                     <span className="ml-4">Price: ${button.price}</span>
                                                 </div>
                                                 </button>
@@ -173,7 +172,7 @@ const Cashier = () => {
                             ))}
                         </ul>
                     ) : (
-                        <p className="mt-2 font-semibold text-xl"><TranslateText text="No items in order." /></p>
+                        <p className="mt-2 font-semibold text-xl">No items in order.</p>
                     )}
                     </div>
                     
