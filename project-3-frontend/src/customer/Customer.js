@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TranslateText } from "../components/Translate";
 
-const Cashier = () => {
+const Customer = () => {
     const [buttons, setButtons] = useState([]);
-    const [loading, setLoading] = useState(true); // Added loading state
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
@@ -13,7 +11,7 @@ const Cashier = () => {
     const location = useLocation();
 
     const handlePaymentClick = () => {
-        navigate('/cashier/payment', { state: { order, total, itemIds } });
+        navigate('/customer/payment', { state: { order, total, itemIds } });
     };
 
     useEffect(() => {
@@ -35,7 +33,6 @@ const Cashier = () => {
             if (response.ok) {
                 const data = await response.json();
                 setButtons(data);
-                setLoading(false); // Set loading to false when data is fetched successfully
             } else {
                 console.error('Failed to fetch menu:', response.status, response.statusText);
             }
@@ -50,7 +47,7 @@ const Cashier = () => {
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
-        if (!isNaN(price)) { 
+        if (!isNaN(price)) { // Check if the price is a valid number after parsing
             setTotal((total) => round(total + price, 2));
             setItemIds((itemIds) => [...itemIds, item.id]); 
             setOrder((order) => {
@@ -114,73 +111,100 @@ const Cashier = () => {
         return order;
     };
 
-    // Group buttons into arrays of 5 buttons each
-    const buttonGroups = buttons.reduce((acc, button, index) => {
-        const groupIndex = Math.floor(index / 5);
-        if (!acc[groupIndex]) {
-            acc[groupIndex] = [];
-        }
-        acc[groupIndex].push(button);
-        return acc;
-    }, []);
+    const menuRowStyle = {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        gap: '10px',
+    };
+
+    const menuItemStyle = {
+        flexGrow: 1,
+        flexBasis: 'calc(33.3333% - 10px)', 
+        padding: '10px',
+        backgroundColor: '#f0f0f0',
+        border: '1px solid #ddd',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        marginBottom: '10px',
+    };
+    
+    const itemNameStyle = {
+        wordWrap: 'break-word', 
+        maxWidth: '70%', 
+        marginRight: 'auto',
+    };
+
+    const itemPriceStyle = {
+        marginLeft: '10px', 
+    };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
-            <div className="flex">
-                <div className="flex-col ml-16 mt-12">
-                    <h1 className="text-6xl font-semibold">Menu</h1>
-                    <div>
-                        <div className="w-full p-4 bg-white rounded-lg h-128 overflow-auto text-black">
-                            {loading ? ( // Render loading state
-                                <p>Loading...</p>
-                            ) : (
-                                buttonGroups.map((group, groupIndex) => (
-                                    <div key={groupIndex} className="flex justify-between items-center text-center ">
-                                        {group.map((button, index) => (
-                                            <div key={index}>
-                                                <button onClick={() => addToOrder(button)}>
-                                                <div style={{ width: "150px" , height: "150px"}} className="flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
-                                                    <TranslateText text={button.itemName}/>
-                                                    <span className="ml-4">Price: ${button.price}</span>
-                                                </div>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div style={{ flex: 1 }} className="ml-16 mt-12">
-                    <div className="text-4xl font-semibold mt-4 mb-8">
-                        <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
-                        <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
-                    </div>
-                    <h2 className="font-semibold text-4xl">Order List</h2>
-                    <div style = {{width: 450}} className="w-full p-4 bg-white text-black rounded-lg h-auto">
-                    {order.length > 0 ? (
-                        <ul>
-                            {order.map((item, index) => (
-                                <li key={item.id} style={{ width: '100%', padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className={`mt-2 mb-2 font-semibold text-lg h-16 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                    <div>
-                                    {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
-                                    </div>
-                                    <button onClick={() => removeFromOrder(index)}>
-                                        <p className="ml-4  border-b border-black">Remove</p>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+        <div style={{ display: 'flex', padding: '20px' }}>
+            <div style={{ width: '80%', marginRight: '20px' }}>
+                <div style={menuRowStyle}>
+                    {buttons.length > 0 ? (
+                        buttons.map((button, index) => (
+                            <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
+                                <span style={itemNameStyle}>
+                                    {button.itemName}
+                                </span>
+                                <span style={itemPriceStyle}>
+                                    ${button.price}
+                                </span>
+                            </div>
+                        ))
                     ) : (
-                        <p className="mt-2 font-semibold text-xl"><TranslateText text="No items in order." /></p>
+                        <p>Loading...</p>
                     )}
+                </div>
+            </div>
+            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
+                <h2 className="text-2xl font-bold mb-4">Order List</h2>
+                <div className="divide-y divide-gray-200">
+                    {order.length > 0 ? (
+                    order.map((item, index) => (
+                        <div key={item.id} className="py-4 flex justify-between items-center">
+                            <div>
+                                <p className="text-gray-800">{item.itemName}</p>
+                                <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                            </div>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={() => addToOrder(item)}
+                                    className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
+                                >
+                                    +
+                                </button>
+                                <button
+                                    onClick={() => removeFromOrder(index)}
+                                    className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                >
+                                    -
+                                </button>
+                            </div>
+                        </div>
+                    ))) : (<p className="text-center text-gray-500">No items in order.</p>)}
+                </div>
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-xl font-semibold">Total:</h3>
+                        <p className="text-xl font-semibold">
+                            ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
+                        </p>
                     </div>
-                    
+                    <button
+                        onClick={handlePaymentClick}
+                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                    >
+                        Go to Payment
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
 
-export default Cashier;
+export default Customer;

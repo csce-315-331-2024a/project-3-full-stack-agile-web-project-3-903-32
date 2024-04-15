@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -70,12 +71,10 @@ const Inventory = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex justify-between items-center p-6 bg-white border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-700">Inventory</h1>
-        </header>
+    <div className="flex flex-col h-screen bg-gray-100">
+      <Navbar /> 
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar /> 
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
           <div className="flex flex-col md:flex-row space-x-0 md:space-x-6">
             <div className="flex-1 bg-white p-6 border-b border-gray-200 mb-6"> {/* Inventory table container */}
@@ -135,7 +134,7 @@ const Inventory = () => {
                   {shortageItems.length > 0 ? (
                     shortageItems.map((item) => (
                       <li key={item.name} className="p-2 bg-red-100 border border-red-200 rounded">
-                        {item.name} (Short by {item.stock})
+                        {item.name} (Short by {item.minimum - item.stock})
                       </li>
                     ))
                   ) : (

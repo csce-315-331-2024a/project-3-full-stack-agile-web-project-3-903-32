@@ -49,7 +49,7 @@ function App() {
     const passwordInt = parseInt(password);
     if (passwords[passwordInt] === username){
       console.log("Successful Login");
-      if(passwordInt === 0 || passwordInt === 2){
+      if(passwordInt == 0 || passwordInt == 2){
         navigate('/manager');
       } else {
         navigate('/cashier')

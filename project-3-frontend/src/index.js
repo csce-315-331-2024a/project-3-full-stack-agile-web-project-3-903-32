@@ -13,6 +13,11 @@ import ManagerHome from './manager/ManagerHome';
 import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
+import Orders from './manager/Orders';
+import CashierConfirm from './cashier/CashierConfirm';
+import Customer from './customer/Customer';
+import CustomerPayment from './customer/CustomerPayment';
+import TranslateContext from './components/Translate';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -29,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: '/cashier/payment',
     element: <CashierPayment />
+  },
+  {
+    path: '/cashier/confirm',
+    element: <CashierConfirm />
   },
   {
     path: '/manager',
@@ -49,6 +58,19 @@ const router = createBrowserRouter([
     path: '/manager/menu',
     element: <Menu />,
     children: [],
+  },
+  {
+    path: '/manager/orders',
+    element: <Orders />,
+    children: [],
+  },
+  {
+    path: '/customer',
+    element: <Customer />,
+  },
+  {
+    path: '/customer/payment',
+    element: <CustomerPayment />,
   }
 ]);
 
@@ -56,7 +78,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com">
+        <TranslateContext>
     <RouterProvider router={router}/>
+    </TranslateContext>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );
