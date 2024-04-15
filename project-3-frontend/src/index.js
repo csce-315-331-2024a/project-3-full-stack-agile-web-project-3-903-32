@@ -14,6 +14,8 @@ import Trends from './manager/Trends';
 import Inventory from './manager/Inventory';
 import Menu from './manager/Menu';
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -53,7 +55,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <GoogleOAuthProvider clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com">
     <RouterProvider router={router}/>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 

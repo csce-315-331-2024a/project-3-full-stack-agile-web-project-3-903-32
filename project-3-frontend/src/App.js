@@ -1,32 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginButton from "./components/login.js";
-import LogoutButton from "./components/logout.js";
+import { GoogleLogin } from "@react-oauth/google"
 import { gapi } from 'gapi-script';
+import { jwtDecode } from "jwt-decode";
 
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
 
+
+
 function App() {
-
-  useEffect(() => {
-    function start(){
-    gapi.client.init({
-      clientId: clientId,
-      scope: ""
-    })
-  };
-  
-  gapi.load('client:auth2',start);
-  })
-
-
   const navigate = useNavigate();
-  
-  // Initialize state variables to store input values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Handler functions to update state when input values change
+  useEffect(() => {
+    function start(){
+      gapi.client.init({
+        clientId: clientId,
+        scope: ""
+      }).then(() => {
+        console.log("Google API initialized successfully");
+      }).catch((error) => {
+        console.error("Error initializing Google API:", error);
+      });
+    };
+  
+    gapi.load('client:auth2', start);
+  }, []);
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -44,15 +45,10 @@ function App() {
     "kyliepass"
   ];
 
-  // Function to handle login button click
   const handleLogin = () => {
-    // You can implement your authentication logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
     const passwordInt = parseInt(password);
     if (passwords[passwordInt] === username){
       console.log("Successful Login");
-      // Redirect to inventory page
       if(passwordInt === 0 || passwordInt === 2){
         navigate('/manager');
       } else {
@@ -63,8 +59,17 @@ function App() {
     }
   };
 
+  const loginManager = () => {
+    navigate('/manager');
+  }
+
+  const loginCashier = () => {
+    navigate('/cashier');
+  }
+
+
+
   return (
-    
     <div className="flex flex-col items-center">
       <h1 className="bg-red-900 text-white p-10 text-center text-9xl mb-8">Rev's American Grill</h1>
       <div className="bg-gray-200 p-4 rounded-lg mb-4">
@@ -89,7 +94,18 @@ function App() {
       >
         Login
       </button>
-      <LoginButton />
+      <GoogleLogin
+        onSuccess={(credentialResponse) => {
+          const decoded = jwtDecode(credentialResponse?.credential);
+          console.log(decoded.email);
+          if (decoded.email == "csce315manager@gmail.com"){
+            loginManager();
+          }
+        }}
+        onError={(error) => {
+          console.error("Google login failed:", error);
+        }}
+      />
     </div>
   );
 }
