@@ -67,6 +67,10 @@ function App() {
     navigate('/cashier');
   }
 
+  const loginMenu = () => {
+    navigate('/customer/StaticMenu');
+  }
+
 
 
   return (
@@ -100,6 +104,10 @@ function App() {
           console.log(decoded.email);
           if (decoded.email == "csce315manager@gmail.com"){
             loginManager();
+          } else if (decoded.email == "csce315cashier@gmail.com"){
+            loginCashier();
+          } else {
+            loginMenu();
           }
         }}
         onError={(error) => {
