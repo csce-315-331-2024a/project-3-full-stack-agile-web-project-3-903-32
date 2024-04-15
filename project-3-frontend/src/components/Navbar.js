@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   const [weather, setWeather] = useState('');
   const [showWeather, setShowWeather] = useState(false); 
   
@@ -40,6 +43,8 @@ const Navbar = () => {
   const handleLogoutClick = async () => {
     // logout logic here
     console.log("Logout");
+    navigate('/');
+
   };
 
   return (

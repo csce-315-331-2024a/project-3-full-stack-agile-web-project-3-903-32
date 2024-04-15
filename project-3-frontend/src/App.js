@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from "@react-oauth/google"
+import { gapi } from 'gapi-script';
+import { jwtDecode } from "jwt-decode";
+
+const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
+
+
 
 function App() {
   const navigate = useNavigate();
-  
-  // Initialize state variables to store input values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Handler functions to update state when input values change
+  useEffect(() => {
+    function start(){
+      gapi.client.init({
+        clientId: clientId,
+        scope: ""
+      }).then(() => {
+        console.log("Google API initialized successfully");
+      }).catch((error) => {
+        console.error("Error initializing Google API:", error);
+      });
+    };
+  
+    gapi.load('client:auth2', start);
+  }, []);
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -26,16 +45,11 @@ function App() {
     "kyliepass"
   ];
 
-  // Function to handle login button click
   const handleLogin = () => {
-    // You can implement your authentication logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
     const passwordInt = parseInt(password);
     if (passwords[passwordInt] === username){
       console.log("Successful Login");
-      // Redirect to inventory page
-      if(passwordInt === 0 || passwordInt === 2){
+      if(passwordInt == 0 || passwordInt == 2){
         navigate('/manager');
       } else {
         navigate('/cashier')
@@ -44,6 +58,16 @@ function App() {
       console.log("Login Failed!");
     }
   };
+
+  const loginManager = () => {
+    navigate('/manager');
+  }
+
+  const loginCashier = () => {
+    navigate('/cashier');
+  }
+
+
 
   return (
     <div className="flex flex-col items-center">
@@ -70,6 +94,18 @@ function App() {
       >
         Login
       </button>
+      <GoogleLogin
+        onSuccess={(credentialResponse) => {
+          const decoded = jwtDecode(credentialResponse?.credential);
+          console.log(decoded.email);
+          if (decoded.email == "csce315manager@gmail.com"){
+            loginManager();
+          }
+        }}
+        onError={(error) => {
+          console.error("Google login failed:", error);
+        }}
+      />
     </div>
   );
 }

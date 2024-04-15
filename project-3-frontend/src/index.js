@@ -19,6 +19,8 @@ import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
 import TranslateContext from './components/Translate';
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -75,9 +77,11 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <TranslateContext>
-      <RouterProvider router={router}/>
+    <GoogleOAuthProvider clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com">
+        <TranslateContext>
+    <RouterProvider router={router}/>
     </TranslateContext>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 
