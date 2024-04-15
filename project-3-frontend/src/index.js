@@ -17,6 +17,7 @@ import Orders from './manager/Orders';
 import CashierConfirm from './cashier/CashierConfirm';
 import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
+import TranslateContext from './components/Translate';
 
 const router = createBrowserRouter([
   {
@@ -74,7 +75,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <TranslateContext>
+      <RouterProvider router={router}/>
+    </TranslateContext>
   </React.StrictMode>
 );
 

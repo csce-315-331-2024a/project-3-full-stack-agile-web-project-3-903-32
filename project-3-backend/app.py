@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from flask_cors import CORS
 from datetime import datetime
+import deepl
 from collections import defaultdict
 
 app = Flask(__name__)
@@ -376,10 +377,11 @@ def sales_by_time():
 
     # Adjust SQL to count occurrences of each menuID
     sql = text("""
-        SELECT OM.menuID, COUNT(*) as frequency FROM Orders O
+        SELECT M.itemName, OM.menuID, COUNT(*) as frequency FROM Orders O
         JOIN OMJunc OM ON O.id = OM.orderID
+        JOIN menu M ON M.id = OM.menuID
         WHERE O.time >= :start_time AND O.time <= :end_time
-        GROUP BY OM.menuID
+        GROUP BY M.itemName, OM.menuID
         ORDER BY OM.menuID;
     """)
 
@@ -388,10 +390,11 @@ def sales_by_time():
     print(result)
 
     # Process result into a dictionary {menuID: frequency}
-    menu_id_frequencies = {row[0]: row[1] for row in result}
+    
+    menu_sales_data = [{'menuName': row[0], 'menuID': row[1], 'frequency': row[2]} for row in result]
 
     # Return JSON response
-    return jsonify(menu_id_frequencies)
+    return jsonify(menu_sales_data)
 
 # Returns excess menu ids
 @app.route('/api/excess_report')
@@ -457,40 +460,6 @@ def order_history():
             data.append(item)
     return jsonify(data)
 '''
-
-
-# @app.route('/api/order_history')
-# def order_history():
-#     sql_stmt = text("""
-#         SELECT 
-#             OMJunc.orderID, 
-#             Menu.itemName, 
-#             Menu.price, 
-#             Orders.customerName, 
-#             Orders.EmployeeID
-#         FROM 
-#             OMJunc
-#         INNER JOIN 
-#             Menu ON OMJunc.menuID = Menu.id
-#         INNER JOIN 
-#             Orders ON OMJunc.orderID = Orders.id
-#         LIMIT 
-#             300;
-#     """)
-#     result = db.session.execute(sql_stmt).fetchall()
-#     print(result)
-#     data = []
-#     if result:
-#         for row in result:
-#             item = {
-#                 'orderID': row[0],
-#                 'itemName': row[1],
-#                 'price': float(row[2]),  # Ensuring price is returned as a float
-#                 'customerName': row[3],
-#                 'employeeID': row[4]
-#             }
-#             data.append(item)
-#     return jsonify(data)
 
 @app.route('/api/order_history')
 def order_history():
@@ -616,5 +585,53 @@ def what_sells_together():
     return jsonify(pair_item_list)
     
     
+auth_key = os.getenv('DEEPL_API_KEY')
+translator = deepl.Translator(auth_key)
+class Language:
+    def __init__(self, name, code):
+        self.code = code
+        self.name = name
+    
+    def getName(self):
+        return self.name
+    
+    def getCode(self):
+        return self.code
+
+# target_lang = Language('English', 'EN')
+
+@app.route('/api/translate', methods=['POST', 'GET'])
+def translate_text():
+    if request.method == 'GET':
+        data = []
+        for lang in translator.get_source_languages():
+            item = {
+                'name' : lang.name,
+                'code' : lang.code
+            }
+            data.append(item)
+        return jsonify(data), 200
+    elif request.method == 'POST':
+        try:
+            data = request.get_json()
+            text = data['text']
+            res_lang = data['target_language']
+            # res_lang = target_lang.getCode()
+            if res_lang == 'EN':
+                res_lang = 'EN-US'
+            transformed_text = translator.translate_text(text=text, target_lang=res_lang)
+            print("Transformed Text", transformed_text.text, res_lang)
+            return jsonify({'translated_text': transformed_text.text}), 200
+        except Exception as e:
+            print("Bad Request", e)
+            return jsonify({'error': 'Translation failed'}), 404
+
+# @app.route('/api/translate/language', methods=['POST'])
+# def translate_language():
+#     data = request.get_json()
+#     target_lang.code = data['language']
+#     print(target_lang.code)
+#     return jsonify({'message': 'Language set successfully'})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

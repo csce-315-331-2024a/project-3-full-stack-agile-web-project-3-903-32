@@ -37,7 +37,7 @@ const Trends = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col bg-gray-100">
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
