@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const getCacheLanguage = () => {
     return localStorage.getItem("language") || "EN";
@@ -8,15 +8,38 @@ const setCacheLanguage = (language) => {
     localStorage.setItem("language", language);
 }
 
+
+const LanguageContext = React.createContext();
+const LanguageUpdateContext = React.createContext();
+
+export const TranslateContext = ({ children }) => {
+    const [language, setLanguage] = useState(getCacheLanguage());
+
+    function setLanguageContext (language) {
+        setCacheLanguage(language);
+        setLanguage(language);
+    }
+
+    return (
+        <LanguageContext.Provider value={language}>
+            <LanguageUpdateContext.Provider value={setLanguageContext}>
+                <TranslateInput />
+                { children }
+            </LanguageUpdateContext.Provider>
+        </LanguageContext.Provider>
+    );
+}
+
 export const TranslateInput = () => {
+    const [languages, setLanguages] = useState([]);
+    const setSelectedLanguage = useContext(LanguageUpdateContext);
 
     async function submitTranslation() {
         const text = document.getElementById("translate-input").value;
-        setCacheLanguage(text);
-        window.location.reload();
+        setSelectedLanguage(text);
+        // setCacheLanguage(text);
+        // window.location.reload();
     }
-
-    const [languages, setLanguages] = useState([]);
 
     useEffect(() => {
         getLanguages();
@@ -44,7 +67,7 @@ export const TranslateInput = () => {
             <select id='translate-input'>
                 {
                     languages.map((lang) => {
-                        return <option key={lang.code} defaultValue={lang.name} value={lang.code}>{lang.name}</option>
+                        return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>{lang.name}</option>
                     })
                 }
             </select>
@@ -54,6 +77,7 @@ export const TranslateInput = () => {
 }
 
 export const TranslateText = (props) => {
+    const selectedLanguage = useContext(LanguageContext);
     const [translatedText, setTranslatedText] = useState("");
 
     async function getTranslation(text) {
@@ -66,7 +90,7 @@ export const TranslateText = (props) => {
             },
             body: JSON.stringify({
                 "text" : text,
-                "target_language": getCacheLanguage()
+                "target_language": selectedLanguage
             })
         });
     
@@ -78,7 +102,7 @@ export const TranslateText = (props) => {
 
     useEffect(() => {
         getTranslation(props.text);
-    }, []);
+    }, [selectedLanguage]);
 
     return (
         <span>
@@ -87,13 +111,4 @@ export const TranslateText = (props) => {
     );
 }
 
-export const TranslateExample = () => {
-    return (
-        <div>
-            <TranslateInput />
-            <TranslateText text="Hello, how are you?" />
-        </div>
-    );
-}
-
-export default TranslateInput;
+export default TranslateContext;

@@ -17,7 +17,7 @@ import Orders from './manager/Orders';
 import CashierConfirm from './cashier/CashierConfirm';
 import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
-import TranslateInput, { TranslateExample } from './components/Translate';
+import TranslateContext from './components/Translate';
 
 const router = createBrowserRouter([
   {
@@ -58,11 +58,6 @@ const router = createBrowserRouter([
     children: [],
   },
   {
-    path: '/translate',
-    element: <TranslateExample />,
-    children: [],
-  },
-  {
     path: '/manager/orders',
     element: <Orders />,
     children: [],
@@ -80,7 +75,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <TranslateContext>
       <RouterProvider router={router}/>
+    </TranslateContext>
   </React.StrictMode>
 );
 

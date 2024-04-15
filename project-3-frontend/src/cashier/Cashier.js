@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import TranslateInput, { TranslateText } from "../components/Translate";
+import { TranslateText } from "../components/Translate";
 
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
@@ -127,7 +127,6 @@ const Cashier = () => {
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
             <div className="flex">
-                <TranslateInput />
                 <div className="flex-col ml-16 mt-12">
                     <h1 className="text-6xl font-semibold">Menu</h1>
                     <div>
