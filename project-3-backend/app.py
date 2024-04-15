@@ -11,7 +11,7 @@ import deepl
 from collections import defaultdict
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": os.getenv('FRONTEND_URL')}})
+CORS(app)
 load_dotenv()
 
 # Database configuration
