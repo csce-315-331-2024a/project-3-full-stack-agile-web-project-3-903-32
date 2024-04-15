@@ -67,11 +67,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/customer',
-    element: <Customer />,
+    element: <TranslateContext><Customer /></TranslateContext>,
   },
   {
     path: '/customer/payment',
-    element: <CustomerPayment />,
+    element: <TranslateContext><CustomerPayment /></TranslateContext>,
   },
   
   {
@@ -85,9 +85,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com">
-        <TranslateContext>
     <RouterProvider router={router}/>
-    </TranslateContext>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

@@ -1,77 +1,36 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+const NavComponent = ( props ) => {
+  return (
+    <div className='px-2 mt-12'>
+      <NavLink
+              to={props.to}
+              className={({ isActive }) =>
+                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-opacity-70 ${
+                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
+                }`
+              }
+            >
+              {props.text}
+            </NavLink>
+      </div>
+  )
+}
 
 const Sidebar = () => {
   return (
     <aside className="w-48 h-screen mr-3" aria-label="Sidebar"> 
       {/* Inventory */}
-      <div className={`mt-12`}>
-        <ul className="space-y-2">
-          <li>
-            <NavLink
-              to="/manager/inventory"
-              className={({ isActive }) =>
-                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
-                }`
-              }
-            >
-              Inventory
-            </NavLink>
-          </li>
-        </ul>
-      </div>
+      <NavComponent to="/manager/inventory" text='Inventory' />
+      
       {/* Menu */}
-      <div> 
-        <ul className="space-y-2">
-          <li>
-            <NavLink
-              to="/manager/menu"
-              className={({ isActive }) =>
-                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
-                }`
-              }
-            >
-              Menu
-            </NavLink>
-          </li>
-        </ul>
-      </div>
+      <NavComponent to="/manager/menu" text='Menu' />
+      
       {/* Trends */}
-      <div> 
-        <ul className="space-y-2">
-          <li>
-            <NavLink
-              to="/manager/trends"
-              className={({ isActive }) =>
-                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
-                }`
-              }
-            >
-              Trends
-            </NavLink>
-          </li>
-        </ul>
-      </div>
+      <NavComponent to="/manager/trends" text='Trends' />
+
       {/* Orders */}
-      <div> 
-        <ul className="space-y-2">
-          <li>
-            <NavLink
-              to="/manager/orders"
-              className={({ isActive }) =>
-                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
-                }`
-              }
-            >
-              Orders
-            </NavLink>
-          </li>
-        </ul>
-      </div>
+      <NavComponent to="/manager/orders" text='Orders'/>
     </aside>
   );
 };
