@@ -48,7 +48,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex justify-between items-center p-6 bg-white border-b border-gray-200">
+    <nav className="flex justify-between items-center p-5 bg-white border-b border-gray-200">
       <div className="text-xl font-semibold text-gray-700">REV'S American Grill</div>
       <div>
         <button
