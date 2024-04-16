@@ -5,14 +5,15 @@ import Navbar from '../components/Navbar';
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [ascending, setAscending] = useState(false);
 
   useEffect(() => {
     getOrders();
-  }, []);
+  }, [ascending]);
 
   async function getOrders() {
     try {
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order_history", {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/order_history?ascending=${ascending}`, {
         method: "GET",
         mode: 'cors'
       });
@@ -48,12 +49,36 @@ const Orders = () => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
 
+  function aggregateItems(items) {
+    const itemMap = new Map();
+  
+    items.forEach((item) => {
+      const existingItem = itemMap.get(item.itemName);
+      if (existingItem) {
+        existingItem.count += 1;
+      } else {
+        itemMap.set(item.itemName, { ...item, count: 1 });
+      }
+    });
+  
+    return Array.from(itemMap.values());
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
+          <div className="mb-4 flex justify-between items-center">
+            <button
+              type="button"
+              onClick={() => setAscending(!ascending)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Sort by ID {ascending ? 'Ascending' : 'Descending'}
+            </button>
+          </div>
           <table className="min-w-full bg-white">
             <thead>
               <tr>
@@ -110,10 +135,11 @@ const Orders = () => {
                         <div className="max-h-40 overflow-auto">
                           <table className="min-w-full">
                             <tbody>
-                              {order.items.map((item, itemIndex) => (
+                              {aggregateItems(order.items).map((item, itemIndex) => (
                                 <tr key={itemIndex} className="bg-white">
                                   <td className="p-2 text-base text-gray-700">{item.itemName}</td>
                                   <td className="p-2 text-base text-gray-700">${item.price.toFixed(2)}</td>
+                                  <td className="p-2 text-base text-gray-700">x {item.count}</td>
                                 </tr>
                               ))}
                             </tbody>

@@ -442,28 +442,15 @@ def excess_report():
         menu_data = []
 
     return jsonify(menu_data)
-'''
-@app.route('/api/order_history')
-def order_history():
-    sql_stmt = text("""
-        SELECT * FROM OMJunc Limit 300;
-    """)
-    result = db.session.execute(sql_stmt).fetchall()
-    print(result)
-    data = []
-    if result:
-        for row in result:
-            item = {
-                'orderID' : row[2],
-                'menuId' : row[1],
-            }
-            data.append(item)
-    return jsonify(data)
-'''
+
 
 @app.route('/api/order_history')
 def order_history():
-    sql_stmt = text("""
+    # Get the query parameter for sorting order; default is descending
+    ascending = request.args.get('ascending', 'false').lower() == 'true'
+    
+    order_by_clause = "ORDER BY Orders.id ASC" if ascending else "ORDER BY Orders.id DESC"
+    sql_stmt = text(f"""
         SELECT 
             OMJunc.orderID, 
             Menu.itemName, 
@@ -476,9 +463,11 @@ def order_history():
             Menu ON OMJunc.menuID = Menu.id
         INNER JOIN 
             Orders ON OMJunc.orderID = Orders.id
+        {order_by_clause}
         LIMIT 
             300;
     """)
+    
     result = db.session.execute(sql_stmt).fetchall()
     print(result)
 
