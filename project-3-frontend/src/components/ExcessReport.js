@@ -29,7 +29,7 @@ const ExcessReport = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className=""> {/*need to change max height*/}
+    <div>
       <div className="flex items-center mb-4">
         <label htmlFor="start-time" className="mr-2">Start Time:</label>
         <input
