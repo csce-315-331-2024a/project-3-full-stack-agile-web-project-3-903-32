@@ -134,7 +134,7 @@ const Cashier = () => {
                                 <p>Loading...</p>
                             ) : (
                                 buttonGroups.map((group, groupIndex) => (
-                                    <div key={groupIndex} className="flex justify-between items-center text-center ">
+                                    <div key={groupIndex} className="flex justify-start items-center text-center ">
                                         {group.map((button, index) => (
                                             <div key={index}>
                                                 <button onClick={() => addToOrder(button)}>
