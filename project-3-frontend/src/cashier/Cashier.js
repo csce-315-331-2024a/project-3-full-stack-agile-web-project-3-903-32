@@ -7,6 +7,7 @@ const Cashier = () => {
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -45,7 +46,7 @@ const Cashier = () => {
 
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-      }
+    }
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
@@ -115,7 +116,7 @@ const Cashier = () => {
 
     // Group buttons into arrays of 5 buttons each
     const buttonGroups = buttons.reduce((acc, button, index) => {
-        const groupIndex = Math.floor(index / 5);
+        const groupIndex = Math.floor(index / 4);
         if (!acc[groupIndex]) {
             acc[groupIndex] = [];
         }
@@ -123,17 +124,27 @@ const Cashier = () => {
         return acc;
     }, []);
 
+    const totalPages = Math.ceil(buttonGroups.length / 3);
+    
+    const nextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
+    };
+
+    const prevPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+    };
+
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
             <div className="flex">
-                <div className="flex-col ml-16 mt-12">
-                    <h1 className="text-6xl font-semibold">Menu</h1>
+                <div className="flex-col ml-32 mt-12">
+                    <h1 className="text-6xl font-semibold mb-4">Menu</h1>
                     <div>
-                        <div className="w-full p-4 bg-white rounded-lg h-128 overflow-auto text-black">
+                        <div style={{height:530}} className="w-full p-4 bg-white rounded-lg h-128 overflow-auto text-black">
                             {loading ? ( // Render loading state
                                 <p>Loading...</p>
                             ) : (
-                                buttonGroups.map((group, groupIndex) => (
+                                buttonGroups.slice(currentPage * 3, currentPage * 3 + 3).map((group, groupIndex) => (
                                     <div key={groupIndex} className="flex justify-start items-center text-center ">
                                         {group.map((button, index) => (
                                             <div key={index}>
@@ -149,12 +160,19 @@ const Cashier = () => {
                                 ))
                             )}
                         </div>
+                        {buttonGroups.length > 3 && (
+                            <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
+                                <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
+                                <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage+1}</p>
+                                <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div style={{ flex: 1 }} className="ml-16 mt-12">
                     <div className="text-4xl font-semibold mt-4 mb-8">
                         <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
-                        <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
+                        <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
                     </div>
                     <h2 className="font-semibold text-4xl">Order List</h2>
                     <div style = {{width: 450}} className="w-full p-4 bg-white text-black rounded-lg h-auto">
