@@ -47,14 +47,26 @@ def get_menu_items():
         results = db.session.execute(query).fetchall() 
         if results:
             data = []
-            for row in results:
-                item = {
-                    'id' : row[0],
-                    'itemName' : row[1],
-                    'price' : row[2]
-                }
-                data.append(item)
-
+            if request.args.get("translate") != 'EN':
+                texts = []
+                for row in results:
+                    texts.append(str(row[1]))
+                names = translator.translate_text(text=texts, target_lang=request.args.get("translate"))
+                for i, row in enumerate(results):
+                    item = {
+                        'id' : row[0],
+                        'itemName' : names[i].text,
+                        'price' : row[2]
+                    }
+                    data.append(item)
+            else:
+                for row in results:
+                    item = {
+                        'id' : row[0],
+                        'itemName' : row[1],
+                        'price' : row[2]
+                    }
+                    data.append(item)
             return jsonify(data)
         else:
             return jsonify({'error': 'No data found'}), 404
@@ -599,7 +611,7 @@ class Language:
 # target_lang = Language('English', 'EN')
 
 @app.route('/api/translate', methods=['POST', 'GET'])
-def translate_text():
+def translate_route():
     if request.method == 'GET':
         data = []
         for lang in translator.get_source_languages():
@@ -612,14 +624,19 @@ def translate_text():
     elif request.method == 'POST':
         try:
             data = request.get_json()
-            text = data['text']
-            res_lang = data['target_language']
-            # res_lang = target_lang.getCode()
-            if res_lang == 'EN':
-                res_lang = 'EN-US'
-            transformed_text = translator.translate_text(text=text, target_lang=res_lang)
-            print("Transformed Text", transformed_text.text, res_lang)
-            return jsonify({'translated_text': transformed_text.text}), 200
+            if isinstance(data['text'], list):
+                texts = data['text']
+                res_lang = data['target_language']
+                if res_lang == 'EN':
+                    res_lang = 'EN-US'
+                transformed_text = translator.translate_text(text=texts, target_lang=res_lang)
+                return jsonify({'translated_text': transformed_text.text}), 200
+            else:
+                text = data['text']
+                res_lang = data['target_language']
+                transformed_text = translator.translate_text(text=text, target_lang=res_lang)
+                print("Transformed Text", transformed_text.text, res_lang)
+                return jsonify({'translated_text': transformed_text.text}), 200
         except Exception as e:
             print("Bad Request", e)
             return jsonify({'error': 'Translation failed'}), 404
