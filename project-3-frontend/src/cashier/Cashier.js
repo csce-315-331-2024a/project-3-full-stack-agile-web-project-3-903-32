@@ -50,9 +50,9 @@ const Cashier = () => {
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
-        if (!isNaN(price)) { 
+        if (!isNaN(price)) {
             setTotal((total) => round(total + price, 2));
-            setItemIds((itemIds) => [...itemIds, item.id]); 
+            setItemIds((itemIds) => [...itemIds, item.id]);
             setOrder((order) => {
                 const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
                 if (existIndex > -1) {
@@ -64,7 +64,7 @@ const Cashier = () => {
                 } else {
                     return [...order, { ...item, price, quantity: 1 }];
                 }
-            });  
+            });
         } else {
             console.error('item.price is not a valid number', item);
         }
@@ -75,9 +75,9 @@ const Cashier = () => {
             const item = order[index];
             if (item) {
                 const price = parseFloat(item.price);
-                if (!isNaN(price)) { 
+                if (!isNaN(price)) {
                     setTotal((total) => round(total - price, 2));
-                    
+
                     setOrder((order) => {
                         if (item.quantity > 1) {
                             return order.map((orderItem, idx) =>
@@ -101,7 +101,7 @@ const Cashier = () => {
                             }
                         }
                         return itemIds;
-                    });            
+                    });
                 } else {
                     console.error('item.price is not a valid number', item);
                 }
@@ -114,14 +114,13 @@ const Cashier = () => {
         return order;
     };
 
-    const changeOrder = (index,newQuantity) => {
+    const changeOrder = (index, newQuantity) => {
         const parseQuantity = parseInt(newQuantity)
-        if(isNaN(parseQuantity) || parseQuantity <= 0)
-        {
+        if (isNaN(parseQuantity) || parseQuantity <= 0) {
             const item = order[index];
             const price = parseFloat(item.price);
-            setTotal((total) => round(total - price * item.quantity,2));
-            setOrder((order) => order.filter((item,idx) => idx !== index));
+            setTotal((total) => round(total - price * item.quantity, 2));
+            setOrder((order) => order.filter((item, idx) => idx !== index));
             return;
         }
 
@@ -133,14 +132,14 @@ const Cashier = () => {
 
         setTotal((total) => round(total + changeInTotal, 2));
         setOrder((order) =>
-            order.map((item,idx) =>
+            order.map((item, idx) =>
                 idx === index
-                    ? { ...item, quantity: newQuantity}
+                    ? { ...item, quantity: newQuantity }
                     : item
             )
         );
     };
-    
+
 
     // Group buttons into arrays of 5 buttons each
     const buttonGroups = buttons.reduce((acc, button, index) => {
@@ -153,7 +152,7 @@ const Cashier = () => {
     }, []);
 
     const totalPages = Math.ceil(buttonGroups.length / 3);
-    
+
     const nextPage = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
     };
@@ -163,66 +162,62 @@ const Cashier = () => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
-            <div className="flex">
-                <div className="flex-col ml-32 mt-12">
-                    <h1 className="text-6xl font-semibold mb-4">Menu</h1>
-                    <div>
-                        <div style={{height:530}} className="w-full p-4 bg-white rounded-lg h-128 overflow-auto text-black">
-                            {loading ? ( // Render loading state
-                                <p>Loading...</p>
-                            ) : (
-                                buttonGroups.slice(currentPage * 3, currentPage * 3 + 3).map((group, groupIndex) => (
-                                    <div key={groupIndex} className="flex justify-start items-center text-center ">
-                                        {group.map((button, index) => (
-                                            <div key={index}>
-                                                <button onClick={() => addToOrder(button)}>
-                                                <div style={{ width: "150px" , height: "150px"}} className="flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
+        <div className='flex justify-center gap-20 py-10 w-screen h-screen overflow-x-hidden bg-customMaroon text-white'>
+            <div className="flex-col w-1/2">
+                <h1 className="text-6xl font-semibold mb-4">Menu</h1>
+                <div>
+                    <div className="p-4 bg-white rounded-lg overflow-auto text-black">
+                        {loading ? ( // Render loading state
+                            <p>Loading...</p>
+                        ) : (
+                            buttonGroups.slice(currentPage * 3, currentPage * 3 + 3).map((group, groupIndex) => (
+                                <div key={groupIndex} className="w-full flex justify-start items-center text-center ">
+                                    {group.map((button, index) => (
+                                        <div key={index} className="w-1/4">
+                                            <button onClick={() => addToOrder(button)} className="w-full">
+                                                <div className="h-[130px] flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
                                                     {button.itemName}
-                                                    <span className="ml-4">Price: ${button.price}</span>
+                                                    <span>${button.price}</span>
                                                 </div>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                        {buttonGroups.length > 3 && (
-                            <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
-                                <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
-                                <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage+1}</p>
-                                <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
-                            </div>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))
                         )}
                     </div>
+                    {buttonGroups.length > 3 && (
+                        <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
+                            <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
+                            <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage + 1}</p>
+                            <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
+                        </div>
+                    )}
                 </div>
-                <div style={{ flex: 1 }} className="ml-16 mt-12">
-                    <div className="text-4xl font-semibold mt-4 mb-8">
-                        <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
-                        <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
-                    </div>
-                    <h2 className="font-semibold text-4xl">Order List</h2>
-                    <div style={{ width: 450 }} className="w-full p-4 bg-white text-black rounded-lg h-auto">
+            </div>
+            <div className="w-[29%]">
+                <h2 className="font-semibold text-4xl mb-2">Order List</h2>
+                <div className="p-4 h-[460px] w-full bg-white text-black rounded-lg">
+                    <div className="max-h-[430px] w-full overflow-y-auto">
                         {order.length > 0 ? (
                             <ul>
                                 {order.map((item, index) => (
-                                    <li key={item.id} style={{height: 60}}className={`mt-2 mb-2 font-semibold text-lg ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                        <div className="flex items-center justify-between">
-                                            <div className="ml-2">
+                                    <li key={item.id} className={`mt-2 mb-2 font-semibold text-lg ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
+                                        <div className="flex items-center justify-between p-2">
+                                            <div>
                                                 {item.itemName} - ${item.price.toFixed(2)}
                                             </div>
-                                            <div className="relative flex items-center px-6 mt-2">
-                                                <button onClick={() => removeFromOrder(index)} style  = {{height: 45, width: 30}} className=" bg-red-500 hover:bg-red-700 rounded-l text-2xl ">-</button>
+                                            <div className="flex items-center">
+                                                <button onClick={() => removeFromOrder(index)} style={{ height: 45, width: 30 }} className=" bg-red-500 hover:bg-red-700 rounded-l text-2xl ">-</button>
                                                 <input
-                                                    style = {{height: 45, outline: 'none'}}
-                                                    className=" w-16 px-4 bg-customMaroon text-lg text-center text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    style={{ outline: 'none' }}
+                                                    className="h-[45px] w-16 px-4 bg-customMaroon text-lg text-center text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                     type="number"
                                                     value={item.quantity}
                                                     onChange={(e) => changeOrder(index, parseInt(e.target.value))}
-                                                    
+
                                                 />
-                                                <button onClick={() => addToOrder(item, item.quantity + 1)} style  = {{height: 45, width: 30}} className=" bg-green-500 hover:bg-green-700 rounded-r text-2xl">+</button>
+                                                <button onClick={() => addToOrder(item, item.quantity + 1)} style={{ height: 45, width: 30 }} className=" bg-green-500 hover:bg-green-700 rounded-r text-2xl">+</button>
                                             </div>
                                         </div>
                                     </li>
@@ -232,6 +227,10 @@ const Cashier = () => {
                             <p className="mt-2 font-semibold text-xl">No items in order.</p>
                         )}
                     </div>
+                </div>
+                <div className="text-4xl font-semibold mt-4">
+                    <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
+                    <button onClick={handlePaymentClick} className='w-full mt-2 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
                 </div>
             </div>
         </div>
