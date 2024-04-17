@@ -94,8 +94,10 @@ const CashierPayment = () => {
                                 {order.length > 0 ? (
                                     <ul>
                                         {order.map((item, index) => (
-                                            <li key={item.id} className={`text-xl font-semibold mt-2 mb-2' ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                                {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                                            <li key={item.id} className={`text-xl font-semibold' ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
+                                                <div className='ml-2 mt-2 mb-2'>
+                                                    {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                                                </div>
                                             </li>
                                         ))}
                                     </ul>
