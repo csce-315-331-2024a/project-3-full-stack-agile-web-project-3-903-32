@@ -8,8 +8,27 @@ const setCacheLanguage = (language) => {
     localStorage.setItem("language", language);
 }
 
+// export async function getArrayTranslation(text) {
+//     console.log("Getting translation for:", text);
+//     const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
+//         method: "POST",
+//         mode: 'cors',
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify({
+//             "text" : text,
+//             "target_language": getCacheLanguage()
+//         })
+//     });
 
-const LanguageContext = React.createContext();
+//     if (response.ok) {
+//         const data = await response.json();
+//         return data.translated_text;
+//     }
+// }
+
+export const LanguageContext = React.createContext();
 const LanguageUpdateContext = React.createContext();
 
 export const TranslateContext = ({ children }) => {
@@ -37,8 +56,6 @@ export const TranslateInput = () => {
     async function submitTranslation() {
         const text = document.getElementById("translate-input").value;
         setSelectedLanguage(text);
-        // setCacheLanguage(text);
-        // window.location.reload();
     }
 
     useEffect(() => {
@@ -101,7 +118,11 @@ export const TranslateText = (props) => {
     }
 
     useEffect(() => {
-        getTranslation(props.text);
+        if(selectedLanguage !== "EN") {
+            getTranslation(props.text);
+        } else{
+            setTranslatedText(props.text);
+        }
     }, [selectedLanguage]);
 
     return (
