@@ -103,10 +103,12 @@ const CustomerPayment = () => {
                 )}
                 <h3 className="text-lg font-semibold text-right mt-4"><TranslateText text='Total:'/> ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
             </div>
+            <label id="customer_name" for="customer_name" className='text-white text-2xl'> Customer's Name: </label>
             <input 
-                className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mr-4 mb-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded text-2xl"
                 type="text" 
-                placeholder="Enter customer's name" 
+                name="customer_name"
+                aria-labelledby='customer_name'
                 value={name}
                 onChange={changeName}
             />
@@ -132,7 +134,7 @@ const CustomerPayment = () => {
                                 <TranslateText text='Confirm'/>
                             </button>
                             <button onClick={closeConfirmationModal} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none">
-                                <TranslateText text='Cancel'/>
+                                <TranslateText text='Clear Order'/>
                             </button>
                         </div>
                     </div>

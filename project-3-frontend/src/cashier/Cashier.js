@@ -114,6 +114,34 @@ const Cashier = () => {
         return order;
     };
 
+    const changeOrder = (index,newQuantity) => {
+        const parseQuantity = parseInt(newQuantity)
+        if(isNaN(parseQuantity) || parseQuantity <= 0)
+        {
+            const item = order[index];
+            const price = parseFloat(item.price);
+            setTotal((total) => round(total - price * item.quantity,2));
+            setOrder((order) => order.filter((item,idx) => idx !== index));
+            return;
+        }
+
+        const oldItem = order[index];
+        const oldQuantity = oldItem.quantity;
+        const price = parseFloat(oldItem.price);
+        const diff = newQuantity - oldQuantity;
+        const changeInTotal = price * diff;
+
+        setTotal((total) => round(total + changeInTotal, 2));
+        setOrder((order) =>
+            order.map((item,idx) =>
+                idx === index
+                    ? { ...item, quantity: newQuantity}
+                    : item
+            )
+        );
+    };
+    
+
     // Group buttons into arrays of 5 buttons each
     const buttonGroups = buttons.reduce((acc, button, index) => {
         const groupIndex = Math.floor(index / 4);
@@ -175,25 +203,35 @@ const Cashier = () => {
                         <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
                     </div>
                     <h2 className="font-semibold text-4xl">Order List</h2>
-                    <div style = {{width: 450}} className="w-full p-4 bg-white text-black rounded-lg h-auto">
-                    {order.length > 0 ? (
-                        <ul>
-                            {order.map((item, index) => (
-                                <li key={item.id} style={{ width: '100%', padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className={`mt-2 mb-2 font-semibold text-lg h-16 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                    <div>
-                                    {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
-                                    </div>
-                                    <button onClick={() => removeFromOrder(index)}>
-                                        <p className="ml-4  border-b border-black">Remove</p>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="mt-2 font-semibold text-xl">No items in order.</p>
-                    )}
+                    <div style={{ width: 450 }} className="w-full p-4 bg-white text-black rounded-lg h-auto">
+                        {order.length > 0 ? (
+                            <ul>
+                                {order.map((item, index) => (
+                                    <li key={item.id} style={{height: 60}}className={`mt-2 mb-2 font-semibold text-lg ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <div className="ml-2">
+                                                {item.itemName} - ${item.price.toFixed(2)}
+                                            </div>
+                                            <div className="relative flex items-center px-6 mt-2">
+                                                <button onClick={() => removeFromOrder(index)} style  = {{height: 45, width: 30}} className=" bg-red-500 hover:bg-red-700 rounded-l text-2xl ">-</button>
+                                                <input
+                                                    style = {{height: 45, outline: 'none'}}
+                                                    className=" w-16 px-4 bg-customMaroon text-lg text-center text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={(e) => changeOrder(index, parseInt(e.target.value))}
+                                                    
+                                                />
+                                                <button onClick={() => addToOrder(item, item.quantity + 1)} style  = {{height: 45, width: 30}} className=" bg-green-500 hover:bg-green-700 rounded-r text-2xl">+</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="mt-2 font-semibold text-xl">No items in order.</p>
+                        )}
                     </div>
-                    
                 </div>
             </div>
         </div>
