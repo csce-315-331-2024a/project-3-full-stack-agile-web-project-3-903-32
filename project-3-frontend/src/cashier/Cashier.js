@@ -50,9 +50,9 @@ const Cashier = () => {
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
-        if (!isNaN(price)) { 
+        if (!isNaN(price)) {
             setTotal((total) => round(total + price, 2));
-            setItemIds((itemIds) => [...itemIds, item.id]); 
+            setItemIds((itemIds) => [...itemIds, item.id]);
             setOrder((order) => {
                 const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
                 if (existIndex > -1) {
@@ -64,7 +64,7 @@ const Cashier = () => {
                 } else {
                     return [...order, { ...item, price, quantity: 1 }];
                 }
-            });  
+            });
         } else {
             console.error('item.price is not a valid number', item);
         }
@@ -75,9 +75,9 @@ const Cashier = () => {
             const item = order[index];
             if (item) {
                 const price = parseFloat(item.price);
-                if (!isNaN(price)) { 
+                if (!isNaN(price)) {
                     setTotal((total) => round(total - price, 2));
-                    
+
                     setOrder((order) => {
                         if (item.quantity > 1) {
                             return order.map((orderItem, idx) =>
@@ -101,7 +101,7 @@ const Cashier = () => {
                             }
                         }
                         return itemIds;
-                    });            
+                    });
                 } else {
                     console.error('item.price is not a valid number', item);
                 }
@@ -125,7 +125,7 @@ const Cashier = () => {
     }, []);
 
     const totalPages = Math.ceil(buttonGroups.length / 3);
-    
+
     const nextPage = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
     };
@@ -135,67 +135,67 @@ const Cashier = () => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-customMaroon text-white'>
-            <div className="flex">
-                <div className="flex-col ml-32 mt-12">
-                    <h1 className="text-6xl font-semibold mb-4">Menu</h1>
-                    <div>
-                        <div style={{height:530}} className="w-full p-4 bg-white rounded-lg h-128 overflow-auto text-black">
-                            {loading ? ( // Render loading state
-                                <p>Loading...</p>
-                            ) : (
-                                buttonGroups.slice(currentPage * 3, currentPage * 3 + 3).map((group, groupIndex) => (
-                                    <div key={groupIndex} className="flex justify-start items-center text-center ">
-                                        {group.map((button, index) => (
-                                            <div key={index}>
-                                                <button onClick={() => addToOrder(button)}>
-                                                <div style={{ width: "150px" , height: "150px"}} className="flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
+        <div className='flex justify-center gap-20 py-10 w-screen h-screen overflow-x-hidden bg-customMaroon text-white'>
+            <div className="flex-col w-1/2">
+                <h1 className="text-6xl font-semibold mb-4">Menu</h1>
+                <div>
+                    <div className="p-4 bg-white rounded-lg overflow-auto text-black">
+                        {loading ? ( // Render loading state
+                            <p>Loading...</p>
+                        ) : (
+                            buttonGroups.slice(currentPage * 3, currentPage * 3 + 3).map((group, groupIndex) => (
+                                <div key={groupIndex} className="w-full flex justify-start items-center text-center ">
+                                    {group.map((button, index) => (
+                                        <div key={index} className="w-1/4">
+                                            <button onClick={() => addToOrder(button)} className="w-full">
+                                                <div className="h-[130px] flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
                                                     {button.itemName}
-                                                    <span className="ml-4">Price: ${button.price}</span>
+                                                    <span>${button.price}</span>
                                                 </div>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))
-                            )}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                    {buttonGroups.length > 3 && (
+                        <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
+                            <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
+                            <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage + 1}</p>
+                            <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
                         </div>
-                        {buttonGroups.length > 3 && (
-                            <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
-                                <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
-                                <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage+1}</p>
-                                <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
-                            </div>
+                    )}
+                </div>
+            </div>
+            <div className="w-[29%]">
+                <h2 className="font-semibold text-4xl mb-2">Order List</h2>
+                <div className="p-4 h-[460px] w-full bg-white text-black rounded-lg">
+                    <div className="max-h-[430px] w-full overflow-y-auto">
+                        {order.length > 0 ? (
+                            <ul>
+                                {order.map((item, index) => (
+                                    <li key={item.id} style={{ width: '100%', padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className={`mt-2 mb-2 font-semibold text-lg h-16 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
+                                        <div>
+                                            {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                                        </div>
+                                        <button onClick={() => removeFromOrder(index)}>
+                                            <p className="ml-4  border-b border-black">Remove</p>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="mt-2 font-semibold text-xl">No items in order.</p>
                         )}
                     </div>
                 </div>
-                <div style={{ flex: 1 }} className="ml-16 mt-12">
-                    <div className="text-4xl font-semibold mt-4 mb-8">
-                        <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
-                        <button onClick={handlePaymentClick} className='w-full mt-4 mr-4 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
-                    </div>
-                    <h2 className="font-semibold text-4xl">Order List</h2>
-                    <div style = {{width: 450}} className="w-full p-4 bg-white text-black rounded-lg h-auto">
-                    {order.length > 0 ? (
-                        <ul>
-                            {order.map((item, index) => (
-                                <li key={item.id} style={{ width: '100%', padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className={`mt-2 mb-2 font-semibold text-lg h-16 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                    <div>
-                                    {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
-                                    </div>
-                                    <button onClick={() => removeFromOrder(index)}>
-                                        <p className="ml-4  border-b border-black">Remove</p>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="mt-2 font-semibold text-xl">No items in order.</p>
-                    )}
-                    </div>
-                    
+                <div className="text-4xl font-semibold mt-4">
+                    <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
+                    <button onClick={handlePaymentClick} className='w-full mt-2 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
                 </div>
             </div>
+            {/* </div> */}
         </div>
     );
 };
