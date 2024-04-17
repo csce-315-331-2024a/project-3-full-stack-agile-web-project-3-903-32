@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TranslateText, LanguageContext } from "../components/Translate";
-
+import Navbar from "../components/NavbarCustomer";
 
 const Customer = () => {
     const [buttons, setButtons] = useState([]);
@@ -146,65 +146,68 @@ const Customer = () => {
     };
 
     return (
-        <div style={{ display: 'flex', padding: '20px' }}>
-            <div style={{ width: '80%', marginRight: '20px' }}>
-                <div style={menuRowStyle}>
-                    {buttons.length > 0 ? (
-                        buttons.map((button, index) => (
-                            <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
-                                <span style={itemNameStyle}>
-                                    {button.itemName}
-                                </span>
-                                <span style={itemPriceStyle}>
-                                    ${button.price}
-                                </span>
-                            </div>
-                        ))
-                    ) : (
-                        <p> <TranslateText text='Loading...' /></p>
-                    )}
-                </div>
-            </div>
-            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
-                <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List'/></h2>
-                <div className="divide-y divide-gray-200">
-                    {order.length > 0 ? (
-                    order.map((item, index) => (
-                        <div key={item.id} className="py-4 flex justify-between items-center">
-                            <div>
-                                <p className="text-gray-800"><TranslateText text={item.itemName}/></p>
-                                <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
-                            </div>
-                            <div className="flex items-center">
-                                <button
-                                    onClick={() => addToOrder(item)}
-                                    className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
-                                >
-                                    +
-                                </button>
-                                <button
-                                    onClick={() => removeFromOrder(index)}
-                                    className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
-                                >
-                                    -
-                                </button>
-                            </div>
-                        </div>
-                    ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.'/></p>)}
-                </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-xl font-semibold"><TranslateText text='Total:' /></h3>
-                        <p className="text-xl font-semibold">
-                            ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
-                        </p>
+        <div className="flex flex-col h-screen bg-gray-100">
+            <Navbar />
+            <div style={{ display: 'flex', padding: '20px' }}>
+                <div style={{ width: '80%', marginRight: '20px' }}>
+                    <div style={menuRowStyle}>
+                        {buttons.length > 0 ? (
+                            buttons.map((button, index) => (
+                                <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
+                                    <span style={itemNameStyle}>
+                                        {button.itemName}
+                                    </span>
+                                    <span style={itemPriceStyle}>
+                                        ${button.price}
+                                    </span>
+                                </div>
+                            ))
+                        ) : (
+                            <p> <TranslateText text='Loading...' /></p>
+                        )}
                     </div>
-                    <button
-                        onClick={handlePaymentClick}
-                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-                    >
-                        <TranslateText text='Go to Payment'/>
-                    </button>
+                </div>
+                <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
+                    <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List'/></h2>
+                    <div className="divide-y divide-gray-200">
+                        {order.length > 0 ? (
+                        order.map((item, index) => (
+                            <div key={item.id} className="py-4 flex justify-between items-center">
+                                <div>
+                                    <p className="text-gray-800"><TranslateText text={item.itemName}/></p>
+                                    <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <button
+                                        onClick={() => addToOrder(item)}
+                                        className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
+                                    >
+                                        +
+                                    </button>
+                                    <button
+                                        onClick={() => removeFromOrder(index)}
+                                        className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                    >
+                                        -
+                                    </button>
+                                </div>
+                            </div>
+                        ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.'/></p>)}
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-xl font-semibold"><TranslateText text='Total:' /></h3>
+                            <p className="text-xl font-semibold">
+                                ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
+                            </p>
+                        </div>
+                        <button
+                            onClick={handlePaymentClick}
+                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                        >
+                            <TranslateText text='Go to Payment'/>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
