@@ -449,6 +449,14 @@ def order_history():
     # Get the query parameter for sorting order; default is descending
     ascending = request.args.get('ascending', 'false').lower() == 'true'
     
+    time_clause = ""
+    
+    # Parse start_time and end_time from request arguments
+    if 'start_time' in request.args and 'end_time' in request.args:
+        start_time = request.args.get('start_time', default='')  # e.g., '2023-01-01 00:00:00'
+        end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
+        time_clause = f"WHERE Orders.time BETWEEN '{start_time}' AND '{end_time}'"
+    
     order_by_clause = "ORDER BY Orders.id ASC" if ascending else "ORDER BY Orders.id DESC"
     sql_stmt = text(f"""
         SELECT 
@@ -461,8 +469,9 @@ def order_history():
             OMJunc
         INNER JOIN 
             Menu ON OMJunc.menuID = Menu.id
-        INNER JOIN 
+        INNER JOIN
             Orders ON OMJunc.orderID = Orders.id
+        {time_clause}
         {order_by_clause}
         LIMIT 
             300;
