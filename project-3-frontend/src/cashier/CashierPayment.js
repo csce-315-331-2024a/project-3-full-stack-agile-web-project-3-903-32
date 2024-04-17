@@ -89,22 +89,24 @@ const CashierPayment = () => {
                         <h2 className='mt-1 mb-2  text-4xl'>Order List</h2>
                         <div className='border-b border-black border-2 mb-2'></div>
 
-                        <div className="overflow-auto">
-                            {order.length > 0 ? (
-                                <ul>
-                                    {order.map((item, index) => (
-                                        <li key={item.id} className={`text-xl font-semibold mt-2 mb-2' ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
-                                            {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className='text-xl'>No items in order.</p>
-                            )}
+                            <div className="overflow-auto">
+                                {order.length > 0 ? (
+                                    <ul>
+                                        {order.map((item, index) => (
+                                            <li key={item.id} className={`text-xl font-semibold' ${index % 2 === 0 ? 'bg-white' : 'bg-gray-300'}`}>
+                                                <div className='ml-2 mt-2 mb-2'>
+                                                    {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className='text-xl'>No items in order.</p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
             <div className='w-1/4 font-semibold'>
                 <div className='flex flex-col items-center w-full'>
