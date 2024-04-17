@@ -71,10 +71,14 @@ function App() {
     navigate('/customer/StaticMenu');
   }
 
+  const loginCustomer = () => {
+    navigate('/customer/StaticMenu');
+  }
+
 
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center min-h-screen relative"> {/* Add min-h-screen and relative */}
       <h1 className="bg-red-900 text-white p-10 text-center text-9xl mb-8">Rev's American Grill</h1>
       <div className="bg-gray-200 p-4 rounded-lg mb-4">
         <input 
@@ -99,6 +103,7 @@ function App() {
         Login
       </button>
       <GoogleLogin
+        className="mt-4"
         onSuccess={(credentialResponse) => {
           const decoded = jwtDecode(credentialResponse?.credential);
           console.log(decoded.email);
@@ -107,15 +112,23 @@ function App() {
           } else if (decoded.email == "csce315cashier@gmail.com"){
             loginCashier();
           } else {
-            loginMenu();
+            loginCustomer();
           }
         }}
         onError={(error) => {
           console.error("Google login failed:", error);
         }}
       />
+      <button 
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute bottom-0 mb-4"
+        onClick={loginMenu}
+      >
+        Menu
+      </button>
     </div>
   );
+  
+  
 }
 
 export default App;
