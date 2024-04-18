@@ -21,10 +21,8 @@ const SalesReport = () => {
       });
   }, [startTime, endTime]);
 
-
-
   return (
-    <div className='max-h-screen overflow-y-auto'>
+    <div>
       <div className='flex items-center mb-4'>
         <label className='mr-6'>
           <span className='mr-2'>Start Time:</span>
