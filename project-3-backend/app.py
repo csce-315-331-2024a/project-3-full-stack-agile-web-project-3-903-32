@@ -43,18 +43,30 @@ def get_data(name):
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
     if request.method == 'GET':
-        query = text("SELECT * FROM Menu")
+        query = text("SELECT * FROM Menu ORDER BY itemName ASC")
         results = db.session.execute(query).fetchall() 
         if results:
             data = []
-            for row in results:
-                item = {
-                    'id' : row[0],
-                    'itemName' : row[1],
-                    'price' : row[2]
-                }
-                data.append(item)
-
+            if request.args.get("translate") != 'EN':
+                texts = []
+                for row in results:
+                    texts.append(str(row[1]))
+                names = translator.translate_text(text=texts, target_lang=request.args.get("translate"))
+                for i, row in enumerate(results):
+                    item = {
+                        'id' : row[0],
+                        'itemName' : names[i].text,
+                        'price' : row[2]
+                    }
+                    data.append(item)
+            else:
+                for row in results:
+                    item = {
+                        'id' : row[0],
+                        'itemName' : row[1],
+                        'price' : row[2]
+                    }
+                    data.append(item)
             return jsonify(data)
         else:
             return jsonify({'error': 'No data found'}), 404
@@ -70,7 +82,7 @@ def get_menu_items():
 def get_menu_item(menu_id):
     if request.method == 'PUT':
         data = request.get_json()
-        print(data)
+        # print(data)
         query = text("UPDATE Menu SET itemName = :itemName, price = :price WHERE id = :id")
         db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'id': menu_id})
         db.session.commit()
@@ -107,7 +119,7 @@ def delete_menu_mijunc_batch(menu_id):
 ###################################
 @app.route('/api/inventory')
 def get_inventory_items():
-    query = text("SELECT * FROM Inventory")
+    query = text("SELECT * FROM Inventory ORDER BY name ASC")
     results = db.session.execute(query).fetchall()
     if results:
         data = []
@@ -130,7 +142,7 @@ def get_inventory_items():
 # GET: Find all low stock items
 @app.route('/api/inventory/shortage', methods=['GET'])
 def get_inventory_shortage():
-    query = text("SELECT * FROM Inventory WHERE stock < minimum;")
+    query = text("SELECT * FROM Inventory WHERE stock < minimum ORDER BY name ASC")
     results = db.session.execute(query).fetchall()
     if results:
         data = []
@@ -203,11 +215,11 @@ def update_inventory_batch(data):
 @app.route('/api/mijunc/<menu_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
 def get_menu_inventory(menu_id):
     if(request.method == 'GET'):
-        query = text("SELECT m.itemid, i.name, m.itemamount FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id")
+        query = text("SELECT m.itemid, i.name, m.itemamount FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id  ORDER BY i.name ASC")
         try:
             results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
             data = []
-            print(results)
+            # print(results)
             for row in results:
                 item = {
                     'itemID' : row.itemid,
@@ -241,11 +253,11 @@ def get_menu_inventory(menu_id):
 #Needed to get all the inventory items that are not in the list of a menu item
 @app.route('/api/mijunc/outside/<menu_id>', methods=['GET'])
 def get_outside_menu_inventory(menu_id):
-    query = text("SELECT DISTINCT inv.id, inv.name FROM Inventory as inv WHERE inv.id NOT IN (SELECT i.id FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id);")
+    query = text("SELECT DISTINCT inv.id, inv.name FROM Inventory as inv WHERE inv.id NOT IN (SELECT i.id FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id) ORDER BY inv.name ASC")
     try:
         results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
         data = []
-        print(results)
+        # print(results)
         for row in results:
             item = {
                 'itemID' : row.id,
@@ -387,7 +399,7 @@ def sales_by_time():
 
     # Execute query with bound parameters
     result = db.session.execute(sql, {'start_time': start_time, 'end_time': end_time}).fetchall()
-    print(result)
+    # print(result)
 
     # Process result into a dictionary {menuID: frequency}
     
@@ -478,7 +490,7 @@ def order_history():
     """)
     
     result = db.session.execute(sql_stmt).fetchall()
-    print(result)
+    # print(result)
 
     # Use a dictionary to aggregate orders
     orders = defaultdict(lambda: {
@@ -526,7 +538,7 @@ def product_usage_report():
                         + "GROUP BY I.name;")
     
     result = db.session.execute(sql_stmt, {'start_time': start_time, 'end_time': end_time}).fetchall()
-    print(result)
+    # print(result)
 
     total_amount = sum(row[1] for row in result)
 
@@ -599,7 +611,7 @@ class Language:
 # target_lang = Language('English', 'EN')
 
 @app.route('/api/translate', methods=['POST', 'GET'])
-def translate_text():
+def translate_route():
     if request.method == 'GET':
         data = []
         for lang in translator.get_source_languages():
@@ -612,14 +624,19 @@ def translate_text():
     elif request.method == 'POST':
         try:
             data = request.get_json()
-            text = data['text']
-            res_lang = data['target_language']
-            # res_lang = target_lang.getCode()
-            if res_lang == 'EN':
-                res_lang = 'EN-US'
-            transformed_text = translator.translate_text(text=text, target_lang=res_lang)
-            print("Transformed Text", transformed_text.text, res_lang)
-            return jsonify({'translated_text': transformed_text.text}), 200
+            if isinstance(data['text'], list):
+                texts = data['text']
+                res_lang = data['target_language']
+                if res_lang == 'EN':
+                    res_lang = 'EN-US'
+                transformed_text = translator.translate_text(text=texts, target_lang=res_lang)
+                return jsonify({'translated_text': transformed_text.text}), 200
+            else:
+                text = data['text']
+                res_lang = data['target_language']
+                transformed_text = translator.translate_text(text=text, target_lang=res_lang)
+                print("Transformed Text", transformed_text.text, res_lang)
+                return jsonify({'translated_text': transformed_text.text}), 200
         except Exception as e:
             print("Bad Request", e)
             return jsonify({'error': 'Translation failed'}), 404
@@ -632,4 +649,4 @@ def translate_text():
 #     return jsonify({'message': 'Language set successfully'})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

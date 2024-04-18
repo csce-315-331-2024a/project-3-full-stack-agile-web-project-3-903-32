@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TranslateText } from "../components/Translate";
+import { TranslateText, LanguageContext } from "../components/Translate";
 
 
 const Customer = () => {
@@ -8,6 +8,7 @@ const Customer = () => {
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
+    const selectedLanguage = useContext(LanguageContext);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,17 +19,18 @@ const Customer = () => {
 
     useEffect(() => {
         getMenu();
+
         if (location.state) {
             const { orderBack, totalBack, itemIdsBack } = location.state;
             setOrder(orderBack);
             setTotal(totalBack);
             setItemIds(itemIdsBack);
         }
-    }, [location.state]);
+    }, [location.state, selectedLanguage]);
 
     async function getMenu() {
         try {
-            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/menu?translate=${selectedLanguage}`, {
                 method: "GET",
                 mode: 'cors'
             });
@@ -45,7 +47,7 @@ const Customer = () => {
 
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-      }
+    }
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
@@ -151,7 +153,7 @@ const Customer = () => {
                         buttons.map((button, index) => (
                             <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
                                 <span style={itemNameStyle}>
-                                    <TranslateText text={button.itemName}/>
+                                    {button.itemName}
                                 </span>
                                 <span style={itemPriceStyle}>
                                     ${button.price}
