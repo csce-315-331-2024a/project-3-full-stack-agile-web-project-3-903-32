@@ -116,13 +116,13 @@ const CustomerPayment = () => {
             />
             <div className="flex justify-center mt-6 space-x-4">
                 {showEmptyMessage && <div className="text-red-500">Order is empty</div>}
-                <button tabIndex={2} onClick={showConfirmationModal} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                <button tabIndex={2} onClick={showConfirmationModal} className="bg-blue-400 text-black px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
                 <TranslateText text='Submit Payment'/>
                 </button>
                 <button tabIndex={3} onClick={toCustomerBack} className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
                 <TranslateText text='Back'/>
                 </button>
-                <button tabIndex={4} onClick={toCustomerCancel} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                <button tabIndex={4} onClick={toCustomerCancel} className="bg-red-500 text-black px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
                 <TranslateText text='Clear Order'/>
                 </button>
             </div>
