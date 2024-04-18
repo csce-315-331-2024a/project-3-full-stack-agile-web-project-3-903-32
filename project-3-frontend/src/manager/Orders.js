@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar'; 
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarManager';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -122,7 +122,7 @@ const Orders = () => {
                     <td className="p-4 text-base text-gray-700">
                       <button
                         type="button"
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700"
                         onClick={() => deleteOrder(order.orderID)}
                       >
                         Delete

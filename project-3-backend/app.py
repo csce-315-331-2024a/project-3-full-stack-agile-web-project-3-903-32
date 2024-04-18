@@ -47,7 +47,7 @@ def get_menu_items():
         results = db.session.execute(query).fetchall() 
         if results:
             data = []
-            if request.args.get("translate") != 'EN':
+            if 'translate' in request.args and request.args.get("translate") != 'EN':
                 texts = []
                 for row in results:
                     texts.append(str(row[1]))
