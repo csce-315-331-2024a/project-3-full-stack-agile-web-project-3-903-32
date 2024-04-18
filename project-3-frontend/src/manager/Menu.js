@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarManager';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -307,13 +307,13 @@ const Menu = () => {
         <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
         <label htmlFor='item_price'>Menu Price:</label>
         <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_price' defaultValue={menuPrice} />
-        <button onClick={handleCloseModal}>Close</button>
+        <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px]'/></button>
       </div>
       <div className='mx-4 flex justify-between'>
-        <button className='rounded border-2 p-2 hover:bg-green-100 border-green-600 text-green-600' id='button_save_menu' onClick={handleSaveMenu}>Save New Name and Price</button>
+        <button className='rounded border-2 p-2 hover:bg-green-100 border-green-900 text-green-900' id='button_save_menu' onClick={handleSaveMenu}>Save New Name and Price</button>
         <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700' onClick={handleDeleteMenu}>{confirmDelete ? "Confirm" : "Delete Menu Item"}</button>
       </div>
-      <h1 className='text-center font-bold'>Menu Ingredients</h1>
+      <h1 className='text-center font-bold border-t-2 border-gray-500 mt-6 pt-6'>Menu Ingredients</h1>
       <table>
         <thead>
           <tr className='text-left'>
@@ -326,9 +326,9 @@ const Menu = () => {
           {
             itemInventoryList.map((item, index) => (
               <tr key={index}>
-                <td className='py-1'>{item.itemName}</td>
-                <td><input className='px-2 bg-gray-200 rounded' type="number" name='editItemAmount' defaultValue={item.itemAmount} onKeyDown={e => handleChangeAmount(index, e)} /></td>
-                <td><button id={index} onClick={handleDeleteItem}>Remove</button></td>
+                <td className='py-1'><label htmlFor={item.itemName}>{item.itemName}</label></td>
+                <td><input className='px-2 bg-gray-200 rounded' id={item.itemName} type="number" name='editItemAmount' defaultValue={item.itemAmount} onKeyDown={e => handleChangeAmount(index, e)} /></td>
+                <td><button id={index} onClick={handleDeleteItem} className='text-red-600'>Remove</button></td>
               </tr>
             ))
           }
