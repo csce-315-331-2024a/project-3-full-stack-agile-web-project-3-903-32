@@ -38,7 +38,8 @@ const ProductUsage = () => {
   const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL + `/api/product_usage?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
+    if(startTime && endTime){
+      fetch(process.env.REACT_APP_BACKEND_URL + `/api/product_usage?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
       .then(response => response.json())
       .then(data => {
         const formattedData = Object.keys(data).map(key => ({
@@ -51,6 +52,8 @@ const ProductUsage = () => {
       .catch(error => {
         console.error('Error fetching product usage data:', error);
       });
+    }
+    
   }, [startTime, endTime]);
 
   return (
