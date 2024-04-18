@@ -4,16 +4,16 @@ const NavComponent = ( props ) => {
   return (
     <div className='px-2 mt-12'>
       <NavLink
-              to={props.to}
-              className={({ isActive }) =>
-                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-opacity-70 ${
-                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
-                }`
-              }
-            >
-              {props.text}
-            </NavLink>
-      </div>
+        to={props.to}
+          className={({ isActive }) =>
+            `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-opacity-70 ${
+              isActive ? 'bg-red-300 dark:bg-red-900' : ''
+            }`
+          }
+        >
+          {props.text}
+      </NavLink>
+    </div>
   )
 }
 
@@ -31,6 +31,9 @@ const Sidebar = () => {
 
       {/* Orders */}
       <NavComponent to="/manager/orders" text='Orders'/>
+
+      {/* Menu Board */}
+      <NavComponent to="/Customer/StaticMenu" text='Menu Board'/>
     </aside>
   );
 };

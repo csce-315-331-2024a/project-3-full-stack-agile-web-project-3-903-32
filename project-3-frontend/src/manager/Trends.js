@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarManager';
 import ExcessReport from '../components/ExcessReport';
 import SalesReport from '../components/SalesReport';
 import ProductUsage from '../components/ProductUsage';

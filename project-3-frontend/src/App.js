@@ -4,9 +4,10 @@ import { GoogleLogin } from "@react-oauth/google"
 import { gapi } from 'gapi-script';
 import { jwtDecode } from "jwt-decode";
 
+import videoBG from "./imgs/Background.mp4";
+import cheeseburgerImg from "./imgs/cheeseburger.png";
+
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
-
-
 
 function App() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ function App() {
     const passwordInt = parseInt(password);
     if (passwords[passwordInt] === username){
       console.log("Successful Login");
-      if(passwordInt == 0 || passwordInt == 2){
+      if(passwordInt === 0 || passwordInt === 2){
         navigate('/manager');
       } else {
         navigate('/cashier')
@@ -75,60 +76,43 @@ function App() {
     navigate('/customer');
   }
 
-
-
   return (
-    <div className="flex flex-col items-center min-h-screen relative"> {/* Add min-h-screen and relative */}
-      <h1 className="bg-red-900 text-white p-10 text-center text-9xl mb-8">Rev's American Grill</h1>
-      <div className="bg-gray-200 p-4 rounded-lg mb-4">
-        <input 
-          className="bg-white border border-gray-300 rounded px-4 py-2 mb-2" 
-          type="text" 
-          placeholder="Enter your username" 
-          value={username} 
-          onChange={handleUsernameChange} 
-        />
-        <input 
-          className="bg-white border border-gray-300 rounded px-4 py-2" 
-          type="password" 
-          placeholder="Enter your password" 
-          value={password} 
-          onChange={handlePasswordChange} 
+    <div className="relative min-h-screen flex flex-col justify-between">
+      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-60" src={videoBG}></video>
+      <div className="flex flex-col items-center justify-center z-10">
+        <h1 className="text-white p-10 text-center text-9xl mb-8" style={{ backgroundColor: 'rgba(139, 0, 0, .8)', width: '100%', marginBottom: 0 }}>Rev's American Grill</h1>
+        <div className="flex items-center justify-center flex-col"> {/* Modified this line */}
+          <div className="flex items-center mb-4"> {/* Added a div to contain the cheeseburger image and button */}
+            <img src={cheeseburgerImg} alt="Cheeseburger" className="w-40 h-auto mr-4" /> {/* Modified this line */}
+            <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={loginCustomer} style={{ fontSize: '2rem' }}>Order Now!</button> {/* Modified this line */}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center justify-center z-10">
+          <div className="bg-white rounded">
+            <h1 className="text-black p-2 mb-2">Employee login:</h1>
+          </div>
+        </div>
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            const decoded = jwtDecode(credentialResponse?.credential);
+            console.log(decoded.email);
+            if (decoded.email === "csce315manager@gmail.com") {
+              loginManager();
+            } else if (decoded.email === "csce315cashier@gmail.com") {
+              loginCashier();
+            } else {
+              loginCustomer();
+            }
+          }}
+          onError={(error) => {
+            console.error("Google login failed:", error);
+          }}
         />
       </div>
-      <button 
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-        onClick={handleLogin}
-      >
-        Login
-      </button>
-      <GoogleLogin
-        className="mt-4"
-        onSuccess={(credentialResponse) => {
-          const decoded = jwtDecode(credentialResponse?.credential);
-          console.log(decoded.email);
-          if (decoded.email == "csce315manager@gmail.com"){
-            loginManager();
-          } else if (decoded.email == "csce315cashier@gmail.com"){
-            loginCashier();
-          } else {
-            loginCustomer();
-          }
-        }}
-        onError={(error) => {
-          console.error("Google login failed:", error);
-        }}
-      />
-      <button 
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute bottom-0 mb-4"
-        onClick={loginMenu}
-      >
-        Menu
-      </button>
     </div>
   );
-  
-  
 }
 
 export default App;

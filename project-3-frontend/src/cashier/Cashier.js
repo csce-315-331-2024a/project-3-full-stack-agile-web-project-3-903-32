@@ -170,7 +170,8 @@ const Cashier = () => {
                 <div className="flex-col w-1/2">
                     <h1 className="text-6xl font-semibold mb-4">Menu</h1>
                     <div>
-                        <div className="w-[740px] h-[470px] bg-white rounded-lg overflow-auto text-black">
+
+                        <div className="w-[740px] h-[470px] p-4 bg-white rounded-lg overflow-auto text-black">
                             {loading ? ( // Render loading state
                                 <p>Loading...</p>
                             ) : (
@@ -180,6 +181,7 @@ const Cashier = () => {
                                             <div key={index} className="w-1/4">
                                                 <button onClick={() => addToOrder(button)} className="w-full">
                                                     <div className="h-[130px] flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 hover:bg-gray-300 rounded m-2 font-semibold">
+
                                                         {button.itemName}
                                                         <span>${button.price}</span>
                                                     </div>
@@ -235,6 +237,7 @@ const Cashier = () => {
                     <div className="text-4xl font-semibold mt-4">
                         <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
                         <button onClick={handlePaymentClick} className='w-full mt-2 overflow-y-auto py-4 px-8 bg-gray-50 hover:bg-gray-300 rounded-lg text-2xl text-black'>Go to Payment</button>
+
                     </div>
                 </div>
             </div>

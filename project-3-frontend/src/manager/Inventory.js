@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarManager';
 
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -70,6 +70,11 @@ const Inventory = () => {
     }
   }
 
+  function handleShortage(event) {
+    document.querySelector('select[name=restock_selector]').value = event.target.innerText.split('(')[0].slice(0, -1);
+    console.log(document.querySelector('input[name=restock_input]').value = event.target.innerText.split('(')[1].split(' ')[2].slice(0, -1));
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <Navbar /> 
@@ -119,13 +124,13 @@ const Inventory = () => {
               <div className="bg-white p-6 border-b border-gray-200"> {/* Restock form container */}
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">Restock Inventory</h2>
                 <form onSubmit={restockInventory} className="space-y-4">
-                  <select required name='restock_selector' className="w-full p-2 border border-gray-300 rounded">
+                  <label for="item"><select required name='restock_selector' className="w-full p-2 border border-gray-300 rounded">
                     {inventoryItems.map((item) => (
                       <option key={item.name} value={item.name}>{item.name}</option>
                     ))}
-                  </select>
-                  <input required type="number" placeholder='Amount' name='restock_input' className="w-full p-2 border border-gray-300 rounded" />
-                  <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Restock</button>
+                  </select></label>
+                  <label for="amount"><input required type="number" placeholder='Amount' name='restock_input' className="w-full p-2 border border-gray-300 rounded" /></label>
+                  <button type="submit" className="w-full p-2 bg-blue-700 text-white rounded hover:bg-blue-600">Restock</button>
                 </form>
               </div>
               <div className="bg-white p-6 border-b border-gray-200"> {/* Shortage items container */}
@@ -134,7 +139,9 @@ const Inventory = () => {
                   {shortageItems.length > 0 ? (
                     shortageItems.map((item) => (
                       <li key={item.name} className="p-2 bg-red-100 border border-red-200 rounded">
-                        {item.name} (Short by {item.minimum - item.stock})
+                        <button className='w-full h-full text-left' onClick={handleShortage}>
+                          {item.name} (Short by {item.minimum - item.stock})
+                        </button>
                       </li>
                     ))
                   ) : (
