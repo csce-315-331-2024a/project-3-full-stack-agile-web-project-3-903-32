@@ -57,12 +57,6 @@ const StaticMenu = () => {
                 <h2 className="text-lg font-semibold mb-2 ">{item.itemName}</h2>
                 <p className="text-black absolute bottom-0 right-0 mr-4">${item.price}</p>
               </div>
-              {(index+1) % 25 === 0 && <hr className="border-t-2 border-black mt-4" />}
-              {(index+1) % 26 === 0 && <hr className="border-t-2 border-black mt-4" />}
-              {(index+1) % 27 === 0 && <hr className="border-t-2 border-black mt-4" />}
-              {(index+1) % 24 === 0 && <hr className="border-t-2 border-black mt-4" />}
-
-
             </div>
           ))}
         </div>
