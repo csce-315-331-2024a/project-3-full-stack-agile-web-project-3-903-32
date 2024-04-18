@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TranslateText, LanguageContext } from "../components/Translate";
-
+import Navbar from "../components/NavbarCustomer";
 
 const Customer = () => {
     const Category = {
