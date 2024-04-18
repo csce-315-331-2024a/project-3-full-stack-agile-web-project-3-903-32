@@ -103,12 +103,13 @@ const CustomerPayment = () => {
                 )}
                 <h3 className="text-lg font-semibold text-right mt-4"><TranslateText text='Total:'/> ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
             </div>
-            <label id="customer_name" htmlFor="customer_name" className='text-white text-2xl'> Customer's Name: </label>
+            <label htmlFor="customer_name" className='text-black font-semibold text-2xl'> Customer's Name</label>
             <input 
                 className="w-full mr-4 mb-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded text-2xl"
                 type="text"
                 tabIndex={1}
-                name="customer_name"
+                id="customer_name"
+                placeholder='Enter your name here...'
                 aria-labelledby='customer_name'
                 value={name}
                 onChange={changeName}
