@@ -72,6 +72,23 @@ const Sidebar = () => {
           </li>
         </ul>
       </div>
+      {/* Static Menu */}
+      <div> 
+        <ul className="space-y-2">
+          <li>
+            <NavLink
+              to="/Customer/StaticMenu"
+              className={({ isActive }) =>
+                `mb-6 overflow-y-auto py-4 px-4 bg-gray-50 rounded dark:bg-gray-800 block p-1 text-base font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                  isActive ? 'bg-red-300 dark:bg-red-900' : ''
+                }`
+              }
+            >
+              Static Menu
+            </NavLink>
+          </li>
+        </ul>
+      </div>
     </aside>
   );
 };
