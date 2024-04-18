@@ -122,7 +122,7 @@ const Orders = () => {
                     <td className="p-4 text-base text-gray-700">
                       <button
                         type="button"
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700"
                         onClick={() => deleteOrder(order.orderID)}
                       >
                         Delete

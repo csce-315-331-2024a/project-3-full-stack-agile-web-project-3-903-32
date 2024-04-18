@@ -124,13 +124,13 @@ const Inventory = () => {
               <div className="bg-white p-6 border-b border-gray-200"> {/* Restock form container */}
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">Restock Inventory</h2>
                 <form onSubmit={restockInventory} className="space-y-4">
-                  <select required name='restock_selector' className="w-full p-2 border border-gray-300 rounded">
+                  <label for="item"><select required name='restock_selector' className="w-full p-2 border border-gray-300 rounded">
                     {inventoryItems.map((item) => (
                       <option key={item.name} value={item.name}>{item.name}</option>
                     ))}
-                  </select>
-                  <input required type="number" placeholder='Amount' name='restock_input' className="w-full p-2 border border-gray-300 rounded" />
-                  <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Restock</button>
+                  </select></label>
+                  <label for="amount"><input required type="number" placeholder='Amount' name='restock_input' className="w-full p-2 border border-gray-300 rounded" /></label>
+                  <button type="submit" className="w-full p-2 bg-blue-700 text-white rounded hover:bg-blue-600">Restock</button>
                 </form>
               </div>
               <div className="bg-white p-6 border-b border-gray-200"> {/* Shortage items container */}

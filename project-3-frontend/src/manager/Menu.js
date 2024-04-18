@@ -391,15 +391,15 @@ const Menu = () => {
                 <tr key={index} className="bg-white border-b">
                   <td className="p-4 text-base text-gray-700 w-1/2">{item.itemName}</td>
                   <td className="p-4 text-base text-gray-700 w-1/3">${item.price}</td>
-                  <td className="p-4 text-base text-gray-700"><button id={index} className='text-blue-600 hover:text-blue-900' onClick={handleEditItem}>Edit</button></td>
+                  <td className="p-4 text-base text-gray-700"><button id={index} className='text-blue-700 hover:text-blue-900' onClick={handleEditItem}>Edit</button></td>
                 </tr>
               ))}
               {
                 addMenuModal ?
                   <AddMenuModal /> :
                   <tr key={-1} className="bg-white border-b" onClick={() => setAddMenuModal(true)}>
-                    <td className="text-right text-base border-gray-700 border-dotted border-2 border-r-0"><button className='p-4'>+</button></td>
-                    <td className="border-gray-700 border-dotted border-2 border-x-0 text-gray-700"><button className='text-2xl p-4 w-full'></button></td>
+                    <td className="text-right text-base border-gray-700 border-dotted border-2 border-r-0"><button className='p-4' value='blank'>+</button></td>
+                    <td className="border-gray-700 border-dotted border-2 border-x-0 text-gray-700"><button className='text-2xl p-4 w-full' value='append element'></button></td>
                     <td className="border-gray-700 border-dotted border-2 border-l-0"><button className='p-4'></button></td>
                   </tr>
               }
