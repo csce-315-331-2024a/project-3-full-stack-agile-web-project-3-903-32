@@ -4,11 +4,25 @@ import { TranslateText, LanguageContext } from "../components/Translate";
 
 
 const Customer = () => {
+    const Category = {
+        ValueMeals: "Value Meals",
+        LimitedTimeOffers: "Limited Time Offers",
+        Burgers: "Burgers",
+        Sandwiches: "Sandwiches",
+        Salads: "Salads",
+        ShakesAndMore: "Shakes&More",
+        Appetizers: "Appetizers",
+        Beverages: "Beverages",
+        null: null
+    };
+
     const [buttons, setButtons] = useState([]);
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
     const selectedLanguage = useContext(LanguageContext);
+    const [selectedCategory, setSelectedCategory] = useState(Category.null);
+    const [invertButton, setInvertButton] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -53,7 +67,7 @@ const Customer = () => {
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
             setTotal((total) => round(total + price, 2));
-            setItemIds((itemIds) => [...itemIds, item.id]); 
+            setItemIds((itemIds) => [...itemIds, item.id]);
             setOrder((order) => {
                 const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
                 if (existIndex > -1) {
@@ -65,7 +79,7 @@ const Customer = () => {
                 } else {
                     return [...order, { ...item, price, quantity: 1 }];
                 }
-            });  
+            });
         } else {
             console.error('item.price is not a valid number', item);
         }
@@ -76,9 +90,9 @@ const Customer = () => {
             const item = order[index];
             if (item) {
                 const price = parseFloat(item.price);
-                if (!isNaN(price)) { 
+                if (!isNaN(price)) {
                     setTotal((total) => round(total - price, 2));
-                    
+
                     setOrder((order) => {
                         if (item.quantity > 1) {
                             return order.map((orderItem, idx) =>
@@ -102,7 +116,7 @@ const Customer = () => {
                             }
                         }
                         return itemIds;
-                    });            
+                    });
                 } else {
                     console.error('item.price is not a valid number', item);
                 }
@@ -124,31 +138,71 @@ const Customer = () => {
 
     const menuItemStyle = {
         flexGrow: 1,
-        flexBasis: 'calc(33.3333% - 10px)', 
+        flexBasis: 'calc(33.3333% - 10px)',
         padding: '10px',
         backgroundColor: '#f0f0f0',
         border: '1px solid #ddd',
         cursor: 'pointer',
         display: 'flex',
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
+        alignItems: 'center',
+        justifyContent: 'space-between',
         marginBottom: '10px',
     };
-    
+
     const itemNameStyle = {
-        wordWrap: 'break-word', 
-        maxWidth: '70%', 
+        wordWrap: 'break-word',
+        maxWidth: '70%',
         marginRight: 'auto',
     };
 
     const itemPriceStyle = {
-        marginLeft: '10px', 
+        marginLeft: '10px',
     };
 
+    const invertColor = {
+        filter : 'invert(1)'
+    };
+
+    const MenuSideBar = () => {
+        const images = {
+            "Value Meals": "https://via.placeholder.com/150",
+            "Limited Time Offers": "https://via.placeholder.com/150",
+            "Burgers": "https://via.placeholder.com/150",
+            "Sandwiches": "https://via.placeholder.com/150",
+            "Salads": "https://via.placeholder.com/150",
+            "Shakes&More": "https://via.placeholder.com/150",
+            "Appetizers": "https://via.placeholder.com/150",
+            "Beverages": "https://via.placeholder.com/150"
+        };
+        const categories = [Category.ValueMeals, Category.LimitedTimeOffers, Category.Burgers, Category.Sandwiches, Category.Salads, Category.ShakesAndMore, Category.Appetizers, Category.Beverages];
+        const sidebarButton = (props) => {
+            return (
+                <button className="bg-placeholder h-[12.5%] w-full" onClick={()=> setSelectedCategory(props.Category) }>
+                    {/* <img src={props.img} alt="No Image" /> */}
+                    <p>{props.category}</p>
+                </button>
+            )
+        }
+        return (
+            <div className="w-1/6 flex flex-col h-full">
+                {categories.map((category) => {
+                    return sidebarButton({ img: images[category], category: category });
+                })
+                }
+            </div>
+        );
+    }
+
     return (
-        <div style={{ display: 'flex', padding: '20px' }}>
-            <div style={{ width: '80%', marginRight: '20px' }}>
-                <div style={menuRowStyle}>
+        <div className="flex w-screen h-screen" id="MenuContainer" >
+            <MenuSideBar />
+            {/* <button onClick={()=> {
+                document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+                setInvertButton(!invertButton)
+            }}>INVERT</button> */}
+            <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6">
+                </div>
+                {/* <div style={menuRowStyle}>
                     {buttons.length > 0 ? (
                         buttons.map((button, index) => (
                             <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
@@ -163,34 +217,33 @@ const Customer = () => {
                     ) : (
                         <p> <TranslateText text='Loading...' /></p>
                     )}
-                </div>
-            </div>
+                </div> */}
             <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
-                <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List'/></h2>
+                <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List' /></h2>
                 <div className="divide-y divide-gray-200">
                     {order.length > 0 ? (
-                    order.map((item, index) => (
-                        <div key={item.id} className="py-4 flex justify-between items-center">
-                            <div>
-                                <p className="text-gray-800"><TranslateText text={item.itemName}/></p>
-                                <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                        order.map((item, index) => (
+                            <div key={item.id} className="py-4 flex justify-between items-center">
+                                <div>
+                                    <p className="text-gray-800"><TranslateText text={item.itemName} /></p>
+                                    <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <button
+                                        onClick={() => addToOrder(item)}
+                                        className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
+                                    >
+                                        +
+                                    </button>
+                                    <button
+                                        onClick={() => removeFromOrder(index)}
+                                        className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                    >
+                                        -
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex items-center">
-                                <button
-                                    onClick={() => addToOrder(item)}
-                                    className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
-                                >
-                                    +
-                                </button>
-                                <button
-                                    onClick={() => removeFromOrder(index)}
-                                    className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
-                                >
-                                    -
-                                </button>
-                            </div>
-                        </div>
-                    ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.'/></p>)}
+                        ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.' /></p>)}
                 </div>
                 <div className="mt-6 pt-4 border-t border-gray-200">
                     <div className="flex justify-between items-center">
@@ -203,7 +256,7 @@ const Customer = () => {
                         onClick={handlePaymentClick}
                         className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
                     >
-                        <TranslateText text='Go to Payment'/>
+                        <TranslateText text='Go to Payment' />
                     </button>
                 </div>
             </div>
