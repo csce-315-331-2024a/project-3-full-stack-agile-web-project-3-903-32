@@ -6,15 +6,15 @@ import Modal from "../components/ModalCustomer";
 
 const Customer = () => {
     const Category = {
-        ValueMeals: "Value Meals",
-        LimitedTimeOffers: "Limited Time Offers",
-        Burgers: "Burgers",
-        Sandwiches: "Sandwiches",
-        Salads: "Salads",
-        ShakesAndMore: "Shakes&More",
-        Appetizers: "Appetizers",
-        Beverages: "Beverages",
-        null: null
+        "null": null,
+        "ValueMeals": ["Black Bean Burger", "Bacon Cheeseburger", "Gig Em Patty Melt", "Cheeseburger", "Classic Hamburger"],
+        "LimitedTimeOffers": "Limited Time Offers",
+        "Burgers": "Burgers",
+        "Sandwiches": ["Aggie Chicken Club", "Spicy Chicken Sandwich", "Revs Grilled Chicken Sandwich", "Chicken Sandwich"],
+        "Salads": "Salads",
+        "ShakesAndMore": "Shakes&More",
+        "Appetizers": "Appetizers",
+        "Beverages": "Beverages",
     };
 
     const [buttons, setButtons] = useState([]);
@@ -189,21 +189,10 @@ const Customer = () => {
     };
 
     const MenuSideBar = () => {
-        const images = {
-            "Value Meals": "https://via.placeholder.com/150",
-            "Limited Time Offers": "https://via.placeholder.com/150",
-            "Burgers": "https://via.placeholder.com/150",
-            "Sandwiches": "https://via.placeholder.com/150",
-            "Salads": "https://via.placeholder.com/150",
-            "Shakes&More": "https://via.placeholder.com/150",
-            "Appetizers": "https://via.placeholder.com/150",
-            "Beverages": "https://via.placeholder.com/150"
-        };
-        const categories = [Category.ValueMeals, Category.LimitedTimeOffers, Category.Burgers, Category.Sandwiches, Category.Salads, Category.ShakesAndMore, Category.Appetizers, Category.Beverages];
+        const categories = Object.keys(Category);
         const sidebarButton = (props) => {
             return (
-                <button className="bg-placeholder h-[12.5%] w-full" onClick={()=> setSelectedCategory(props.Category) }>
-                    {/* <img src={props.img} alt="No Image" /> */}
+                <button className="bg-placeholder h-[12.5%] w-full " onClick={()=> setSelectedCategory(props.Category) }>
                     <p>{props.category}</p>
                 </button>
             )
@@ -211,7 +200,7 @@ const Customer = () => {
         return (
             <div className="w-1/6 flex flex-col h-full">
                 {categories.map((category) => {
-                    return sidebarButton({ img: images[category], category: category });
+                    return sidebarButton({ category: category });
                 })
                 }
             </div>
