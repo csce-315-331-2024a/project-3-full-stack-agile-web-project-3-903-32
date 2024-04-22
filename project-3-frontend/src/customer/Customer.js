@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TranslateText, LanguageContext } from "../components/Translate";
 import Navbar from "../components/NavbarCustomer";
+import Modal from "../components/ModalCustomer";
 
 const Customer = () => {
     const Category = {
@@ -20,15 +21,24 @@ const Customer = () => {
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [inventoryData, setInventoryData] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+
     const selectedLanguage = useContext(LanguageContext);
     const [selectedCategory, setSelectedCategory] = useState(Category.null);
     const [invertButton, setInvertButton] = useState(false);
-
+    
     const navigate = useNavigate();
     const location = useLocation();
 
     const handlePaymentClick = () => {
         navigate('/customer/payment', { state: { order, total, itemIds } });
+    };
+
+    const handleViewIngredients = (item) => {
+        getMenuInventory(item.id);
+        setSelectedItem(item);
     };
 
     useEffect(() => {
@@ -58,6 +68,21 @@ const Customer = () => {
             console.error('Error fetching menu:', error);
         }
     }
+
+    const getMenuInventory = async (menuId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/mijunc/${menuId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setInventoryData(data);
+                setModalOpen(true);
+            } else {
+                console.error('Failed to fetch inventory:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+        }
+    };
 
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
@@ -192,7 +217,6 @@ const Customer = () => {
             </div>
         );
     }
-
     return (
         <div className="flex w-screen h-screen" id="MenuContainer" >
             <MenuSideBar />
@@ -205,14 +229,19 @@ const Customer = () => {
                 {/* <div style={menuRowStyle}>
                     {buttons.length > 0 ? (
                         buttons.map((button, index) => (
-                            <div key={index} style={menuItemStyle} onClick={() => addToOrder(button)}>
-                                <span style={itemNameStyle}>
-                                    {button.itemName}
-                                </span>
-                                <span style={itemPriceStyle}>
-                                    ${button.price}
-                                </span>
-                            </div>
+                            <div style={menuItemStyle}>
+                                <div key={index} onClick={() => addToOrder(button)}>
+                                    <span style={itemNameStyle}>
+                                        {button.itemName}
+                                    </span>
+                                    <span style={itemPriceStyle}>
+                                        ${button.price}
+                                    </span>
+                                </div>
+                                <button onClick={() => handleViewIngredients(button)} style={{ marginLeft: '10px' }}>
+                                    View Ingredients
+                                </button>
+                            </div>     
                         ))
                     ) : (
                         <p> <TranslateText text='Loading...' /></p>
@@ -259,6 +288,16 @@ const Customer = () => {
                         <TranslateText text='Go to Payment' />
                     </button>
                 </div>
+                <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+                    <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
+                    {inventoryData.length > 0 ? (
+                        inventoryData.map(item => (
+                            <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
+                        ))
+                    ) : (
+                        <p>Loading inventory...</p>
+                    )}
+                </Modal>
             </div>
         </div>
     );
