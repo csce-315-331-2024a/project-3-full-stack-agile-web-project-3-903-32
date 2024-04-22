@@ -56,7 +56,8 @@ def get_menu_items():
                     item = {
                         'id' : row[0],
                         'itemName' : names[i].text,
-                        'price' : row[2]
+                        'price' : row[2],
+                        'category' : row[3]
                     }
                     data.append(item)
             else:
@@ -64,7 +65,8 @@ def get_menu_items():
                     item = {
                         'id' : row[0],
                         'itemName' : row[1],
-                        'price' : row[2]
+                        'price' : row[2],
+                        'category' : row[3]
                     }
                     data.append(item)
             return jsonify(data)
