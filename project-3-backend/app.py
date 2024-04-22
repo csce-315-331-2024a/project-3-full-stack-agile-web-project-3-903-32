@@ -75,10 +75,29 @@ def get_menu_items():
     elif request.method == 'POST':
         data = request.get_json()
         res = db.session.execute(text("SELECT MAX(id) FROM Menu")).fetchone()[0] + 1
-        query = text("INSERT INTO menu (id, itemname, price) VALUES (:id, :itemName, :price);")
-        db.session.execute(query, {'id': res, 'itemName': data['itemName'], 'price': data['price']})
+        query = text("INSERT INTO menu (id, itemname, price) VALUES (:id, :itemName, :price, :category);")
+        db.session.execute(query, {'id': res, 'itemName': data['itemName'], 'price': data['price'], 'category': data['category']})
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
+
+@app.route('/api/menu/category', methods=['GET'])
+def get_menu_category():
+    if request.method == 'GET':
+        try:
+            data = get_category_types()
+            return jsonify(data)    
+        except:
+            return jsonify({'error': 'No data found'}), 404
+
+def get_category_types():
+    query = text("SELECT enumlabel FROM pg_enum ORDER BY enumlabel ASC")
+    results = db.session.execute(query).fetchall()
+    if not results:
+        raise Exception('No data found')
+    data = []
+    for row in results:
+        data.append(row[0])
+    return data
     
 @app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
 def get_menu_item(menu_id):
