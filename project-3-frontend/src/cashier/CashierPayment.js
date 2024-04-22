@@ -129,7 +129,7 @@ const CashierPayment = () => {
                 {showEmptyMessage ? (
                     <div className='text-white text-2xl'>Empty Order</div>
                 ) : (
-                    <button onClick={toCashierSubmit} disabled={order.length === 0 || paymentSubmitted || loading} className={`w-full overflow-y-auto py-2 my-2 rounded text-2xl ${order.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-50'}`}>
+                    <button onClick={toCashierSubmit} disabled={order.length === 0 || paymentSubmitted || loading} className={`w-full overflow-y-auto py-2 my-2 rounded text-2xl ${order.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-gray-300'}`}>
                         {loading ? ( // Show loading spinner when loading is true
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <ThreeDots type="ThreeDots" color="#000000" height={30} width={30} />
@@ -139,8 +139,8 @@ const CashierPayment = () => {
                         )}
                     </button>
                 )}
-                <button onClick={toCashierBack} className='w-full overflow-y-auto py-2 my-2 bg-gray-50 rounded text-2xl'>Back</button>
-                <button onClick={toCashierCancel} className='w-full overflow-y-auto py-2 my-2 bg-red-800 text-white rounded text-2xl'>Clear Order</button>
+                <button onClick={toCashierBack} className='w-full overflow-y-auto py-2 my-2 bg-gray-50 hover:bg-gray-300 rounded text-2xl'>Back</button>
+                <button onClick={toCashierCancel} className='w-full overflow-y-auto py-2 my-2 bg-red-600 hover:bg-red-800 text-white rounded text-2xl'>Clear Order</button>
             </div>
         </div>
     );

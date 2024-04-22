@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from "../components/NavbarCashier";
@@ -169,7 +170,8 @@ const Cashier = () => {
                 <div className="flex-col w-1/2">
                     <h1 className="text-6xl font-semibold mb-4">Menu</h1>
                     <div>
-                        <div className="p-4 bg-white rounded-lg overflow-auto text-black">
+
+                        <div className="w-[740px] h-[470px] p-4 bg-white rounded-lg overflow-auto text-black">
                             {loading ? ( // Render loading state
                                 <p>Loading...</p>
                             ) : (
@@ -178,7 +180,8 @@ const Cashier = () => {
                                         {group.map((button, index) => (
                                             <div key={index} className="w-1/4">
                                                 <button onClick={() => addToOrder(button)} className="w-full">
-                                                    <div className="h-[130px] flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 rounded m-2 font-semibold">
+                                                    <div className="h-[130px] flex flex-col justify-center p-2 border border-gray-300 bg-gray-200 hover:bg-gray-300 rounded m-2 font-semibold">
+
                                                         {button.itemName}
                                                         <span>${button.price}</span>
                                                     </div>
@@ -191,9 +194,9 @@ const Cashier = () => {
                         </div>
                         {buttonGroups.length > 3 && (
                             <div className="mt-4 flex justify-center text-black font-semibold text-2xl">
-                                <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-200 rounded-lg">&#60;</button>
-                                <p className="mx-2 px-8 py-4 bg-gray-200 rounded-lg ">{currentPage + 1}</p>
-                                <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-200 rounded-lg">&#62;</button>
+                                <button onClick={prevPage} className="mx-2 px-16 py-4 bg-gray-50 hover:bg-gray-300 rounded-lg">&#60;</button>
+                                <p className="mx-2 px-8 py-4 bg-gray-50 rounded-lg ">{currentPage + 1}</p>
+                                <button onClick={nextPage} className="mx-2 px-16 py- bg-gray-50 hover:bg-gray-300 rounded-lg">&#62;</button>
                             </div>
                         )}
                     </div>
@@ -233,7 +236,8 @@ const Cashier = () => {
                     </div>
                     <div className="text-4xl font-semibold mt-4">
                         <h3>Total: ${typeof total === 'number' ? total.toFixed(2) : '0.00'}</h3>
-                        <button onClick={handlePaymentClick} className='w-full mt-2 overflow-y-auto py-4 px-8 bg-gray-50 rounded-lg text-2xl text-black'>Go to Payment</button>
+                        <button onClick={handlePaymentClick} className='w-full mt-2 overflow-y-auto py-4 px-8 bg-gray-50 hover:bg-gray-300 rounded-lg text-2xl text-black'>Go to Payment</button>
+
                     </div>
                 </div>
             </div>

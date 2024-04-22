@@ -6,7 +6,8 @@ const SalesReport = () => {
   const [endTime,setEndTime] = useState('');
   
   useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL + `/api/sales_by_time?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
+    if(startTime && endTime){
+      fetch(process.env.REACT_APP_BACKEND_URL + `/api/sales_by_time?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
       .then(response => response.json())
       .then(data => {
         const formattedData = Object.keys(data).map(key => ({
@@ -19,6 +20,8 @@ const SalesReport = () => {
       .catch(error => {
         console.error('Error fetching product usage data:', error);
       });
+    }
+    
   }, [startTime, endTime]);
 
   return (
@@ -56,8 +59,8 @@ const SalesReport = () => {
           </thead>
 
           <tbody>
-          {salesData.map((item) => (
-              <tr key={item.menuID}>
+          {salesData.map((item,index) => (
+              <tr key={index}>
                 <td className="border border-gray-400 px-4 py-2 text-center">{item.id}</td>
                 <td className="border border-gray-400 px-4 py-2 text-center">{item.name}</td>
                 <td className="border border-gray-400 px-4 py-2 text-center">{item.amount}</td>
