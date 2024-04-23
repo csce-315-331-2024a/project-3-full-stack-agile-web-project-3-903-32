@@ -216,6 +216,10 @@ const Customer = () => {
         filter : 'invert(1)'
     };
 
+const imageMapping = {
+    'Burger' : '../imgs/cheeseburger.png'
+}
+
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
