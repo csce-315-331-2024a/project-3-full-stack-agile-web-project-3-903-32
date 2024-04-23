@@ -74,9 +74,8 @@ def get_menu_items():
             return jsonify({'error': 'No data found'}), 404
     elif request.method == 'POST':
         data = request.get_json()
-        res = db.session.execute(text("SELECT MAX(id) FROM Menu")).fetchone()[0] + 1
-        query = text("INSERT INTO menu (id, itemname, price) VALUES (:id, :itemName, :price, :category);")
-        db.session.execute(query, {'id': res, 'itemName': data['itemName'], 'price': data['price'], 'category': data['category']})
+        query = text("INSERT INTO menu (itemname, price, category) VALUES (:itemName, :price, :category);")
+        db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'category': data['category']})
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
 
@@ -104,8 +103,8 @@ def get_menu_item(menu_id):
     if request.method == 'PUT':
         data = request.get_json()
         # print(data)
-        query = text("UPDATE Menu SET itemName = :itemName, price = :price WHERE id = :id")
-        db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'id': menu_id})
+        query = text("UPDATE Menu SET itemName = :itemName, price = :price, category = :category WHERE id = :id")
+        db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'category': data['category'], 'id': menu_id})
         db.session.commit()
         return jsonify({'message': 'Menu item updated successfully'}), 200
     elif request.method == 'DELETE':

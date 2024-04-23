@@ -43,22 +43,26 @@ const ExcessReport = () => {
       </div>
       
       <div>
-        <table className="min-w-full border-collapse border border-gray-400">
-          <thead>
-            <tr>
-              <th className="border border-gray-400 bg-gray-100 px-4 py-2 text-center">Menu Item ID</th>
-              <th className="border border-gray-400 bg-gray-100 px-4 py-2 text-center">Menu Item Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {excessData.map((item) => (
-              <tr key={item.menuID}>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.menuID}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.menuName}</td>
+        {excessData.length > 0 ? (
+          <table className="min-w-full border-collapse border border-gray-400">
+            <thead>
+              <tr>
+                <th className="border border-gray-400 bg-gray-100 px-4 py-2 text-center">Menu Item ID</th>
+                <th className="border border-gray-400 bg-gray-100 px-4 py-2 text-center">Menu Item Name</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {excessData.map((item) => (
+                <tr key={item.menuID}>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.menuID}</td>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.menuName}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div>No menu item is exceeded for the selected time.</div>
+        )}
       </div>
     </div>
   );

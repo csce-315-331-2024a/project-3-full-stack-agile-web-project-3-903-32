@@ -91,7 +91,7 @@ const Orders = () => {
               onClick={() => setAscending(!ascending)}
               className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
             >
-              Sort by ID {ascending ? 'Ascending' : 'Descending'}
+              Sort by ID 
             </button>
 
             <label htmlFor ="start-time" className='ml-4'>
