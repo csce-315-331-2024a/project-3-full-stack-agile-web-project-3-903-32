@@ -43,14 +43,14 @@ function App() {
 
   const toggleVideoPlayback = () => {
     const video = videoRef.current;
-    if (video.paused) {
-      video.play();
-      setIsVideoPlaying(true);
+    if (isVideoPlaying) {
+      video.style.display = 'none'; // Hide the video
     } else {
-      video.pause();
-      setIsVideoPlaying(false);
+      video.style.display = 'block'; // Show the video
     }
+    setIsVideoPlaying(!isVideoPlaying); // Toggle the state
   };
+  
 
   const loginManager = () => {
     localStorage.setItem('isManagerLoggedIn', 'true');
@@ -108,7 +108,7 @@ function App() {
     className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute top-0 right-0 m-4" 
     onClick={toggleVideoPlayback} 
     style={{ zIndex: 9999 }}>
-    {isVideoPlaying ? 'Pause Video' : 'Play Video'}
+    {isVideoPlaying ? 'Low Mobility Mode Off' : 'Low Mobility Mode On'}
   </button>
 
       </div>
