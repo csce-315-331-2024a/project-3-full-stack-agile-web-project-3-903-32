@@ -1,6 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
+import { useNavigate } from 'react-router-dom';
+
+
+const isAuthenticatedManager = () => {
+  const isManager = localStorage.getItem("isManagerLoggedIn");
+  console.log(isManager);
+  return isManager;
+};
+
+const withManagerAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log("HERE");
+      if (isAuthenticatedManager() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a manager
+    return isAuthenticatedManager() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
+
+
+
 
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -79,7 +107,7 @@ const Inventory = () => {
     <div className="flex flex-col h-screen bg-gray-100">
       <Navbar /> 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar /> 
+        <Sidebar />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
           <div className="flex flex-col md:flex-row space-x-0 md:space-x-6">
             <div className="flex-1 bg-white p-6 border-b border-gray-200 mb-6"> {/* Inventory table container */}
@@ -157,4 +185,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default withManagerAuthentication(Inventory);

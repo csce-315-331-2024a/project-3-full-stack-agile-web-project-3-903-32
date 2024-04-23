@@ -26,7 +26,7 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between items-center p-5 bg-white border-b border-gray-200">
-      <div className="text-xl font-semibold text-gray-700">REV'S American Grill</div>
+      <h1><div className="text-xl font-semibold text-gray-700">REV'S American Grill</div></h1>
       <div className="flex items-center">
         <NavComponent to="/manager" text='Manager' />
         <NavComponent to="/cashier" text='Cashier' />
@@ -36,7 +36,7 @@ const Navbar = () => {
       <div className="flex items-center">
         <button
           onClick={handleLogoutClick}
-          className="text-white bg-red-500 hover:bg-red-700 px-3 py-2 rounded"
+          className="text-white bg-red-700 hover:bg-red-800 px-3 py-2 rounded"
         >
           Logout
         </button>

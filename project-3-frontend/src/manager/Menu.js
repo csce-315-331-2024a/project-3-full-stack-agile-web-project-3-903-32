@@ -1,20 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
+import { useNavigate } from 'react-router-dom';
+
+
+const isAuthenticatedManager = () => {
+  const isManager = localStorage.getItem("isManagerLoggedIn");
+  console.log(isManager);
+  return isManager;
+};
+
+const withManagerAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log("HERE");
+      if (isAuthenticatedManager() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a manager
+    return isAuthenticatedManager() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
+
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [menuModal, setMenuModal] = useState(false);
   const [menuName, setMenuName] = useState('');
   const [menuPrice, setMenuPrice] = useState('');
+  const [menuCategory, setMenuCategory] = useState('');
   const [menuId, setMenuId] = useState('');
   const [itemInventoryList, setItemInventoryList] = useState([]);
   const [itemOutsideInventoryList, setItemOutsideInventoryList] = useState([]);
   const [addMenuModal, setAddMenuModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     getMenu();
+    getCategory();
   }, []);
 
   useEffect(() => {
@@ -24,6 +53,8 @@ const Menu = () => {
       curr_name.addEventListener('input', validateAddMenu);
       const curr_price = document.getElementsByName('add_menu_price')[0];
       curr_price.addEventListener('input', validateAddMenu);
+      const curr_category = document.getElementsByName('add_menu_category')[0];
+      curr_category.addEventListener('input', validateAddMenu);
     }
   }, [addMenuModal]);
 
@@ -39,7 +70,6 @@ const Menu = () => {
     }
   }, [confirmDelete]);
 
-
   const handleCloseModal = (event) => {
     event.preventDefault();
     setMenuModal(false);
@@ -47,6 +77,7 @@ const Menu = () => {
     setMenuId('');
     setMenuName('');
     setMenuPrice('');
+    setMenuCategory('');
     setItemInventoryList([]);
     setItemOutsideInventoryList([]);
   }
@@ -54,7 +85,7 @@ const Menu = () => {
   const handleSaveMenu = (event) => {
     event.preventDefault();
     setMenuModal(false);
-    putMenu(menuId, document.getElementById('item_name').value, parseFloat(document.getElementById('item_price').value).toFixed(2));
+    putMenu(menuId, document.getElementById('item_name').value, parseFloat(document.getElementById('item_price').value).toFixed(2), document.getElementById('item_category').value);
   }
 
   const handleDeleteMenu = (event) => {
@@ -72,7 +103,8 @@ const Menu = () => {
     event.preventDefault();
     const curr_name = document.getElementsByName('add_menu_name')[0].value;
     const curr_price = parseFloat(document.getElementsByName('add_menu_price')[0].value).toFixed(2);
-    postMenu(curr_name, curr_price);
+    const curr_category = document.getElementsByName('add_menu_category')[0].value;
+    postMenu(curr_name, curr_price, curr_category);
   }
 
   const validateAddMenu = () => {
@@ -107,6 +139,7 @@ const Menu = () => {
     setMenuId(menuItems[event.target.id].id);
     setMenuName(menuItems[event.target.id].itemName);
     setMenuPrice(menuItems[event.target.id].price);
+    setMenuCategory(menuItems[event.target.id].category);
     getMenuInventory(menuItems[event.target.id].id);
     getOutsideMenuInventory(menuItems[event.target.id].id);
     setAddMenuModal(false);
@@ -139,7 +172,7 @@ const Menu = () => {
     }
   }
 
-  async function postMenu(menu_name, menu_price) {
+  async function postMenu(menu_name, menu_price, menu_category) {
     try {
       const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
         method: "POST",
@@ -147,7 +180,7 @@ const Menu = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ "itemName": menu_name, "price": menu_price })
+        body: JSON.stringify({ "itemName": menu_name, "price": menu_price, "category": menu_category })
       });
       if (response.ok) {
         getMenu();
@@ -160,7 +193,7 @@ const Menu = () => {
     }
   }
 
-  async function putMenu(menu_id, menu_name, menu_price) {
+  async function putMenu(menu_id, menu_name, menu_price, menu_category) {
     try {
       const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu/" + menu_id, {
         method: "PUT",
@@ -168,11 +201,11 @@ const Menu = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ "itemName": menu_name, "price": menu_price })
+        body: JSON.stringify({ "itemName": menu_name, "price": menu_price, "category": menu_category })
       });
       if (response.ok) {
         getMenu();
-        alert('Menu name: ' + menu_name + ' and ' + menu_price + ' updated successfully!');
+        alert('Menu name: ' + menu_name + ', $' + menu_price + ' and ' + menu_category + ' updated successfully!');
       } else {
         console.error('Failed to fetch menu:', response.status, response.statusText);
       }
@@ -300,17 +333,43 @@ const Menu = () => {
     }
   }
 
+  async function getCategory() {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu/category", {
+        method: "GET",
+        mode: 'cors'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+        if (data.length > 0) {
+          setMenuCategory(data[0]); // Set default category if available
+        }
+      } else {
+        console.error('Failed to fetch categories:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  }
+
   const EditMenuModal = (props) => (
-    (<div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
+    <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
       <div className='p-4'>
-        <label htmlFor='item_name'>Menu Name:</label>
-        <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
-        <label htmlFor='item_price'>Menu Price:</label>
-        <input className='px-2 mx-4 bg-gray-200 rounded' type='text' id='item_price' defaultValue={menuPrice} />
+        <label htmlFor='item_name'>Name:</label>
+        <input className='my-2 px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
+        <label htmlFor='item_price'>Price:</label>
+        <input className='px-2 mx-4 bg-gray-200 rounded w-1/4' type='text' id='item_price' defaultValue={menuPrice} />
         <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px]'/></button>
+        <label htmlFor='item_category'>Category:</label>
+        <select className='px-2 mx-4 bg-gray-200 rounded' id='item_category' defaultValue={menuCategory}>
+          {categories.map((category) => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
       </div>
       <div className='mx-4 flex justify-between'>
-        <button className='rounded border-2 p-2 hover:bg-green-100 border-green-900 text-green-900' id='button_save_menu' onClick={handleSaveMenu}>Save New Name and Price</button>
+        <button className='rounded border-2 p-2 hover:bg-green-100 border-green-900 text-green-900' id='button_save_menu' onClick={handleSaveMenu}>Save Menu Item</button>
         <button className='rounded border-2 p-2 hover:bg-red-100 border-red-700 text-red-700' onClick={handleDeleteMenu}>{confirmDelete ? "Confirm" : "Delete Menu Item"}</button>
       </div>
       <h1 className='text-center font-bold border-t-2 border-gray-500 mt-6 pt-6'>Menu Ingredients</h1>
@@ -351,19 +410,27 @@ const Menu = () => {
           </tr>
         </tbody>
       </table>
-    </div>)
+    </div>
   );
 
   const AddMenuModal = () => (
-    (<tr >
+    <tr>
       <td className='p-4'><label htmlFor='add_menu_name'>Menu Name:</label>
         <input className='bg-gray-200 rounded px-2 ml-2' type='text' name='add_menu_name' />
       </td>
       <td className='p-4'><label htmlFor='add_menu_price'>Price: </label>
-        <input className='bg-gray-200 rounded px-2 ml-2' type='number' name='add_menu_price' />
+        <input className='bg-gray-200 rounded px-2 ml-2 w-3/5' type='number' name='add_menu_price' />
       </td>
-      <td className='p-4'><button name='add_menu_button' onClick={handleAddMenu}>Add</button></td>
-    </tr>)
+      <td className='p-4'>
+        <label htmlFor='add_menu_category'>Category:</label>
+        <select className='bg-gray-200 rounded px-2 ml-2' name='add_menu_category'>
+          {categories.map((category) => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+      </td>
+      <td className='p-4 pl-0'><button name='add_menu_button' onClick={handleAddMenu}>Add</button></td>
+    </tr>
   );
 
   return (
@@ -384,7 +451,7 @@ const Menu = () => {
                 <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Category
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 pl-0 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Edit
                 </th>
               </tr>
@@ -392,10 +459,10 @@ const Menu = () => {
             <tbody>
               {menuItems.map((item, index) => (
                 <tr key={index} className="bg-white border-b">
-                  <td className="p-4 text-base text-gray-700 w-1/2">{item.itemName}</td>
+                  <td className="p-4 text-base text-gray-700 w-5/12">{item.itemName}</td>
                   <td className="p-4 text-base text-gray-700 w-1/4">${item.price}</td>
-                  <td className="p-4 text-base text-gray-700 w-1/4">{item.category}</td>
-                  <td className="p-4 text-base text-gray-700"><button id={index} className='text-blue-700 hover:text-blue-900' onClick={handleEditItem}>Edit</button></td>
+                  <td className="p-4 text-base text-gray-700 w-1/3">{item.category}</td>
+                  <td className="p-4 pl-0 text-base text-gray-700"><button id={index} className='text-blue-700 hover:text-blue-900' onClick={handleEditItem}>Edit</button></td>
                 </tr>
               ))}
               {
@@ -420,4 +487,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default withManagerAuthentication(Menu);

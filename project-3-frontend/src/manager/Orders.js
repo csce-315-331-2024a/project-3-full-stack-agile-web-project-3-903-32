@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar'; 
 import Navbar from '../components/NavbarManager';
+import { useNavigate } from 'react-router-dom';
+
+
+const isAuthenticatedManager = () => {
+  const isManager = localStorage.getItem("isManagerLoggedIn");
+  console.log(isManager);
+  return isManager;
+};
+
+const withManagerAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log("HERE");
+      if (isAuthenticatedManager() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a manager
+    return isAuthenticatedManager() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -89,9 +114,9 @@ const Orders = () => {
             <button
               type="button"
               onClick={() => setAscending(!ascending)}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
             >
-              Sort by ID {ascending ? 'Ascending' : 'Descending'}
+              Sort by ID 
             </button>
 
             <label htmlFor ="start-time" className='ml-4'>
@@ -197,4 +222,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default withManagerAuthentication(Orders);
