@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
 import ExcessReport from '../components/ExcessReport';
 import SalesReport from '../components/SalesReport';
 import ProductUsage from '../components/ProductUsage';
 import SellsTogether from '../components/SellsTogether';
+import { useNavigate } from 'react-router-dom';
+
+
+const isAuthenticatedManager = () => {
+  const isManager = localStorage.getItem("isManagerLoggedIn");
+  console.log(isManager);
+  return isManager;
+};
+
+const withManagerAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log("HERE");
+      if (isAuthenticatedManager() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a manager
+    return isAuthenticatedManager() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
+
+
 
 const ReportButton = ({ reportName, onReportSelected, isActive }) => {
   const activeClasses = "bg-blue-500 hover:bg-blue-700 text-white";
@@ -65,4 +92,4 @@ const Trends = () => {
   );
 };
 
-export default Trends;
+export default withManagerAuthentication(Trends);

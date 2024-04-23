@@ -2,6 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ThreeDots } from 'react-loader-spinner'; // Import the loader spinner
 
+const isAuthenticatedCashier = () => {
+    const isCashier = localStorage.getItem("isCashierLoggedIn");
+    console.log(isCashier);
+    return isCashier;
+  };
+  
+  const withCashierAuthentication = (WrappedComponent) => {
+    const AuthenticatedComponent = (props) => {
+      const navigate = useNavigate();
+      useEffect(() => {
+        if (isAuthenticatedCashier() == 'false') {
+          navigate('/'); 
+        }
+      }, [navigate]);
+  
+      // Render the wrapped component if the user is authenticated as a cashier
+      return isAuthenticatedCashier() ? <WrappedComponent {...props} /> : null;
+    };
+  
+    return AuthenticatedComponent;
+  };
+  
+
 const CashierPayment = () => {
     const [itemIds, setItemIds] = useState([]);
     const [name, setName] = useState('');
@@ -146,4 +169,4 @@ const CashierPayment = () => {
     );
 };
 
-export default CashierPayment;
+export default withCashierAuthentication(CashierPayment);
