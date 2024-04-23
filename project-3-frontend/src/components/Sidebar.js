@@ -31,9 +31,6 @@ const Sidebar = () => {
 
       {/* Orders */}
       <NavComponent to="/manager/orders" text='Orders'/>
-
-      {/* Menu Board */}
-      <NavComponent to="/Customer/StaticMenu" text='Menu Board'/>
     </aside>
   );
 };
