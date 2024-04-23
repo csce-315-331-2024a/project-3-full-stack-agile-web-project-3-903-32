@@ -5,28 +5,18 @@ import Navbar from "../components/NavbarCustomer";
 import Modal from "../components/ModalCustomer";
 
 const Customer = () => {
-    const Category = {
-        "null": null,
-        "ValueMeals": ["Black Bean Burger", "Bacon Cheeseburger", "Gig Em Patty Melt", "Cheeseburger", "Classic Hamburger"],
-        "LimitedTimeOffers": "Limited Time Offers",
-        "Burgers": "Burgers",
-        "Sandwiches": ["Aggie Chicken Club", "Spicy Chicken Sandwich", "Revs Grilled Chicken Sandwich", "Chicken Sandwich"],
-        "Salads": "Salads",
-        "ShakesAndMore": "Shakes&More",
-        "Appetizers": "Appetizers",
-        "Beverages": "Beverages",
-    };
-
-    const [buttons, setButtons] = useState([]);
+    const [fullMenu, setFullMenu] = useState([]);
     const [itemIds, setItemIds] = useState([]);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [inventoryData, setInventoryData] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
 
     const selectedLanguage = useContext(LanguageContext);
-    const [selectedCategory, setSelectedCategory] = useState(Category.null);
     const [invertButton, setInvertButton] = useState(false);
     
     const navigate = useNavigate();
@@ -52,6 +42,22 @@ const Customer = () => {
         }
     }, [location.state, selectedLanguage]);
 
+    useEffect(() => {
+        getCategory();
+        setDisplayedMenu(fullMenu);
+    }, []);
+
+    useEffect(() => {
+        if (selectedCategory === 'All') {
+            console.log('All');
+            setDisplayedMenu(fullMenu);
+        } else {
+            console.log('Category:', selectedCategory);
+            setDisplayedMenu(fullMenu.filter(item => item.category === selectedCategory));
+            console.log(fullMenu.filter(item => item.category === selectedCategory));
+        }
+    }, [selectedCategory]);
+
     async function getMenu() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/menu?translate=${selectedLanguage}`, {
@@ -60,12 +66,30 @@ const Customer = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setButtons(data);
+                setFullMenu(data);
             } else {
                 console.error('Failed to fetch menu:', response.status, response.statusText);
             }
         } catch (error) {
             console.error('Error fetching menu:', error);
+        }
+    }
+
+    async function getCategory() {
+        try {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/api/menu/category', {
+                method: "GET",
+                mode: 'cors'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const data_all = ['All', ...data];
+                setCategories(data_all);
+            } else {
+                console.error('Failed to fetch category:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching category:', error);
         }
     }
 
@@ -184,15 +208,24 @@ const Customer = () => {
         marginLeft: '10px',
     };
 
+    const imageMapping = {
+        'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
+    }
+
     const invertColor = {
         filter : 'invert(1)'
     };
 
     const MenuSideBar = () => {
-        const categories = Object.keys(Category);
         const sidebarButton = (props) => {
+            const sideBarImage = {
+                backgroundImage: `url(${imageMapping[props.category]})`,
+            }
+
             return (
-                <button className="bg-placeholder h-[12.5%] w-full " onClick={()=> setSelectedCategory(props.Category) }>
+                <button className="bg-placeholder h-[12.5%] w-full " style={sideBarImage} onClick={()=> {
+                    setSelectedCategory(props.category)
+                    } }>
                     <p>{props.category}</p>
                 </button>
             )
@@ -213,8 +246,21 @@ const Customer = () => {
                 document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
                 setInvertButton(!invertButton)
             }}>INVERT</button> */}
-            <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6">
-                </div>
+            <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6 grid grid-cols-4">
+                {displayedMenu.length > 0 ? (
+                    displayedMenu.map((button, index) => (
+                        <div key={index} onClick={() => addToOrder(button)} className="bg-gray-200 p-4 rounded-lg">
+                            <span className="text-xl font-bold"><TranslateText text={button.itemName} /></span>
+                            <span className="text-lg font-bold">$</span>
+                            <button onClick={() => handleViewIngredients(button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                                <TranslateText text='View Ingredients' />
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-center text-gray-500"><TranslateText text='Loading...' /></p>
+                )}
+            </div>
                 {/* <div style={menuRowStyle}>
                     {buttons.length > 0 ? (
                         buttons.map((button, index) => (

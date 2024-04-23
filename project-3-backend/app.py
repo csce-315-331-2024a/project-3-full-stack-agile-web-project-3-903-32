@@ -85,7 +85,7 @@ def get_menu_category():
     if request.method == 'GET':
         try:
             data = get_category_types()
-            return jsonify(data)    
+            return jsonify(data)
         except:
             return jsonify({'error': 'No data found'}), 404
 
