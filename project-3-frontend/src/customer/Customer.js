@@ -208,17 +208,13 @@ const Customer = () => {
         marginLeft: '10px',
     };
 
-    const imageMapping = {
-        'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
-    }
-
     const invertColor = {
         filter : 'invert(1)'
     };
 
-const imageMapping = {
-    'Burger' : '../imgs/cheeseburger.png'
-}
+    const imageMapping = {
+        'Burger' : '../imgs/cheeseburger.png'
+    }
 
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
