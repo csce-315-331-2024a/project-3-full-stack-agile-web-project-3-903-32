@@ -19,6 +19,7 @@ import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
 import TranslateContext from './components/Translate';
 import StaticMenu from './customer/StaticMenu';
+import CustomerConfirm from './customer/CustomerConfirm';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: '/cashier/confirm',
     element: <CashierConfirm />
+  },
+  {
+    path: '/customer/confirm',
+    element: <CustomerConfirm />
   },
   {
     path: '/manager',

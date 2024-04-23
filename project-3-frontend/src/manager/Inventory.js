@@ -121,16 +121,16 @@ const Inventory = () => {
                       Stock
                     </th>
                     <th className="border-b-2 p-4 text-center align-middle font-semibold text-gray-600 uppercase tracking-wider">
-                      Location
+                      Minimum
                     </th>
                     <th className="border-b-2 p-4 text-center align-middle font-semibold text-gray-600 uppercase tracking-wider">
                       Capacity
                     </th>
                     <th className="border-b-2 p-4 text-center align-middle font-semibold text-gray-600 uppercase tracking-wider">
-                      Supplier
+                      Location
                     </th>
                     <th className="border-b-2 p-4 text-center align-middle font-semibold text-gray-600 uppercase tracking-wider">
-                      Minimum
+                      Supplier
                     </th>
                   </tr>
                 </thead>
@@ -139,10 +139,10 @@ const Inventory = () => {
                     <tr key={index} className="border-b">
                       <td className="p-3 text-center text-gray-700">{item.name}</td>
                       <td className="p-3 text-center text-gray-700">{item.stock}</td>
-                      <td className="p-3 text-center text-gray-700">{item.location}</td>
-                      <td className="p-3 text-center text-gray-700">{item.capacity}</td>
-                      <td className="p-3 text-center text-gray-700">{item.supplier}</td>
                       <td className="p-3 text-center text-gray-700">{item.minimum}</td>
+                      <td className="p-3 text-center text-gray-700">{item.capacity}</td>
+                      <td className="p-3 text-center text-gray-700">{item.location}</td>
+                      <td className="p-3 text-center text-gray-700">{item.supplier}</td>
                     </tr>
                   ))}
                 </tbody>
