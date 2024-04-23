@@ -50,25 +50,29 @@ const SellsTogether = () => {
       </div>
 
       <div>
-        <table className="min-w-full border-collapse border border-gray-400">
-          <thead>
-            <tr>
-              <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Item 1</th>
-              <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Item 2</th>
-              <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Frequency</th>
-            </tr>
-          </thead>
-
-          <tbody>
-          {sellData.map((item,index) => (
-              <tr key={index}>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.item1}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.item2}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.frequency}</td>
+        {sellData.length > 0 ? (
+          <table className="min-w-full border-collapse border border-gray-400">
+            <thead>
+              <tr>
+                <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Item 1</th>
+                <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Item 2</th>
+                <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Frequency</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+            {sellData.map((item,index) => (
+                <tr key={index}>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.item1}</td>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.item2}</td>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.frequency}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div>No data available for the selected time.</div>
+        )}
       </div>
     </div>
   );

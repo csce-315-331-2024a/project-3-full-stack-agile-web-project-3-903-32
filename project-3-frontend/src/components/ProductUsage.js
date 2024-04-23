@@ -78,43 +78,47 @@ const ProductUsage = () => {
           />
         </label>
       </div>
-      <PieChart width={800} height={600}>
-        <Pie
-          data={data}
-          cx={300}
-          cy={200}
-          outerRadius={180}
-          fill="#8884d8"
-          dataKey="amount"
-          nameKey="name"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip content={<CustomTooltip />} />
-        <Legend
-          layout="vertical"
-          align="right"
-          verticalAlign="middle"
-          wrapperStyle={{
-            marginRight: '-50px',
-            paddingBottom: '20px' 
-          }}
-          content={({ payload }) => (
-            <div className="grid grid-cols-2 gap-4 ml-auto w-auto">
-              {payload.map((entry, index) => (
-                <div key={`item-${index}`} className="flex items-center">
-                  <svg className="mr-2" width="14" height="14" viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="16" fill={entry.color} />
-                  </svg>
-                  <span>{entry.value}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        />
-      </PieChart>
+      {data.length > 0 ? (
+        <PieChart width={800} height={600}>
+          <Pie
+            data={data}
+            cx={300}
+            cy={200}
+            outerRadius={180}
+            fill="#8884d8"
+            dataKey="amount"
+            nameKey="name"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip />} />
+          <Legend
+            layout="vertical"
+            align="right"
+            verticalAlign="middle"
+            wrapperStyle={{
+              marginRight: '-50px',
+              paddingBottom: '20px' 
+            }}
+            content={({ payload }) => (
+              <div className="grid grid-cols-2 gap-4 ml-auto w-auto">
+                {payload.map((entry, index) => (
+                  <div key={`item-${index}`} className="flex items-center">
+                    <svg className="mr-2" width="14" height="14" viewBox="0 0 32 32">
+                      <circle cx="16" cy="16" r="16" fill={entry.color} />
+                    </svg>
+                    <span>{entry.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          />
+        </PieChart>
+      ) : (
+        <div>No data available for the selected time.</div>
+      )}
     </div>
   );
 };
