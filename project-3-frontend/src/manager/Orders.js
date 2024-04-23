@@ -31,17 +31,32 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [ascending, setAscending] = useState(false);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
+    //use when changing the ascending state
     getOrders();
   }, [ascending]);
 
+  useEffect(() => {
+    // Call getOrders function whenever startTime or endTime changes
+    getOrders(startTime, endTime);
+  }, [startTime, endTime]);
+
   async function getOrders() {
     try {
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/order_history?ascending=${ascending}`, {
+      let url = process.env.REACT_APP_BACKEND_URL + '/api/order_history?ascending=true';
+      if(startTime && endTime) {
+        url += `&start_time=${startTime}&end_time=${endTime}`; 
+      }
+      const option = {
         method: "GET",
         mode: 'cors'
-      });
+      };
+
+      const response = await fetch(url,option);
+      
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -95,14 +110,38 @@ const Orders = () => {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
-          <div className="mb-4 flex justify-between items-center">
+          <div className="mb-4 flex justify-start items-center">
             <button
               type="button"
               onClick={() => setAscending(!ascending)}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
             >
-              Sort by ID {ascending ? 'Ascending' : 'Descending'}
+              Sort by ID 
             </button>
+
+            <label htmlFor ="start-time" className='ml-4'>
+              <span className = 'mr-2'>Start Time:</span> 
+              <input
+                type = "datetime-local"
+                id = "start-time"
+                name = "start-time"
+                value = {startTime}
+                onChange = {(e) => setStartTime(e.target.value)}
+                className = 'border-2 border-gray-300 p-2 rounded-lg'
+              />
+            </label>
+
+            <label htmlFor ="end-time" className='ml-4'>
+              <span className = 'mr-2'>End Time:</span> 
+              <input
+                type = "datetime-local"
+                id = "end-time"
+                name = "end-time"
+                value = {endTime}
+                onChange = {(e) => setEndTime(e.target.value)}
+                className = 'border-2 border-gray-300 p-2 rounded-lg'
+              />
+            </label>
           </div>
           <table className="min-w-full bg-white">
             <thead>
@@ -147,7 +186,7 @@ const Orders = () => {
                     <td className="p-4 text-base text-gray-700">
                       <button
                         type="button"
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700"
                         onClick={() => deleteOrder(order.orderID)}
                       >
                         Delete

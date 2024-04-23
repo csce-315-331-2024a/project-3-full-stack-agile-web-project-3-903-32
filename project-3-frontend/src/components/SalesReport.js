@@ -6,7 +6,8 @@ const SalesReport = () => {
   const [endTime,setEndTime] = useState('');
   
   useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL + `/api/sales_by_time?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
+    if(startTime && endTime){
+      fetch(process.env.REACT_APP_BACKEND_URL + `/api/sales_by_time?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
       .then(response => response.json())
       .then(data => {
         const formattedData = Object.keys(data).map(key => ({
@@ -19,6 +20,8 @@ const SalesReport = () => {
       .catch(error => {
         console.error('Error fetching product usage data:', error);
       });
+    }
+    
   }, [startTime, endTime]);
 
   return (
@@ -46,25 +49,29 @@ const SalesReport = () => {
       </div>
 
       <div>
-        <table className="min-w-full border-collapse border border-gray-400">
-          <thead>
-            <tr>
-              <th style={{width: 100}}className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Menu Id</th>
-              <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Menu Name</th>
-              <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Frequency</th>
-            </tr>
-          </thead>
-
-          <tbody>
-          {salesData.map((item) => (
-              <tr key={item.menuID}>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.id}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.name}</td>
-                <td className="border border-gray-400 px-4 py-2 text-center">{item.amount}</td>
+        {salesData.length > 0 ? (
+          <table className="min-w-full border-collapse border border-gray-400">
+            <thead>
+              <tr>
+                <th style={{width: 100}}className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Menu Id</th>
+                <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Menu Name</th>
+                <th className='border border-gray-400 bg-gray-100 px-4 py-2 text-center'>Frequency</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+            {salesData.map((item,index) => (
+                <tr key={index}>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.id}</td>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.name}</td>
+                  <td className="border border-gray-400 px-4 py-2 text-center">{item.amount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div>No data available for the selected time.</div>
+        )}
       </div>
     </div>
   );
