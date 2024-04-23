@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleLogin } from "@react-oauth/google"
+import { GoogleLogin } from "@react-oauth/google";
 import { gapi } from 'gapi-script';
 import { jwtDecode } from "jwt-decode";
 
@@ -13,9 +13,11 @@ function App() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true); // State to track video playback
+  const videoRef = useRef(null); // Ref to access the video element
 
   useEffect(() => {
-    function start(){
+    function start() {
       localStorage.setItem('isManagerLoggedIn', 'false');
       localStorage.setItem('isCashierLoggedIn', 'false');
       gapi.client.init({
@@ -27,7 +29,7 @@ function App() {
         console.error("Error initializing Google API:", error);
       });
     };
-  
+
     gapi.load('client:auth2', start);
   }, []);
 
@@ -39,7 +41,16 @@ function App() {
     setPassword(event.target.value);
   };
 
-
+  const toggleVideoPlayback = () => {
+    const video = videoRef.current;
+    if (video.paused) {
+      video.play();
+      setIsVideoPlaying(true);
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
+    }
+  };
 
   const loginManager = () => {
     localStorage.setItem('isManagerLoggedIn', 'true');
@@ -53,20 +64,13 @@ function App() {
     navigate('/cashier');
   }
 
-
-  /*
-  const loginMenu = () => {
-    navigate('/customer/StaticMenu');
-  }
-  */
-
   const loginCustomer = () => {
     navigate('/customer');
   }
 
   return (
     <div className="relative min-h-screen flex flex-col justify-between">
-      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-60" src={videoBG}></video>
+      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-60" src={videoBG} ref={videoRef}></video>
       <div className="flex flex-col items-center justify-center z-10">
         <h1 className="text-white p-10 text-center text-9xl mb-8" style={{ backgroundColor: 'rgba(139, 0, 0, .8)', width: '100%', marginBottom: 0 }}>Rev's American Grill</h1>
         <div className="flex items-center justify-center flex-col"> {/* Modified this line */}
@@ -98,6 +102,15 @@ function App() {
             console.error("Google login failed:", error);
           }}
         />
+      </div>
+      <div className="flex justify-center mb-4">
+      <button 
+    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded absolute top-0 right-0 m-4" 
+    onClick={toggleVideoPlayback} 
+    style={{ zIndex: 9999 }}>
+    {isVideoPlaying ? 'Pause Video' : 'Play Video'}
+  </button>
+
       </div>
     </div>
   );

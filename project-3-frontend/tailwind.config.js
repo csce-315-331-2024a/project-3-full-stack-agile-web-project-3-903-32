@@ -8,6 +8,7 @@ module.exports = {
       },
       backgroundImage: {
         'placeholder': "url('https://via.placeholder.com/150')",
+        'fountainDrink': "url('./imgs/fountainDrink.png')"
       },
     },
   },

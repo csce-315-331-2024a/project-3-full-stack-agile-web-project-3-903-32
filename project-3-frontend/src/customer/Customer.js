@@ -163,22 +163,17 @@ const Customer = () => {
         filter : 'invert(1)'
     };
 
+const imageMapping = {
+    'Burger' : '../imgs/cheeseburger.png'
+}
+
     const MenuSideBar = () => {
-        const images = {
-            "Value Meals": "https://via.placeholder.com/150",
-            "Limited Time Offers": "https://via.placeholder.com/150",
-            "Burgers": "https://via.placeholder.com/150",
-            "Sandwiches": "https://via.placeholder.com/150",
-            "Salads": "https://via.placeholder.com/150",
-            "Shakes&More": "https://via.placeholder.com/150",
-            "Appetizers": "https://via.placeholder.com/150",
-            "Beverages": "https://via.placeholder.com/150"
-        };
+
         const categories = [Category.ValueMeals, Category.LimitedTimeOffers, Category.Burgers, Category.Sandwiches, Category.Salads, Category.ShakesAndMore, Category.Appetizers, Category.Beverages];
         const sidebarButton = (props) => {
             return (
-                <button className="bg-placeholder h-[12.5%] w-full" onClick={()=> setSelectedCategory(props.Category) }>
-                    {/* <img src={props.img} alt="No Image" /> */}
+                <button className="bg- h-[12.5%] w-full" onClick={()=> setSelectedCategory(props.Category) }>
+                    { <img src={props.img} alt="No Image" /> }
                     <p>{props.category}</p>
                 </button>
             )
