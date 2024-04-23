@@ -1,6 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
+import { useNavigate } from 'react-router-dom';
+
+
+const isAuthenticatedManager = () => {
+  const isManager = localStorage.getItem("isManagerLoggedIn");
+  console.log(isManager);
+  return isManager;
+};
+
+const withManagerAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log("HERE");
+      if (isAuthenticatedManager() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a manager
+    return isAuthenticatedManager() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
+
+
+
 
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -157,4 +185,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default withManagerAuthentication(Inventory);

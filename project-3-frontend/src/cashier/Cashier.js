@@ -2,6 +2,31 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from "../components/NavbarCashier";
 
+
+
+const isAuthenticatedCashier = () => {
+  const isCashier = localStorage.getItem("isCashierLoggedIn");
+  console.log(isCashier);
+  return isCashier;
+};
+
+const withCashierAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      if (isAuthenticatedCashier() == 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a cashier
+    return isAuthenticatedCashier() ? <WrappedComponent {...props} /> : null;
+  };
+
+  return AuthenticatedComponent;
+};
+
+
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
     const [loading, setLoading] = useState(true); 
@@ -241,4 +266,4 @@ const Cashier = () => {
     );
 };
 
-export default Cashier;
+export default withCashierAuthentication(Cashier);
