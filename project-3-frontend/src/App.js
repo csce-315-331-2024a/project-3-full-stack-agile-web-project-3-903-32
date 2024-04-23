@@ -16,6 +16,8 @@ function App() {
 
   useEffect(() => {
     function start(){
+      localStorage.setItem('isManagerLoggedIn', 'false');
+      localStorage.setItem('isCashierLoggedIn', 'false');
       gapi.client.init({
         clientId: clientId,
         scope: ""
@@ -37,40 +39,26 @@ function App() {
     setPassword(event.target.value);
   };
 
-  const passwords = [
-    "ozpass",
-    "nolanpass",
-    "jimothypass",
-    "rebeccapass",
-    "georgepass",
-    "kyliepass"
-  ];
 
-  const handleLogin = () => {
-    const passwordInt = parseInt(password);
-    if (passwords[passwordInt] === username){
-      console.log("Successful Login");
-      if(passwordInt === 0 || passwordInt === 2){
-        navigate('/manager');
-      } else {
-        navigate('/cashier')
-      }
-    } else {
-      console.log("Login Failed!");
-    }
-  };
 
   const loginManager = () => {
+    localStorage.setItem('isManagerLoggedIn', 'true');
+    localStorage.setItem('isCashierLoggedIn', 'false');
     navigate('/manager');
   }
 
   const loginCashier = () => {
+    localStorage.setItem('isManagerLoggedIn', 'false');
+    localStorage.setItem('isCashierLoggedIn', 'true');
     navigate('/cashier');
   }
 
+
+  /*
   const loginMenu = () => {
     navigate('/customer/StaticMenu');
   }
+  */
 
   const loginCustomer = () => {
     navigate('/customer');
