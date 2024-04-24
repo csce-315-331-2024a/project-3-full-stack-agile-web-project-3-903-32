@@ -19,6 +19,7 @@ import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
 import TranslateContext from './components/Translate';
 import StaticMenu from './customer/StaticMenu';
+import Cook from './cook/Cook';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -73,11 +74,15 @@ const router = createBrowserRouter([
     path: '/customer/payment',
     element: <TranslateContext><CustomerPayment /></TranslateContext>,
   },
-  
   {
     path: '/customer/StaticMenu',
     element: <StaticMenu />,
     children: [],
+  },
+  {
+    path: '/cook',
+    element: <Cook />,
+    childrem: [],  
   }
 ]);
 
