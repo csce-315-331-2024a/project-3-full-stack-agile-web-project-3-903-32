@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Navbar from "../components/NavbarCashier";
 
-const Cook = () => {
+const CookScreen = () => {
     const [order, setOrder] = useState([]);
     
     useEffect(() => {
@@ -29,7 +29,7 @@ const Cook = () => {
     
 };
 
-export default Cook;
+export default CookScreen;
 
 
 

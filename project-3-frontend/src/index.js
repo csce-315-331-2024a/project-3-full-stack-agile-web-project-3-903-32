@@ -19,11 +19,8 @@ import Customer from './customer/Customer';
 import CustomerPayment from './customer/CustomerPayment';
 import TranslateContext from './components/Translate';
 import StaticMenu from './customer/StaticMenu';
-<<<<<<< HEAD
 import CustomerConfirm from './customer/CustomerConfirm';
-=======
-import Cook from './cook/Cook';
->>>>>>> Added the Cook page and link to it
+import Cook from './cook/CookScreen';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
