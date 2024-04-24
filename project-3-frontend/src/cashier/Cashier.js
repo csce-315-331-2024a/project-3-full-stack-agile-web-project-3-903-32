@@ -15,7 +15,7 @@ const withCashierAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
     useEffect(() => {
-      if (isAuthenticatedCashier() == 'false') {
+      if (isAuthenticatedCashier() === 'false') {
         navigate('/'); 
       }
     }, [navigate]);
