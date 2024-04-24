@@ -239,100 +239,108 @@ const Customer = () => {
             </div>
         );
     }
+
+    const handleRecommendedItemClick = (recommendedItem) => {
+        addToOrder(recommendedItem);
+      };
+    
     return (
-        <div className="flex w-screen h-screen" id="MenuContainer" >
-            <MenuSideBar />
-            {/* <button onClick={()=> {
-                document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
-                setInvertButton(!invertButton)
-            }}>INVERT</button> */}
-            <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6 grid grid-cols-4">
-                {displayedMenu.length > 0 ? (
-                    displayedMenu.map((button, index) => (
-                        <div key={index} onClick={() => addToOrder(button)} className="bg-gray-200 p-4 rounded-lg">
-                            <span className="text-xl font-bold"><TranslateText text={button.itemName} /></span>
-                            <span className="text-lg font-bold">$</span>
-                            <button onClick={() => handleViewIngredients(button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-                                <TranslateText text='View Ingredients' />
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    <p className="text-center text-gray-500"><TranslateText text='Loading...' /></p>
-                )}
-            </div>
-                {/* <div style={menuRowStyle}>
-                    {buttons.length > 0 ? (
-                        buttons.map((button, index) => (
-                            <div style={menuItemStyle}>
-                                <div key={index} onClick={() => addToOrder(button)}>
-                                    <span style={itemNameStyle}>
-                                        {button.itemName}
-                                    </span>
-                                    <span style={itemPriceStyle}>
-                                        ${button.price}
-                                    </span>
-                                </div>
-                                <button onClick={() => handleViewIngredients(button)} style={{ marginLeft: '10px' }}>
-                                    View Ingredients
+        <div className="flex flex-col h-screen bg-gray-100">
+            <Navbar handleRecommendedItemClick={handleRecommendedItemClick} />
+            <div className="flex w-screen h-screen" id="MenuContainer" >
+                <MenuSideBar />
+                {/* <button onClick={()=> {
+                    document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+                    setInvertButton(!invertButton)
+                }}>INVERT</button> */}
+                <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6 grid grid-cols-4">
+                    {displayedMenu.length > 0 ? (
+                        displayedMenu.map((button, index) => (
+                            <div key={index} onClick={() => addToOrder(button)} className="bg-gray-200 p-4 rounded-lg">
+                                <span className="text-xl font-bold"><TranslateText text={button.itemName} /></span>
+                                <span className="text-lg font-bold">$</span>
+                                <button onClick={() => handleViewIngredients(button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                                    <TranslateText text='View Ingredients' />
                                 </button>
-                            </div>     
-                        ))
-                    ) : (
-                        <p> <TranslateText text='Loading...' /></p>
-                    )}
-                </div> */}
-            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
-                <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List' /></h2>
-                <div className="divide-y divide-gray-200">
-                    {order.length > 0 ? (
-                        order.map((item, index) => (
-                            <div key={item.id} className="py-4 flex justify-between items-center">
-                                <div>
-                                    <p className="text-gray-800"><TranslateText text={item.itemName} /></p>
-                                    <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
-                                </div>
-                                <div className="flex items-center">
-                                    <button
-                                        onClick={() => addToOrder(item)}
-                                        className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
-                                    >
-                                        +
-                                    </button>
-                                    <button
-                                        onClick={() => removeFromOrder(index)}
-                                        className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
-                                    >
-                                        -
-                                    </button>
-                                </div>
                             </div>
-                        ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.' /></p>)}
-                </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-xl font-semibold"><TranslateText text='Total:' /></h3>
-                        <p className="text-xl font-semibold">
-                            ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
-                        </p>
-                    </div>
-                    <button
-                        onClick={handlePaymentClick}
-                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-                    >
-                        <TranslateText text='Go to Payment' />
-                    </button>
-                </div>
-                <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-                    <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
-                    {inventoryData.length > 0 ? (
-                        inventoryData.map(item => (
-                            <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
                         ))
                     ) : (
-                        <p>Loading inventory...</p>
+                        <p className="text-center text-gray-500"><TranslateText text='Loading...' /></p>
                     )}
-                </Modal>
+                </div>
+                    {/* <div style={menuRowStyle}>
+                        {buttons.length > 0 ? (
+                            buttons.map((button, index) => (
+                                <div style={menuItemStyle}>
+                                    <div key={index} onClick={() => addToOrder(button)}>
+                                        <span style={itemNameStyle}>
+                                            {button.itemName}
+                                        </span>
+                                        <span style={itemPriceStyle}>
+                                            ${button.price}
+                                        </span>
+                                    </div>
+                                    <button onClick={() => handleViewIngredients(button)} style={{ marginLeft: '10px' }}>
+                                        View Ingredients
+                                    </button>
+                                </div>     
+                            ))
+                        ) : (
+                            <p> <TranslateText text='Loading...' /></p>
+                        )}
+                    </div> */}
+                <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
+                    <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List' /></h2>
+                    <div className="divide-y divide-gray-200">
+                        {order.length > 0 ? (
+                            order.map((item, index) => (
+                                <div key={item.id} className="py-4 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-gray-800"><TranslateText text={item.itemName} /></p>
+                                        <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <button
+                                            onClick={() => addToOrder(item)}
+                                            className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
+                                        >
+                                            +
+                                        </button>
+                                        <button
+                                            onClick={() => removeFromOrder(index)}
+                                            className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                        >
+                                            -
+                                        </button>
+                                    </div>
+                                </div>
+                            ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.' /></p>)}
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-xl font-semibold"><TranslateText text='Total:' /></h3>
+                            <p className="text-xl font-semibold">
+                                ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
+                            </p>
+                        </div>
+                        <button
+                            onClick={handlePaymentClick}
+                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                        >
+                            <TranslateText text='Go to Payment' />
+                        </button>
+                    </div>
+                    <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+                        <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
+                        {inventoryData.length > 0 ? (
+                            inventoryData.map(item => (
+                                <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
+                            ))
+                        ) : (
+                            <p>Loading inventory...</p>
+                        )}
+                    </Modal>
+                </div>
             </div>
         </div>
     );
