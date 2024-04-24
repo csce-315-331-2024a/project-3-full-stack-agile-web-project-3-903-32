@@ -246,7 +246,6 @@ const Customer = () => {
     
     return (
         <div className="flex flex-col h-screen bg-gray-100">
-            <Navbar handleRecommendedItemClick={handleRecommendedItemClick} />
             <div className="flex w-screen h-screen" id="MenuContainer" >
                 <MenuSideBar />
                 {/* <button onClick={()=> {
