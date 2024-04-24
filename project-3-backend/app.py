@@ -37,6 +37,7 @@ def get_data(name):
     else:
         return jsonify({'error': 'No data found'}), 404
 
+
 ###################################
 #             MENU API            #
 ###################################
@@ -79,6 +80,7 @@ def get_menu_items():
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
 
+
 @app.route('/api/menu/category', methods=['GET'])
 def get_menu_category():
     if request.method == 'GET':
@@ -87,6 +89,7 @@ def get_menu_category():
             return jsonify(data)
         except:
             return jsonify({'error': 'No data found'}), 404
+
 
 def get_category_types():
     query = text("SELECT enumlabel FROM pg_enum ORDER BY enumlabel ASC")
@@ -97,6 +100,7 @@ def get_category_types():
     for row in results:
         data.append(row[0])
     return data
+
     
 @app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
 def get_menu_item(menu_id):
@@ -114,6 +118,7 @@ def get_menu_item(menu_id):
         db.session.execute(query, {'id': menu_id})
         db.session.commit()
         return jsonify({'message': 'Menu item deleted successfully'}), 200
+
     
 def delete_menu_omjunc_batch(menu_id):
     try:
@@ -124,6 +129,7 @@ def delete_menu_omjunc_batch(menu_id):
     except Exception as e:
         return jsonify({'error': 'Issue with deletion' + e}), 404
 
+
 #Deleting all inventory items attached to the menu item
 def delete_menu_mijunc_batch(menu_id):
     try:
@@ -133,6 +139,7 @@ def delete_menu_mijunc_batch(menu_id):
         return jsonify({'message': 'Menu inventory deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': 'Issue with deletion' + e}), 404
+
 
 ###################################
 #             Inventory API       #
@@ -159,6 +166,7 @@ def get_inventory_items():
     else:
         return jsonify({'error': 'No data found'}), 404
 
+
 # GET: Find all low stock items
 @app.route('/api/inventory/shortage', methods=['GET'])
 def get_inventory_shortage():
@@ -180,6 +188,7 @@ def get_inventory_shortage():
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
+
 
 @app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET"])
 def update_inventory(inventory_id):
@@ -223,11 +232,13 @@ def update_inventory(inventory_id):
         db.session.commit()
         return jsonify({'message': 'Inventory item deleted successfully'}), 200
 
+
 def update_inventory_batch(data):
     query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
     params = [{'add_stock': item['amount'], 'id': item['id']} for item in data]
     db.session.execute(query, params)
     db.session.commit()
+
 
 ###################################
 #             MIJUNC API          #
@@ -269,6 +280,7 @@ def get_menu_inventory(menu_id):
         db.session.execute(query, {'item_amount': data['itemAmount'], 'menu_id': menu_id, 'item_id': data['itemID']})
         db.session.commit()
         return jsonify({'message': 'Menu inventory updated successfully'}), 200
+
 
 #Needed to get all the inventory items that are not in the list of a menu item
 @app.route('/api/mijunc/outside/<menu_id>', methods=['GET'])
@@ -338,12 +350,92 @@ def update_orders():
                     'customerName' : row.customername,
                     'time' : row.time,
                     'paid' : row.paid,
-                    'employeeID' : row.employeeid
+                    'employeeID' : row.employeeid,
+                    'isComplete' : row.iscomplete,
                 }
                 data.append(item)
             return jsonify(data)
         except Exception as e:
             return jsonify({'error': 'No data found' + e}), 404
+
+
+@app.route('/api/order_history')
+def order_history():
+    # Get the query parameter for sorting order; default is descending
+    ascending = request.args.get('ascending', 'false').lower() == 'true'
+    
+    time_clause = ""
+    complete_clause = ""
+    
+    # Parse start_time and end_time from request arguments
+    if 'start_time' in request.args and 'end_time' in request.args:
+        start_time = request.args.get('start_time', default='')  # e.g., '2023-01-01 00:00:00'
+        end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
+        time_clause = f"WHERE Orders.time BETWEEN '{start_time}' AND '{end_time}'"
+
+    if 'is_complete' in request.args:
+        is_complete = request.args.get('is_complete')
+        complete_clause = f"WHERE Orders.iscomplete = '{is_complete}'"
+    
+    order_by_clause = "ORDER BY Orders.time ASC" if ascending else "ORDER BY Orders.time DESC"
+    sql_stmt = text(f"""
+        SELECT 
+            OMJunc.orderID, 
+            Menu.itemName, 
+            Menu.price, 
+            Orders.customerName, 
+            Orders.time,
+            Orders.iscomplete
+        FROM 
+            OMJunc
+        INNER JOIN 
+            Menu ON OMJunc.menuID = Menu.id
+        INNER JOIN
+            Orders ON OMJunc.orderID = Orders.id
+        {complete_clause}
+        {time_clause}
+        {order_by_clause}
+        LIMIT 
+            300;
+    """)
+    
+    result = db.session.execute(sql_stmt).fetchall()
+    # print(result)
+
+    # Use a dictionary to aggregate orders
+    orders = defaultdict(lambda: {
+        'customerName': '',
+        'time': None,
+        'items': [],
+        'totalPrice': 0.0,
+        'isComplete': False,
+    })
+
+    # Process each row in the result
+    for row in result:
+        order_id = row[0]
+        order = orders[order_id]
+        order['customerName'] = row[3]
+        order['time'] = row[4]
+        order['isComplete'] = row[5]
+        order['items'].append({
+            'itemName': row[1],
+            'price': float(row[2])
+        })
+        order['totalPrice'] += float(row[2])
+
+    # Convert aggregated orders into a list
+    data = [{
+        'orderID': order_id,
+        'customerName': info['customerName'],
+        'time': info['time'],
+        'items': info['items'],
+        'isComplete': info['isComplete'],
+        'totalPrice': round(info['totalPrice'], 2)  # Round total price to 2 decimal places
+    } for order_id, info in orders.items()]
+
+    return jsonify(data)
+
 
 @app.route('/api/order/<order_id>', methods=['DELETE'])
 def delete_order(order_id):
@@ -356,6 +448,7 @@ def delete_order(order_id):
     db.session.commit()
     return jsonify({'message': 'Order deleted successfully'}), 200
 
+
 def delete_order_omjunc_batch(order_id):
     try:
         query = text("DELETE FROM OMJunc WHERE orderid = :order_id")
@@ -364,6 +457,24 @@ def delete_order_omjunc_batch(order_id):
         return jsonify({'message': 'Order menu deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': 'Issue with deletion' + e}), 404
+
+
+@app.route('/api/order/<order_id>', methods=['PUT'])
+def update_order(order_id):
+    try:
+        data = request.get_json()  
+        is_complete = data['isComplete']  # Expected to receive {"isComplete": true} or {"isComplete": false}
+
+        # Update the completion status in the database
+        query = text("UPDATE Orders SET isComplete = :is_complete WHERE id = :order_id")
+        db.session.execute(query, {'is_complete': is_complete, 'order_id': order_id})
+        db.session.commit()
+
+        return jsonify({'message': 'Order completion status updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()  # Roll back the transaction in case of error
+        return jsonify({'error': 'Failed to update order completion status', 'exception': str(e)}), 500
+
 
 @app.route('/api/weather')
 def show_Weather():
@@ -428,6 +539,7 @@ def sales_by_time():
     # Return JSON response
     return jsonify(menu_sales_data)
 
+
 # Returns excess menu ids
 @app.route('/api/excess_report')
 def excess_report():
@@ -476,74 +588,6 @@ def excess_report():
     return jsonify(menu_data)
 
 
-@app.route('/api/order_history')
-def order_history():
-    # Get the query parameter for sorting order; default is descending
-    ascending = request.args.get('ascending', 'false').lower() == 'true'
-    
-    time_clause = ""
-    
-    # Parse start_time and end_time from request arguments
-    if 'start_time' in request.args and 'end_time' in request.args:
-        start_time = request.args.get('start_time', default='')  # e.g., '2023-01-01 00:00:00'
-        end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
-        time_clause = f"WHERE Orders.time BETWEEN '{start_time}' AND '{end_time}'"
-    
-    order_by_clause = "ORDER BY Orders.id ASC" if ascending else "ORDER BY Orders.id DESC"
-    sql_stmt = text(f"""
-        SELECT 
-            OMJunc.orderID, 
-            Menu.itemName, 
-            Menu.price, 
-            Orders.customerName, 
-            Orders.EmployeeID
-        FROM 
-            OMJunc
-        INNER JOIN 
-            Menu ON OMJunc.menuID = Menu.id
-        INNER JOIN
-            Orders ON OMJunc.orderID = Orders.id
-        {time_clause}
-        {order_by_clause}
-        LIMIT 
-            300;
-    """)
-    
-    result = db.session.execute(sql_stmt).fetchall()
-    # print(result)
-
-    # Use a dictionary to aggregate orders
-    orders = defaultdict(lambda: {
-        'customerName': '',
-        'employeeID': None,
-        'items': [],
-        'totalPrice': 0.0
-    })
-
-    # Process each row in the result
-    for row in result:
-        order_id = row[0]
-        order = orders[order_id]
-        order['customerName'] = row[3]
-        order['employeeID'] = row[4]
-        order['items'].append({
-            'itemName': row[1],
-            'price': float(row[2])
-        })
-        order['totalPrice'] += float(row[2])
-
-    # Convert aggregated orders into a list
-    data = [{
-        'orderID': order_id,
-        'customerName': info['customerName'],
-        'employeeID': info['employeeID'],
-        'items': info['items'],
-        'totalPrice': round(info['totalPrice'], 2)  # Round total price to 2 decimal places
-    } for order_id, info in orders.items()]
-
-    return jsonify(data)
-
-
 @app.route('/api/product_usage')
 def product_usage_report():
     # Parse start_time and end_time from request arguments
@@ -566,6 +610,7 @@ def product_usage_report():
     menu_names_list = {row[0]: {'amount': row[1], 'percentage': round((row[1] / total_amount * 100), 2)} for row in result}
     
     return jsonify(menu_names_list)
+
 
 @app.route('/api/sells_together')
 def what_sells_together():
