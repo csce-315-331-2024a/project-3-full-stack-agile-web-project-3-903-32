@@ -80,16 +80,17 @@ export const TranslateInput = () => {
     }
 
     return (
-        <div className="absolute top-5 left-5">
-            <select id='translate-input'>
-                {
-                    languages.map((lang) => {
-                        return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>{lang.name}</option>
-                    })
-                }
-            </select>
-            <button onClick={submitTranslation}>Translate</button>
-        </div>
+            <div className="absolute top-5 left-5">
+                <label id="select-language-label">Select Language:</label>
+                <select id='translate-input' aria-labelledby="select-language-label">
+                    {
+                        languages.map((lang) => {
+                            return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>{lang.name}</option>
+                        })
+                    }
+                </select>
+                <button onClick={submitTranslation}>Translate</button>
+            </div>
     );
 }
 
