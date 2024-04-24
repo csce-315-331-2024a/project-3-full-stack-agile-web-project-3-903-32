@@ -668,5 +668,34 @@ def translate_route():
 #     print(target_lang.code)
 #     return jsonify({'message': 'Language set successfully'})
 
+def get_temp():
+    api_key = os.getenv('weather_api_key')
+    city_name = "College Station"
+    Weather_URL = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + api_key
+    
+    response = requests.get(Weather_URL)
+    weather_info = response.json()
+
+    if weather_info['cod'] == 200:
+        kelvin = 273
+        temp_k = weather_info['main']['temp']
+        description = weather_info['weather'][0]['description']
+        
+        # Convert temperatures from Kelvin to Fahrenheit
+        temp_f = (temp_k - kelvin) * 9/5 + 32
+        
+        # Return the temperature
+        return str(round(temp_f, 2))
+
+    else:
+        return "Error: Weather not found. COD was not 200"
+    
+@app.route('/api/recommended')
+def get_recommended_item():
+    temp = get_temp()
+    
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
