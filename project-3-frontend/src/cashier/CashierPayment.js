@@ -12,7 +12,7 @@ const isAuthenticatedCashier = () => {
     const AuthenticatedComponent = (props) => {
       const navigate = useNavigate();
       useEffect(() => {
-        if (isAuthenticatedCashier() == 'false') {
+        if (isAuthenticatedCashier() === 'false') {
           navigate('/'); 
         }
       }, [navigate]);

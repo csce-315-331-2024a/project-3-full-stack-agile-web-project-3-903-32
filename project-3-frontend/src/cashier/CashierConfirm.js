@@ -3,26 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import './CashierConfirm.css'; // Import CSS file for animation
 
 const isAuthenticatedCashier = () => {
-    const isCashier = localStorage.getItem("isCashierLoggedIn");
-    console.log(isCashier);
-    return isCashier;
+  const isCashier = localStorage.getItem("isCashierLoggedIn");
+  console.log(isCashier);
+  return isCashier;
+};
+
+const withCashierAuthentication = (WrappedComponent) => {
+  const AuthenticatedComponent = (props) => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      if (isAuthenticatedCashier() === 'false') {
+        navigate('/'); 
+      }
+    }, [navigate]);
+
+    // Render the wrapped component if the user is authenticated as a cashier
+    return isAuthenticatedCashier() ? <WrappedComponent {...props} /> : null;
   };
-  
-  const withCashierAuthentication = (WrappedComponent) => {
-    const AuthenticatedComponent = (props) => {
-      const navigate = useNavigate();
-      useEffect(() => {
-        if (isAuthenticatedCashier() == 'false') {
-          navigate('/'); 
-        }
-      }, [navigate]);
-  
-      // Render the wrapped component if the user is authenticated as a cashier
-      return isAuthenticatedCashier() ? <WrappedComponent {...props} /> : null;
-    };
-  
-    return AuthenticatedComponent;
-  };
+
+  return AuthenticatedComponent;
+};
   
 
 

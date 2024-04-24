@@ -15,7 +15,7 @@ const withManagerAuthentication = (WrappedComponent) => {
     const navigate = useNavigate();
     useEffect(() => {
       console.log("HERE");
-      if (isAuthenticatedManager() == 'false') {
+      if (isAuthenticatedManager() === 'false') {
         navigate('/'); 
       }
     }, [navigate]);
@@ -46,7 +46,7 @@ const Orders = () => {
 
   async function getOrders() {
     try {
-      let url = process.env.REACT_APP_BACKEND_URL + '/api/order_history?ascending=true';
+      let url = process.env.REACT_APP_BACKEND_URL + `/api/order_history?ascending=${ascending}`;
       if(startTime && endTime) {
         url += `&start_time=${startTime}&end_time=${endTime}`; 
       }
@@ -85,6 +85,35 @@ const Orders = () => {
     }
   };
 
+  const toggleComplete = async (orderId, isComplete) => {
+    try {
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/order/${orderId}`;
+      const response = await fetch(url, {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isComplete }),
+        mode: 'cors',
+      });
+  
+      if (response.ok) {
+        // Update the orders state to reflect the change
+        setOrders(orders.map(order => {
+          if (order.orderID === orderId) {
+            return { ...order, isComplete };
+          }
+          return order;
+        }));
+        alert("Order " + orderId + " is updated successfully!");
+      } else {
+        console.error('Failed to update order completion status:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating order completion status:', error);
+    }
+  };
+
   const toggleItemsView = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
@@ -116,7 +145,7 @@ const Orders = () => {
               onClick={() => setAscending(!ascending)}
               className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
             >
-              Sort by ID 
+              Sort by Time 
             </button>
 
             <label htmlFor ="start-time" className='ml-4'>
@@ -143,25 +172,28 @@ const Orders = () => {
               />
             </label>
           </div>
-          <table className="min-w-full bg-white">
+          <table className="min-w-full bg-white text-center">
             <thead>
               <tr>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Order ID
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
-                  Employee ID
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
+                  Time
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Total Price
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Items
                 </th>
-                <th className="border-b-2 p-4 text-left text-base font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
+                  Complete
+                </th>
+                <th className="border-b-2 p-4 text-center text-base font-semibold text-gray-600 uppercase tracking-wider">
                   Delete
                 </th>
               </tr>
@@ -172,7 +204,7 @@ const Orders = () => {
                   <tr className="bg-white border-b">
                     <td className="p-4 text-base text-gray-700">{order.orderID}</td>
                     <td className="p-4 text-base text-gray-700">{order.customerName}</td>
-                    <td className="p-4 text-base text-gray-700">{order.employeeID}</td>
+                    <td className="p-4 text-base text-gray-700">{order.time}</td>
                     <td className="p-4 text-base text-gray-700">${order.totalPrice.toFixed(2)}</td>
                     <td className="p-4 text-base text-gray-700">
                       <button
@@ -180,8 +212,18 @@ const Orders = () => {
                         className="text-blue-600 hover:text-blue-900"
                         onClick={() => toggleItemsView(order.orderID)}
                       >
-                        {expandedOrderId === order.orderID ? 'Hide Items' : 'View Items'}
+                        {expandedOrderId === order.orderID ? 'Hide' : 'View'}
                       </button>
+                    </td>
+                    <td className="p-4 text-base text-gray-700">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={order.isComplete}
+                          onChange={() => toggleComplete(order.orderID, !order.isComplete)}
+                          className="form-checkbox text-blue-500 h-6 w-6 rounded-sm border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </label>
                     </td>
                     <td className="p-4 text-base text-gray-700">
                       <button
