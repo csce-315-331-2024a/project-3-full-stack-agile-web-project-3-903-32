@@ -239,7 +239,12 @@ const Customer = () => {
             </div>
         );
     }
-    return (
+
+    const handleRecommendedItemClick = (recommendedItem) => {
+        addToOrder(recommendedItem);
+      };
+    
+      return (
         <div className="flex w-screen h-screen" id="MenuContainer" >
             <MenuSideBar />
             {/* <button onClick={()=> {
