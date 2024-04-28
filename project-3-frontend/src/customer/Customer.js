@@ -267,7 +267,7 @@ const Customer = () => {
                             <img src="" alt="Image" className="h-30 w-30" />
                             <span className="text-xl font-bold">{button.itemName}</span>
                             <span className="text-lg font-bold text-center">${button.price}</span>
-                            <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                            <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4">
                                 {
                                     getStaticWord("View Ingredients")
                                 }
