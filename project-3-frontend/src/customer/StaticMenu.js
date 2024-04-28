@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
+const imageMapping = {
+  'Bacon Cheeseburger': '../baconCheeseburger.png',
+  'shakeImg': '../shake.png',
+  'Cheeseburger': '../cheeseburger.png',
+  'Black Bean Burger': '../blackBeanBurger.png',
+  'Chicken Caesar Salad': '../caesarSalad.png',
+  'Aggie Chicken Club': '../chickenClub.png',
+  'chickenWrap': '../chickenWrap.png',
+  'cookieIceCream': '../cookieIceCream.png',
+  'Corn Dog Value Meal': '../corndog.png',
+  'fishSandwich': '../fishSandwich.png',
+  'fountainDrink': '../fountainDrink.png',
+  'fries': '../fries.png',
+  'Revs Grilled Chicken Sandwich': '../grilledChickenSandwich.png',
+  'Classic Hamburger': '../hamburger.png',
+  '2 Hot Dog Value Meal': '../hotdog.png',
+  'iceCreamScoop': '../iceCreamScoop.png',
+  'Gig Em Patty Melt': '../pattymelt.png',
+  'rootBeerFloat': '../rootBeerFloat.png',
+  'Spicy Chicken Sandwich': '../spicyChickenSandwich.png',
+  'Tender Entree': '../tenders.png',
+  'tunaMelt': '../tunaMelt.png',
+  'waterBottle': '../waterBottle.png',
+  'tamuLogo': '../tamu-logo.png' // Added TAMU logo mapping
+};
+
 const StaticMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
-  const [columnWidth, setColumnWidth] = useState('auto');
-  const [maxNumColumns, setMaxNumColumns] = useState(4); // Maximum number of columns
+  const [maxItemsPerCategory, setMaxItemsPerCategory] = useState(0);
+  const [columnHeight, setColumnHeight] = useState('auto');
 
   useEffect(() => {
     getMenu();
-    handleResize(); // Initialize column width
-    window.addEventListener('resize', handleResize); // Listen for window resize
-    return () => window.removeEventListener('resize', handleResize); // Clean up event listener
   }, []);
-
-  useEffect(() => {
-    calculateColumns(); // Calculate the number of columns on component mount
-  }, [menuItems]);
 
   async function getMenu() {
     try {
@@ -24,7 +43,17 @@ const StaticMenu = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setMenuItems(data);
+        const filteredItems = data.filter(item =>
+          item.category === 'Sandwiches' ||
+          item.category === 'Burgers' ||
+          item.category === 'Value Meals'
+        );
+        const groupedItems = groupByCategory(filteredItems);
+        const maxItems = Math.max(...Object.values(groupedItems).map(category => category.length));
+        setMaxItemsPerCategory(maxItems);
+        // Calculate column height based on maximum number of items
+        setColumnHeight(`${maxItems * 200}px`); // Increased height to accommodate larger images
+        setMenuItems(groupedItems);
       } else {
         console.error('Failed to fetch menu:', response.status, response.statusText);
       }
@@ -33,33 +62,44 @@ const StaticMenu = () => {
     }
   }
 
-  function calculateColumns() {
-    const screenWidth = window.innerWidth;
-    const minColumnWidth = 300; // Minimum width for each column
-    const maxColumns = Math.floor(screenWidth / minColumnWidth); // Maximum number of columns
-    setMaxNumColumns(maxColumns);
-    const calculatedColumnWidth = Math.floor(screenWidth / maxColumns); // Calculate column width
-    setColumnWidth(calculatedColumnWidth + 'px');
-  }
-
-  function handleResize() {
-    calculateColumns(); // Recalculate column width on window resize
+  function groupByCategory(items) {
+    return items.reduce((acc, item) => {
+      const category = item.category;
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {});
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }} className='h-screen overflow-auto bg-red-900 text-white'>
-      <div className="container mx-auto px-4 py-8 bg-maroon">
-        <h1 className="text-2xl font-semibold mb-4 text-white">Menu</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
-          {menuItems.map((item, index) => (
-            <div key={index} className="relative">
-              <div className="p-4 rounded text-white mb-4" style={{ width: columnWidth, backgroundColor: 'transparent' }}>
-                <h2 className="text-lg font-semibold mb-2 ">{item.itemName}</h2>
-                <p className="text-black absolute bottom-0 right-0 mr-4">${item.price}</p>
+    <div className='h-screen bg-gray-200 relative'>
+      <div className="container mx-auto px-2 py-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+          {Object.entries(menuItems).map(([category, categoryItems], index) => (
+            <div key={index} className={category === 'Burgers' ? 'md:col-span-2' : ''}>
+              <h2 className={`text-2xl font-semibold mb-2 underline ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>{category}</h2>
+              <div className={`grid grid-cols-1 ${category === 'Burgers' ? 'md:grid-cols-2' : ''} gap-4`}>
+                {categoryItems.map((item, itemIndex) => (
+                  <div key={itemIndex} className="p-2 flex">
+                    <img src={imageMapping[item.itemName]} alt={item.itemName} className="w-40 h-40 mr-4 object-cover" />
+                    <div>
+                      <h3 className={`text-xl font-semibold mb-1 ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>{item.itemName}</h3>
+                      <p className={`text-xl font-bold ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>${item.price}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
+      </div>
+      <div className="absolute top-0 right-0 h-full w-1/2 bg-red-900 z-0"></div>
+      <div className="absolute top-0 left-0 h-full w-1/2 bg-white z-0"></div>
+      {/* Added TAMU logo */}
+      <div className="absolute top-0 left-0 h-full w-1/2 z-0">
+        <img src={imageMapping['tamuLogo']} alt="TAMU Logo" className="w-full h-full object-cover opacity-80" style={{ opacity: 0.2 }} />
       </div>
     </div>
   );

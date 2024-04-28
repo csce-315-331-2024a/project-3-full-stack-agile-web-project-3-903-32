@@ -4,6 +4,8 @@ import { TranslateText, LanguageContext } from "../components/Translate";
 import Navbar from "../components/NavbarCustomer";
 import Modal from "../components/ModalCustomer";
 
+
+
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
     const [itemIds, setItemIds] = useState([]);
@@ -208,22 +210,16 @@ const Customer = () => {
         marginLeft: '10px',
     };
 
-    const imageMapping = {
-        'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
-    }
-
     const invertColor = {
         filter : 'invert(1)'
     };
 
-const imageMapping = {
-    'Burger' : '../imgs/cheeseburger.png'
-}
+
 
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
-                backgroundImage: `url(${imageMapping[props.category]})`,
+              //  backgroundImage: `url(${imageMapping[props.category]})`,
             }
 
             return (
