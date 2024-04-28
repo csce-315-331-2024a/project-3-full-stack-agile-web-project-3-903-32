@@ -54,6 +54,7 @@ export const TranslateInput = () => {
     const setSelectedLanguage = useContext(LanguageUpdateContext);
 
     async function submitTranslation() {
+        window.location.reload();
         const text = document.getElementById("translate-input").value;
         setSelectedLanguage(text);
     }
@@ -80,17 +81,18 @@ export const TranslateInput = () => {
     }
 
     return (
-            <div className="absolute top-5 left-5">
-                <label id="select-language-label">Select Language:</label>
-                <select id='translate-input' aria-labelledby="select-language-label">
-                    {
-                        languages.map((lang) => {
-                            return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>{lang.name}</option>
-                        })
-                    }
-                </select>
-                <button onClick={submitTranslation}>Translate</button>
-            </div>
+        <div className="absolute top-2 right-4 flex flex-col">
+            <label id="select-language-label">Select Language:</label>
+            <select id='translate-input' aria-labelledby="select-language-label" onChange={submitTranslation} className="p-2 rounded hover:cursor-pointer border border-gray-500">
+                {
+                    languages.map((lang) => {
+                        return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>
+                            {lang.name}
+                        </option>
+                    })
+                }
+            </select>
+        </div>
     );
 }
 

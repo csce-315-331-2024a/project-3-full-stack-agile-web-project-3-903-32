@@ -674,8 +674,6 @@ class Language:
     def getCode(self):
         return self.code
 
-# target_lang = Language('English', 'EN')
-
 @app.route('/api/translate', methods=['POST', 'GET'])
 def translate_route():
     if request.method == 'GET':
@@ -695,13 +693,14 @@ def translate_route():
                 res_lang = data['target_language']
                 if res_lang == 'EN':
                     res_lang = 'EN-US'
-                transformed_text = translator.translate_text(text=texts, target_lang=res_lang)
-                return jsonify({'translated_text': transformed_text.text}), 200
+                transformed_text = translator.translate_text(text=",".join(texts), target_lang=res_lang)
+                return jsonify({'translated_text': transformed_text.text.split(",")}), 200
             else:
                 text = data['text']
                 res_lang = data['target_language']
+                if res_lang == 'EN':
+                    res_lang = 'EN-US'
                 transformed_text = translator.translate_text(text=text, target_lang=res_lang)
-                print("Transformed Text", transformed_text.text, res_lang)
                 return jsonify({'translated_text': transformed_text.text}), 200
         except Exception as e:
             print("Bad Request", e)
