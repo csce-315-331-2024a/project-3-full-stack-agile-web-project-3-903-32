@@ -6,6 +6,7 @@ const Navbar = ({handleRecommendedItemClick}) => {
   const [showRecommendedItemModal, setShowRecommendedItemModal] = useState(false);
   const [recommendedItem, setRecommendedItem] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [hasSpoken, setHasSpoken] = useState(false);
 
   useEffect(() => {
     getWeather();
@@ -94,6 +95,26 @@ const Navbar = ({handleRecommendedItemClick}) => {
     handleRecommendedItemClick(recommendedItem);
   }
 
+  const handleSpeechAssistance = () => {
+    if (!hasSpoken) {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = "Speech assistance activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, and value meals. Please click a category to hear menu items and prices. ";
+      window.speechSynthesis.speak(msg);
+      setHasSpoken(true);
+    } else {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = "Speech assistance off.";
+      window.speechSynthesis.speak(msg);
+      setHasSpoken(false);
+    }
+  };
+
   return (
     <nav className="flex justify-between items-center p-5 bg-white border-b border-gray-200">
       <div className="text-xl font-semibold text-gray-700">REV'S American Grill</div>
@@ -101,6 +122,9 @@ const Navbar = ({handleRecommendedItemClick}) => {
         <span className='mx-4'>{weather}</span>
         <button onClick={handleOpenRecommendedItemModal} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
           Recommended Item
+        </button>
+        <button onClick={handleSpeechAssistance} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
+          Speech Assistance
         </button>
       </div>
       {showRecommendedItemModal && <RecommendedItemModal />}
