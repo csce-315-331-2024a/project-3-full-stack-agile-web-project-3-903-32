@@ -204,7 +204,7 @@ const Orders = () => {
                   <tr className="bg-white border-b">
                     <td className="p-4 text-base text-gray-700">{order.orderID}</td>
                     <td className="p-4 text-base text-gray-700">{order.customerName}</td>
-                    <td className="p-4 text-base text-gray-700">{order.time}</td>
+                    <td classN-grame="p-4 text-base text-gray-700">{order.time}</td>
                     <td className="p-4 text-base text-gray-700">${order.totalPrice.toFixed(2)}</td>
                     <td className="p-4 text-base text-gray-700">
                       <button

@@ -143,7 +143,10 @@ const Cashier = () => {
 
     const changeOrder = (index, newQuantity) => {
         const parseQuantity = parseInt(newQuantity)
-        if (isNaN(parseQuantity) || parseQuantity <= 0) {
+        if(isNaN(parseQuantity)) {
+            return;
+        }
+        if (parseQuantity <= 0) {
             const item = order[index];
             const price = parseFloat(item.price);
             setTotal((total) => round(total - price * item.quantity, 2));
