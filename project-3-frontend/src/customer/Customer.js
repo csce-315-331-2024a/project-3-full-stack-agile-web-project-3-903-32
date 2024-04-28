@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { TranslateText, LanguageContext } from "../components/Translate";
 import Modal from "../components/ModalCustomer";
 import { StaticOrderingWords } from "./CustomerConstants";
+import { NavLink } from 'react-router-dom';
 
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
@@ -223,10 +224,6 @@ const Customer = () => {
         filter : 'invert(1)'
     };
 
-    const imageMapping = {
-        'Burger' : '../imgs/cheeseburger.png'
-    }
-
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
@@ -285,13 +282,13 @@ const Customer = () => {
                     </p>
                 )}
             </div>
-            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 pt-5 flex flex-col">
+            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 mt-2 flex flex-col">
                 <div className="flex flex-row gap-2 justify-start align-top">
-                    <button className="w-1/3 h-10 bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-2 rounded mb-2">
+                    <NavLink to="/" className="w-1/3 h-10 bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-2 rounded mb-2 text-center">
                         {
                             getStaticWord('Logout')
                         }
-                    </button>
+                    </NavLink>
                     <button className="w-1/4 h-10 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded mb-2" onClick={()=> {
                     document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
                     setInvertButton(!invertButton)}}>

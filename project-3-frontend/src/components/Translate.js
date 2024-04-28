@@ -81,7 +81,7 @@ export const TranslateInput = () => {
     }
 
     return (
-        <div className="absolute top-5 right-4">
+        <div className="absolute top-2 right-4 flex flex-col">
             <label id="select-language-label">Select Language:</label>
             <select id='translate-input' aria-labelledby="select-language-label" onChange={submitTranslation} className="p-2 rounded hover:cursor-pointer border border-gray-500">
                 {
