@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/NavbarCashier";
+import Navbar from "../components/NavbarCook";
 import ConfirmModal from "../components/ModalCookConfirm";
 
 const CookScreen = () => {
@@ -130,7 +130,7 @@ const CookScreen = () => {
                                             </tr>
                                             <tbody>
                                                 {aggregateItems(item.items).map((item, itemIndex) => (
-                                                    <tr key={itemIndex} className="bg-white ">
+                                                    <tr key={itemIndex} className={` ${itemIndex % 2 === 0  ? 'bg-white' : 'bg-gray-300'}`}>
                                                         <td className="p-2 text-base text-gray-800">{item.itemName}</td>
                                                         <td className="p-2 text-base text-gray-800">x {item.count}</td>
                                                     </tr>
@@ -141,7 +141,7 @@ const CookScreen = () => {
                                     </div>
                                 ))
                             ) : (
-                                <p className='text-xl'>No Ordres in Queue</p>
+                                <p className='text-xl'>No Orders in Queue</p>
                             )}
                         </div>
                     </div>
