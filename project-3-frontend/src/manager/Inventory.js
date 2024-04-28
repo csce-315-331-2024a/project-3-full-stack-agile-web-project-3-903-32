@@ -72,27 +72,33 @@ const Inventory = () => {
 
   async function restockInventory(event) {
     event.preventDefault();
+    
     try {
+        const inventoryId = document.querySelector('select[name=restock_selector]').value;
+        const addStock = document.querySelector('input[name=restock_input]').value;
+        
         // console.log(document.querySelector('select[name=restock_selector]').value);
-        await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory/" + document.querySelector('select[name=restock_selector]').value, {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/inventory/${inventoryId}`, {
             method: "PUT",
-            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "name": document.querySelector('select[name=restock_selector]').value,
-                "add_stock": document.querySelector('input[name=restock_input]').value,
+                add_stock: addStock
             })
-        })
-        .then((res) => res.json())
-        .then((data) => {
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Updates were successful, refresh inventory data
             getInventory();
             getShortage();
-            console.log(data['message']);
-        }).catch((err) => {
-            console.log(err);
-        });
+            alert('Stock updated successfully.');
+        } else {
+            // Handle errors, such as stock level out of bounds
+            alert(data['error']); // Show an error message from the server
+        }
     } catch {
         console.log("Error");
     }

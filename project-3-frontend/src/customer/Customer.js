@@ -362,7 +362,7 @@ const Customer = () => {
                     <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
                     {inventoryData.length > 0 ? (
                         inventoryData.map(item => (
-                            <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
+                            <p key={item.itemID} className="text-lg mb-2">{item.itemName}</p>
                         ))
                     ) : (
                         <p>
