@@ -75,7 +75,6 @@ const Orders = () => {
         mode: 'cors'
       });
       if (response.ok) {
-        deleteOrder(orderId);
         getOrders();
       } else {
         console.error('Failed to delete order:', response.status, response.statusText);
