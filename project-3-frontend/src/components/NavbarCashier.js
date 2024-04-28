@@ -31,6 +31,7 @@ const Navbar = () => {
         <NavComponent to="/cashier" text='Cashier' />
         <NavComponent to="/customer" text='Customer' />
         <NavComponent to="/customer/StaticMenu" text='Menu Board' />
+        <NavComponent to="/cook" text='Kitchen' />
       </div>
       <div className="flex items-center">
         <button
