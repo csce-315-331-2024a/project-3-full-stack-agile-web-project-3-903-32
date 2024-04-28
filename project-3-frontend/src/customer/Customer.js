@@ -325,7 +325,7 @@ const Customer = () => {
                                     </button>
                                     <button
                                         onClick={() => removeFromOrder(index)}
-                                        className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                        className="text-sm bg-red-700 hover:bg-red-900 text-white font-semibold py-1 px-3 rounded-r"
                                     >
                                         -
                                     </button>
@@ -350,7 +350,7 @@ const Customer = () => {
                     </div>
                     <button
                         onClick={handlePaymentClick}
-                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                        className="w-full bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4"
                     >
                         {
                             getStaticWord('Go to Payment')
