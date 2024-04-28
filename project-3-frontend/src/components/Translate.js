@@ -82,7 +82,8 @@ export const TranslateInput = () => {
 
     return (
         <div className="absolute top-5 right-4">
-            <select id='translate-input' onChange={submitTranslation} className="p-2 rounded hover:cursor-pointer border border-gray-500">
+            <label id="select-language-label">Select Language:</label>
+            <select id='translate-input' aria-labelledby="select-language-label" onChange={submitTranslation} className="p-2 rounded hover:cursor-pointer border border-gray-500">
                 {
                     languages.map((lang) => {
                         return <option key={lang.code} selected={lang.code === getCacheLanguage()} value={lang.code}>

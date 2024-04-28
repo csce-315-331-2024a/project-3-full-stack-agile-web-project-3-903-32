@@ -19,7 +19,7 @@ const withManagerAuthentication = (WrappedComponent) => {
     const navigate = useNavigate();
     useEffect(() => {
       console.log("HERE");
-      if (isAuthenticatedManager() == 'false') {
+      if (isAuthenticatedManager() === 'false') {
         navigate('/'); 
       }
     }, [navigate]);

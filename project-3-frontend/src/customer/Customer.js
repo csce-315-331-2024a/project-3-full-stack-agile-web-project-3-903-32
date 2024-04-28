@@ -223,6 +223,10 @@ const Customer = () => {
         filter : 'invert(1)'
     };
 
+    const imageMapping = {
+        'Burger' : '../imgs/cheeseburger.png'
+    }
+
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
@@ -250,8 +254,13 @@ const Customer = () => {
             </div>
         );
     }
-    return (
-        <div className="flex w-screen h-screen overflow-hidden" id="MenuContainer" >
+    
+    const handleRecommendedItemClick = (recommendedItem) => {
+        addToOrder(recommendedItem);
+      };
+    
+      return (
+        <div className="flex w-screen h-screen" id="MenuContainer" >
             <MenuSideBar />
            
             <div className="w-full lg:w-[70%] bg-white shadow-md rounded p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">

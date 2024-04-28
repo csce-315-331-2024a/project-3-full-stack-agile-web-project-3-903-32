@@ -88,7 +88,7 @@ const CustomerPayment = () => {
 
             const data = await response.json();
             console.log(data['message']);
-            navigate('/customer'); // Navigating back to the Customer page
+            navigate('/customer/confirm'); // Navigating to customer confirm
         } catch (err) {
             console.error(err);
         }
