@@ -32,6 +32,10 @@ const Customer = () => {
         navigate('/customer/payment', { state: { order, total, itemIds } });
     };
 
+    const toggleSpeechAssistance = () => {
+        setHasSpoken(!hasSpoken);
+    };
+
     const handleViewIngredients = (event, item) => {
         event.stopPropagation();
         getMenuInventory(item.id);
@@ -269,20 +273,22 @@ const Customer = () => {
     const readSelectedCategory = (category) => {
         const categoryItems = fullMenu.filter(item => item.category === category);
         if ('speechSynthesis' in window) {
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-            }
-            const msg = new SpeechSynthesisUtterance();
-            msg.text = category;
-            window.speechSynthesis.speak(msg);
-            categoryItems.forEach((item) => {
+            if (!hasSpoken) {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
                 const msg = new SpeechSynthesisUtterance();
-                msg.text = `${item.itemName} - ${item.price} dollars.`;
-                msg.lang = selectedLanguage;
-                msg.rate = 1.0;
-                msg.pitch = 1.0;
+                msg.text = category;
                 window.speechSynthesis.speak(msg);
-            });
+                categoryItems.forEach((item) => {
+                    const msg = new SpeechSynthesisUtterance();
+                    msg.text = `${item.itemName} - ${item.price} dollars.`;
+                    msg.lang = selectedLanguage;
+                    msg.rate = 1.0;
+                    msg.pitch = 1.0;
+                    window.speechSynthesis.speak(msg);
+                });
+            }
         } else {
             alert('Text-to-speech is not supported in this browser.');
         }
@@ -311,17 +317,17 @@ const Customer = () => {
             )
         }
         const recommendedItemStyle = {
-            backgroundColor: '#f0f0f0', // Adjust the color as needed
-            color: '#333', // Adjust the text color as needed
-            border: '1px solid #ccc', // Adjust the border color as needed
-            height: '3rem', // Adjust the height as needed
-            borderRadius: '0.25rem', // Adjust the border radius as needed
-            margin: '0.5rem', // Adjust the margin as needed
-            fontSize: '1rem', // Adjust the font size as needed
-            fontWeight: '500', // Adjust the font weight as needed
-            textAlign: 'center', // Adjust the text alignment as needed
-            cursor: 'pointer', // Show pointer cursor on hover
-            transition: 'background-color 0.3s ease', // Add transition effect
+            backgroundColor: '#2DA3EB',
+            color: '#333',
+            border: '1px solid #ccc',
+            height: '3rem',
+            borderRadius: '0.25rem',
+            margin: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: '500',
+            textAlign: 'center',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
         };
         return (
             <div className="w-1/6 flex flex-col">
@@ -348,7 +354,7 @@ const Customer = () => {
   useEffect(() => {
     if (!hasSpokenRef.current) {
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Welcome to Rev's American Grill. For speech assistance, please click the button on the top right corner of the screen. Click again at any point to turn speech assistance off.";
+      msg.text = "Welcome to Rev's American Grill. For speech assistance, please click the green, ON, button on the top right-hand side of the screen. Click again at any point to turn speech assistance off.";
       window.speechSynthesis.speak(msg);
       hasSpokenRef.current = true;
     }
@@ -356,7 +362,7 @@ const Customer = () => {
 
   return (
     <div>
-    <Navbar handleRecommendedItemClick={handleRecommendedItemClick} />
+        <Navbar toggleSpeechAssistance={toggleSpeechAssistance} handleRecommendedItemClick={handleRecommendedItemClick} />
     <div className="flex w-screen h-screen" id="MenuContainer" >
         <MenuSideBar />
        
@@ -382,7 +388,7 @@ const Customer = () => {
                 </p>
             )}
         </div>
-        <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 mt-2 flex flex-col">
+        <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 mt-2 flex flex-col h-[725px]">
             
             <div className="w-full border my-2 border-black rounded"></div>
             <h2 className="text-2xl font-bold mb-4">
