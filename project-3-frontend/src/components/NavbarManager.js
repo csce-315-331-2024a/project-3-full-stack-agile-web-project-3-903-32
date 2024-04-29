@@ -64,6 +64,8 @@ const Navbar = () => {
         <NavComponent to="/cashier" text='Cashier' />
         <NavComponent to="/customer" text='Customer' />
         <NavComponent to="/customer/StaticMenu" text='Menu Board' />
+        <NavComponent to="/customer/StaticMenu2" text='Menu Board 2' />
+
       </div>
       <div className="flex items-center">
         <span className='mx-4'>{weather}</span>

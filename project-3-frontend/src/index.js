@@ -21,6 +21,7 @@ import TranslateContext from './components/Translate';
 import StaticMenu from './customer/StaticMenu';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import StaticMenu2 from './customer/StaticMenu2';
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,12 @@ const router = createBrowserRouter([
   {
     path: '/customer/StaticMenu',
     element: <StaticMenu />,
+    children: [],
+  },
+
+  {
+    path: '/customer/StaticMenu2',
+    element: <StaticMenu2 />,
     children: [],
   }
 ]);
