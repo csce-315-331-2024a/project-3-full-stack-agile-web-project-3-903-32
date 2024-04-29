@@ -265,9 +265,6 @@ const Customer = () => {
         'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
     }
 
-    const invertColor = {
-        filter : 'invert(1)'
-    };
 
     const readSelectedCategory = (category) => {
         const categoryItems = fullMenu.filter(item => item.category === category);
@@ -290,6 +287,9 @@ const Customer = () => {
             alert('Text-to-speech is not supported in this browser.');
         }
     };
+    // const invertColor = {
+    //     filter : 'invert(1)'
+    // };
 
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
