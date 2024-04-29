@@ -220,9 +220,9 @@ const Customer = () => {
         'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
     }
 
-    const invertColor = {
-        filter : 'invert(1)'
-    };
+    // const invertColor = {
+    //     filter : 'invert(1)'
+    // };
 
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
@@ -254,7 +254,7 @@ const Customer = () => {
     
     const handleRecommendedItemClick = (recommendedItem) => {
         addToOrder(recommendedItem);
-      };
+    };
     
       return (
         <div className="flex w-screen h-screen" id="MenuContainer" >
@@ -282,16 +282,17 @@ const Customer = () => {
                     </p>
                 )}
             </div>
-            <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 mt-2 flex flex-col">
+            <div className="w-full lg:w-1/4 bg-white shadow-md p-6 flex flex-col">
                 <div className="flex flex-row gap-2 justify-start align-top">
                     <NavLink to="/" className="w-1/3 h-10 bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-2 rounded mb-2 text-center">
                         {
                             getStaticWord('Logout')
                         }
                     </NavLink>
-                    <button className="w-1/4 h-10 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded mb-2" onClick={()=> {
-                    document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
-                    setInvertButton(!invertButton)}}>
+                    <button className="w-1/4 h-10 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded mb-2" onClick={(event)=> {
+                        document.getElementById('root').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+                        setInvertButton(!invertButton)}}
+                    >
                         {
                             getStaticWord('Invert')
                         }
