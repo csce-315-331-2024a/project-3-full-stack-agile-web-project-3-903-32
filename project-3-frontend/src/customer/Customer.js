@@ -18,7 +18,7 @@ const Customer = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
     const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
-    const [hasSpoken, setHasSpoken] = useState(false);
+    const [hasSpoken, setHasSpoken] = useState(true);
     const [showRecommendedItemModal, setShowRecommendedItemModal] = useState(false);
     const [recommendedItem, setRecommendedItem] = useState(null);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -32,8 +32,8 @@ const Customer = () => {
         navigate('/customer/payment', { state: { order, total, itemIds } });
     };
 
-    const toggleSpeechAssistance = () => {
-        setHasSpoken(!hasSpoken);
+    const handleSpeechAssistanceChange = (newHasSpoken) => {
+        setHasSpoken(newHasSpoken);
     };
 
     const handleViewIngredients = (event, item) => {
@@ -362,7 +362,7 @@ const Customer = () => {
 
   return (
     <div>
-        <Navbar toggleSpeechAssistance={toggleSpeechAssistance} handleRecommendedItemClick={handleRecommendedItemClick} />
+        <Navbar onSpeechAssistanceChange={handleSpeechAssistanceChange} handleRecommendedItemClick={handleRecommendedItemClick} />
     <div className="flex w-screen h-screen" id="MenuContainer" >
         <MenuSideBar />
        

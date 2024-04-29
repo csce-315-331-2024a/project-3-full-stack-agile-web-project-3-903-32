@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { StaticOrderingWords } from "../customer/CustomerConstants";
 
-const Navbar = ({ toggleSpeechAssistance }) => {
+const Navbar = ({ onSpeechAssistanceChange }) => {
   const [weather, setWeather] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
@@ -73,6 +73,7 @@ const Navbar = ({ toggleSpeechAssistance }) => {
       msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. ";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
+      onSpeechAssistanceChange(false);
     } else {
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
@@ -81,6 +82,7 @@ const Navbar = ({ toggleSpeechAssistance }) => {
       msg.text = "Speech assistance off.";
       window.speechSynthesis.speak(msg);
       setHasSpoken(false);
+      onSpeechAssistanceChange(true);
     }
   };
 
