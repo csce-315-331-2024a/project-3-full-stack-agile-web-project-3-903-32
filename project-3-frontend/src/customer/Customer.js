@@ -18,6 +18,10 @@ const Customer = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
     const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
+    const [hasSpoken, setHasSpoken] = useState(false);
+    const [showRecommendedItemModal, setShowRecommendedItemModal] = useState(false);
+    const [recommendedItem, setRecommendedItem] = useState(null);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const selectedLanguage = useContext(LanguageContext);
     
@@ -95,6 +99,47 @@ const Customer = () => {
             console.error('Error fetching static translations:', error);
         }
     }
+
+    async function getRecommendedItem() {
+        setIsButtonDisabled(true);
+        try {
+          const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/recommended", {
+            mode: 'cors'
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRecommendedItem(data.item);
+          } else {
+            console.error('Failed to fetch recommended items:', response.status, response.statusText);
+          }
+        } catch (error) {
+          console.error('Error fetching recommended items:', error);
+        }
+      }
+
+      const handleOpenRecommendedItemModal = async () => {
+        await getRecommendedItem();
+        setShowRecommendedItemModal(true);
+      };
+    
+      const RecommendedItemModal = (props) => (
+        <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
+          <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-gray-200 text-black rounded hover:bg-gray-300 transition duration-300 ease-in-out font-bold text-lg" > {recommendedItem.itemName} </button>
+          <p>Click to add this delicious item to your order!</p>
+          <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] my-4'/></button>
+        </div>
+      )
+
+      const handleCloseModal = (event) => {
+        setIsButtonDisabled(false);
+        setShowRecommendedItemModal(false);
+      }
+    
+      const handleCloseAndOrderModal = (event) => {
+        setIsButtonDisabled(false);
+        setShowRecommendedItemModal(false);
+        handleRecommendedItemClick(recommendedItem);
+      }
 
     async function getMenu() {
         try {
@@ -224,6 +269,28 @@ const Customer = () => {
         filter : 'invert(1)'
     };
 
+    const readSelectedCategory = (category) => {
+        const categoryItems = fullMenu.filter(item => item.category === category);
+        if ('speechSynthesis' in window) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = category;
+            window.speechSynthesis.speak(msg);
+            categoryItems.forEach((item) => {
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = `${item.itemName} - ${item.price} dollars.`;
+                msg.lang = selectedLanguage;
+                msg.rate = 1.0;
+                msg.pitch = 1.0;
+                window.speechSynthesis.speak(msg);
+            });
+        } else {
+            alert('Text-to-speech is not supported in this browser.');
+        }
+    };
+
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
@@ -232,7 +299,8 @@ const Customer = () => {
 
             return (
                 <button className="bg-placeholder w-full border-gray-500 border h-16" key={props.category} style={sideBarImage} onClick={()=> {
-                    setSelectedCategory(props.category)
+                    setSelectedCategory(props.category);
+                    readSelectedCategory(props.category);
                     } }>
                     <p>
                         {
@@ -242,12 +310,31 @@ const Customer = () => {
                 </button>
             )
         }
+        const recommendedItemStyle = {
+            backgroundColor: '#f0f0f0', // Adjust the color as needed
+            color: '#333', // Adjust the text color as needed
+            border: '1px solid #ccc', // Adjust the border color as needed
+            height: '3rem', // Adjust the height as needed
+            borderRadius: '0.25rem', // Adjust the border radius as needed
+            margin: '0.5rem', // Adjust the margin as needed
+            fontSize: '1rem', // Adjust the font size as needed
+            fontWeight: '500', // Adjust the font weight as needed
+            textAlign: 'center', // Adjust the text alignment as needed
+            cursor: 'pointer', // Show pointer cursor on hover
+            transition: 'background-color 0.3s ease', // Add transition effect
+        };
         return (
             <div className="w-1/6 flex flex-col">
                 {categories.map((category) => {
                     return sidebarButton({ category: category });
                 })
                 }
+            <button
+                onClick={handleOpenRecommendedItemModal}
+                style={recommendedItemStyle}
+                disabled={isButtonDisabled}
+            > Recommended item
+            </button>
             </div>
         );
     }
