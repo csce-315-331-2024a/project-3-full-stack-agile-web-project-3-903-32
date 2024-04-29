@@ -167,7 +167,6 @@ const CustomerPayment = () => {
             <input 
                 className="w-full mr-4 mb-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded text-2xl"
                 type="text"
-                tabIndex={1}
                 id="customer_name"
                 placeholder='Enter your name here...'
                 aria-labelledby='customer_name'
@@ -175,18 +174,18 @@ const CustomerPayment = () => {
                 onChange={changeName}
             />
             <div className="flex justify-center mt-6 space-x-4">
-                {showEmptyMessage && <div className="text-red-500">Order is empty</div>}
-                <button tabIndex={2} onClick={showConfirmationModal} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                {showEmptyMessage && <div className="text-red-700">Order is empty</div>}
+                <button onClick={showConfirmationModal} className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 {
                     getStaticWord('Submit Payment')
                 }
                 </button>
-                <button tabIndex={3} onClick={toCustomerBack} className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
+                <button onClick={toCustomerBack} className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
                 {
                     getStaticWord('Back')
                 }
                 </button>
-                <button tabIndex={4} onClick={toCustomerCancel} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                <button onClick={toCustomerCancel} className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
                 {
                     getStaticWord('Clear Order')
                 }
@@ -198,10 +197,10 @@ const CustomerPayment = () => {
                         <h3 className="mb-4 text-lg font-bold"><TranslateText text='Confirm Payment'/></h3>
                         <p><TranslateText text='Are you sure you want to submit the payment?'/></p>
                         <div className="flex justify-around mt-6">
-                            <button onClick={confirmSubmit} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">
+                            <button onClick={confirmSubmit} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 focus:outline-none">
                                 <TranslateText text='Confirm'/>
                             </button>
-                            <button onClick={closeConfirmationModal} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none">
+                            <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
                                 <TranslateText text='Clear Order'/>
                             </button>
                         </div>

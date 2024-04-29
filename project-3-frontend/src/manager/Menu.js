@@ -353,20 +353,24 @@ const Menu = () => {
     }
   }
 
-  const EditMenuModal = (props) => (
+  const EditMenuModal = () => (
     <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
-      <div className='p-4'>
-        <label htmlFor='item_name'>Name:</label>
-        <input className='my-2 px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
-        <label htmlFor='item_price'>Price:</label>
-        <input className='px-2 mx-4 bg-gray-200 rounded w-1/4' type='text' id='item_price' defaultValue={menuPrice} />
-        <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px]'/></button>
-        <label htmlFor='item_category'>Category:</label>
-        <select className='px-2 mx-4 bg-gray-200 rounded' id='item_category' defaultValue={menuCategory}>
-          {categories.map((category) => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
+      <div className='pb-4 px-4 flex flex-col relative'>
+        <div>
+          <label htmlFor='item_name'>Name:</label>
+          <input className='my-2 px-2 mx-4 bg-gray-200 rounded' type='text' id='item_name' defaultValue={menuName} />
+          <label htmlFor='item_price'>Price:</label>
+          <input className='px-2 mx-4 bg-gray-200 rounded w-1/4' type='text' id='item_price' defaultValue={menuPrice} />
+          <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] absolute right-1 top-3'/></button>
+        </div>
+        <div>
+          <label htmlFor='item_category'>Category:</label>
+          <select className='px-2 mx-4 bg-gray-200 rounded' id='item_category' defaultValue={menuCategory}>
+            {categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className='mx-4 flex justify-between'>
         <button className='rounded border-2 p-2 hover:bg-green-100 border-green-900 text-green-900' id='button_save_menu' onClick={handleSaveMenu}>Save Menu Item</button>
