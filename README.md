@@ -58,4 +58,4 @@ Sprint 3 Meeting 2:
 In this meeting, we discussed how the first week of sprint 3 went for us and whether or not there were any difficulties. For the first week, many team members had finished all of their tasks, but we kept finding more and more possible issues and ways to improve our program which led to more and more tasks being added. We looked through the backlog to make sure we were all were satisfied with our extra workload due to the new tasks.
 
 Sprint 3 Meeting 3:
-In this meeting, we did our final check-ins for the sprint with each team member and discussed if there were any last minute additions that we would like to add to go above and beyond for the final product. We wrote down some of our ideas and voted on which ones were the best suited for our program. 
+In this meeting, we did our final check-ins for the sprint with each team member and discussed if there were any last minute additions that we would like to add to go above and beyond for the final product. We wrote down some of our ideas and voted on which ones were the best suited for our program. We divided the work and made sure each of us were willing to put in the extra work.
