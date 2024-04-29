@@ -145,27 +145,46 @@ def delete_menu_mijunc_batch(menu_id):
 ###################################
 #             Inventory API       #
 ###################################
-@app.route('/api/inventory')
+@app.route('/api/inventory', methods=['GET', 'POST'])
 def get_inventory_items():
-    query = text("SELECT * FROM Inventory ORDER BY name ASC")
-    results = db.session.execute(query).fetchall()
-    if results:
-        data = []
-        for row in results:
-            item = {
-                'id' : row[0],
-                'name' : row[1],
-                'stock' : row[2],
-                'location' : row[3],
-                'capacity' : row[4],
-                'supplier' : row[5],
-                'minimum' : row[6]
-            }
-            data.append(item)
+    if request.method == 'GET':
+        query = text("SELECT * FROM Inventory ORDER BY name ASC")
+        results = db.session.execute(query).fetchall()
+        if results:
+            data = []
+            for row in results:
+                item = {
+                    'id' : row[0],
+                    'name' : row[1],
+                    'stock' : row[2],
+                    'location' : row[3],
+                    'capacity' : row[4],
+                    'supplier' : row[5],
+                    'minimum' : row[6]
+                }
+                data.append(item)
 
-        return jsonify(data)
-    else:
-        return jsonify({'error': 'No data found'}), 404
+            return jsonify(data)
+        else:
+            return jsonify({'error': 'No data found'}), 404
+    elif request.method == 'POST':
+        data = request.get_json()
+        if (data['name'] is not None
+        and data['stock'] is not None
+        and data['minimum'] is not None 
+        and data['capacity'] is not None 
+        and data['location'] is not None 
+        and data['supplier'] is not None):
+            query = text("SELECT id FROM Inventory Order BY id DESC LIMIT 1")
+            res = db.session.execute(query).fetchone()
+            if res is not None:
+                new_id = res[0] + 1
+            query = text("INSERT INTO Inventory (id, name, stock, minimum, capacity, location, supplier) VALUES (:id, :name, :stock, :minimum, :capacity, :location, :supplier)")
+            db.session.execute(query, {'id' : new_id ,'name' : data['name'], 'stock' : data['stock'], 'minimum': data['minimum'], 'capacity': data['capacity'], 'location': data['location'], 'supplier': data['supplier']})
+            db.session.commit()
+        else:
+            return jsonify({'error': 'Missing data'}), 400
+        return jsonify({'message': 'Inventory Item created successfully'}), 201
 
 
 # GET: Find all low stock items
@@ -191,14 +210,13 @@ def get_inventory_shortage():
         return jsonify({'error': 'No data found'}), 404
 
 
-@app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET"])
+@app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET", "DELETE", "POST"])
 def update_inventory(inventory_id):
     if request.method == 'GET':
         data = []
         if(inventory_id.isnumeric() == False):
             query = text("SELECT id FROM Inventory WHERE name = :name")
             result = db.session.execute(query, {'name': inventory_id}).fetchone()
-            
         else:
             query = text("SELECT * FROM Inventory WHERE id = :id")
             result = db.session.execute(query, {'id': inventory_id}).fetchone()
@@ -214,6 +232,29 @@ def update_inventory(inventory_id):
         else:
             return jsonify({'error': 'No data found'}), 404
     elif(request.method == 'PUT'):
+        data = request.get_json()
+        if (data['name'] is not None
+        and data['stock'] is not None
+        and data['minimum'] is not None 
+        and data['capacity'] is not None 
+        and data['location'] is not None 
+        and data['supplier'] is not None):
+            query = text("UPDATE Inventory SET name = :name, stock = :stock, minimum = :minimum, capacity = :capacity, location = :location, supplier = :supplier WHERE id = :id")
+            db.session.execute(query, {'name' : data['name'], 'stock' : data['stock'], 'minimum': data['minimum'], 'capacity': data['capacity'], 'location': data['location'], 'supplier': data['supplier'], 'id': inventory_id})
+            db.session.commit()
+        else:
+            return jsonify({'error': 'Missing data'}), 400
+        return jsonify({'message': 'Inventory Item updated successfully'}), 200
+
+    elif(request.method == 'DELETE'):
+        query = text("DELETE FROM Inventory WHERE id = :id")
+        db.session.execute(query, {'id': inventory_id})
+        db.session.commit()
+        return jsonify({'message': 'Inventory item deleted successfully'}), 200
+
+@app.route('/api/inventory/<inventory_id>/add', methods=['PUT'])
+def add_inventory(inventory_id):
+    if request.method == 'PUT':
         if(inventory_id.isnumeric() == False):
             query = text("SELECT id FROM Inventory WHERE name = :name")
             result = db.session.execute(query, {'name': inventory_id}).fetchone()
@@ -224,15 +265,8 @@ def update_inventory(inventory_id):
         data = request.get_json()
         query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
         db.session.execute(query, {'add_stock': data['add_stock'], 'id': inventory_id})
-        print('Updated stock for item with ID: ' + str(inventory_id))
         db.session.commit()
         return jsonify({'message': 'Stock updated successfully'}), 200
-    elif(request.method == 'DELETE'):
-        query = text("DELETE FROM Inventory WHERE id = :id")
-        db.session.execute(query, {'id': inventory_id})
-        db.session.commit()
-        return jsonify({'message': 'Inventory item deleted successfully'}), 200
-
 
 def update_inventory_batch(data):
     query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
