@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TranslateText, LanguageContext } from "../components/Translate";
-import Navbar from "../components/NavbarCustomer";
 import Modal from "../components/ModalCustomer";
+import { StaticOrderingWords } from "./CustomerConstants";
+//import { NavLink } from 'react-router-dom';
+import Navbar from "../components/NavbarCustomer";
 
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
@@ -15,9 +17,9 @@ const Customer = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
+    const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
 
     const selectedLanguage = useContext(LanguageContext);
-    const [invertButton, setInvertButton] = useState(false);
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,12 +28,23 @@ const Customer = () => {
         navigate('/customer/payment', { state: { order, total, itemIds } });
     };
 
-    const handleViewIngredients = (item) => {
+    const handleViewIngredients = (event, item) => {
+        event.stopPropagation();
         getMenuInventory(item.id);
         setSelectedItem(item);
     };
 
+    const getStaticWord = (word) => {
+        return (
+        <span>
+            {
+                staticTranslations[StaticOrderingWords.indexOf(word)]
+            }
+        </span>);
+    };
+
     useEffect(() => {
+        postStaticTranslations();
         getMenu();
 
         if (location.state) {
@@ -45,18 +58,43 @@ const Customer = () => {
     useEffect(() => {
         getCategory();
         setDisplayedMenu(fullMenu);
-    }, []);
+    }, [fullMenu]);
 
     useEffect(() => {
+        setDisplayedMenu([]);
         if (selectedCategory === 'All') {
             console.log('All');
             setDisplayedMenu(fullMenu);
         } else {
             console.log('Category:', selectedCategory);
             setDisplayedMenu(fullMenu.filter(item => item.category === selectedCategory));
-            console.log(fullMenu.filter(item => item.category === selectedCategory));
+            // console.log(fullMenu.filter(item => item.category === selectedCategory));
         }
     }, [selectedCategory]);
+
+    async function postStaticTranslations() {
+        try {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
+                method: "POST",
+                mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "text": staticTranslations,
+                    "target_language": selectedLanguage
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setStaticTranslations(data.translated_text);
+            } else {
+                console.error('Failed to fetch static translations:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching static translations:', error);
+        }
+    }
 
     async function getMenu() {
         try {
@@ -178,43 +216,13 @@ const Customer = () => {
         return order;
     };
 
-    const menuRowStyle = {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        gap: '10px',
-    };
-
-    const menuItemStyle = {
-        flexGrow: 1,
-        flexBasis: 'calc(33.3333% - 10px)',
-        padding: '10px',
-        backgroundColor: '#f0f0f0',
-        border: '1px solid #ddd',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '10px',
-    };
-
-    const itemNameStyle = {
-        wordWrap: 'break-word',
-        maxWidth: '70%',
-        marginRight: 'auto',
-    };
-
-    const itemPriceStyle = {
-        marginLeft: '10px',
-    };
+    const imageMapping = {
+        'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
+    }
 
     const invertColor = {
         filter : 'invert(1)'
     };
-
-    const imageMapping = {
-        'Burger' : '../imgs/cheeseburger.png'
-    }
 
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
@@ -223,15 +231,19 @@ const Customer = () => {
             }
 
             return (
-                <button className="bg-placeholder h-[12.5%] w-full " style={sideBarImage} onClick={()=> {
+                <button className="bg-placeholder w-full border-gray-500 border h-16" key={props.category} style={sideBarImage} onClick={()=> {
                     setSelectedCategory(props.category)
                     } }>
-                    <p>{props.category}</p>
+                    <p>
+                        {
+                            getStaticWord(props.category)
+                        }
+                    </p>
                 </button>
             )
         }
         return (
-            <div className="w-1/6 flex flex-col h-full">
+            <div className="w-1/6 flex flex-col">
                 {categories.map((category) => {
                     return sidebarButton({ category: category });
                 })
@@ -239,7 +251,7 @@ const Customer = () => {
             </div>
         );
     }
-
+    
     const handleRecommendedItemClick = (recommendedItem) => {
         addToOrder(recommendedItem);
       };
@@ -254,107 +266,115 @@ const Customer = () => {
       hasSpokenRef.current = true;
     }
   }, []);
-    
-    return (
-        <div className="flex flex-col h-screen bg-gray-100">
-            <Navbar handleRecommendedItemClick={handleRecommendedItemClick} />
-            <div className="flex w-screen h-screen" id="MenuContainer" >
-                <MenuSideBar />
-                {/* <button onClick={()=> {
-                    document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
-                    setInvertButton(!invertButton)
-                }}>INVERT</button> */}
-                <div className="w-full lg:w-3/4 bg-white shadow-md rounded p-6 grid grid-cols-4">
-                    {displayedMenu.length > 0 ? (
-                        displayedMenu.map((button, index) => (
-                            <div key={index} onClick={() => addToOrder(button)} className="bg-gray-200 p-4 rounded-lg">
-                                <span className="text-xl font-bold"><TranslateText text={button.itemName} /></span>
-                                <span className="text-lg font-bold">$</span>
-                                <button onClick={() => handleViewIngredients(button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-                                    <TranslateText text='View Ingredients' />
+
+  return (
+    <div>
+    <Navbar handleRecommendedItemClick={handleRecommendedItemClick} />
+    <div className="flex w-screen h-screen" id="MenuContainer" >
+        <MenuSideBar />
+       
+        <div className="w-full lg:w-[70%] bg-white shadow-md rounded p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
+            {displayedMenu.length > 0 ? (
+                displayedMenu.map((button, index) => (
+                    <button key={index} onClick={() => addToOrder(button)} className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end">
+                        <img src="" alt="Image" className="h-30 w-30" />
+                        <span className="text-xl font-bold">{button.itemName}</span>
+                        <span className="text-lg font-bold text-center">${button.price}</span>
+                        <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                            {
+                                getStaticWord("View Ingredients")
+                            }
+                        </button>
+                    </button>
+                ))
+            ) : (
+                <p className="text-center text-gray-500">
+                    {
+                        getStaticWord('Loading...')
+                    }
+                </p>
+            )}
+        </div>
+        <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6 mt-2 flex flex-col">
+            
+            <div className="w-full border my-2 border-black rounded"></div>
+            <h2 className="text-2xl font-bold mb-4">
+                {
+                    getStaticWord('Order List')
+                }
+            </h2>
+            <div className="divide-y divide-gray-200 flex-1">
+                {order.length > 0 ? (
+                    order.map((item, index) => (
+                        <div key={item.id} className="py-4 flex justify-between items-center">
+                            <div>
+                                <p className="text-gray-800">
+                                    {
+                                    item.itemName
+                                    }
+                                </p>
+                                <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
+                            </div>
+                            <div className="flex items-center">
+                                <button
+                                    onClick={() => addToOrder(item)}
+                                    className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
+                                >
+                                    +
+                                </button>
+                                <button
+                                    onClick={() => removeFromOrder(index)}
+                                    className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
+                                >
+                                    -
                                 </button>
                             </div>
-                        ))
-                    ) : (
-                        <p className="text-center text-gray-500"><TranslateText text='Loading...' /></p>
-                    )}
-                </div>
-                    {/* <div style={menuRowStyle}>
-                        {buttons.length > 0 ? (
-                            buttons.map((button, index) => (
-                                <div style={menuItemStyle}>
-                                    <div key={index} onClick={() => addToOrder(button)}>
-                                        <span style={itemNameStyle}>
-                                            {button.itemName}
-                                        </span>
-                                        <span style={itemPriceStyle}>
-                                            ${button.price}
-                                        </span>
-                                    </div>
-                                    <button onClick={() => handleViewIngredients(button)} style={{ marginLeft: '10px' }}>
-                                        View Ingredients
-                                    </button>
-                                </div>     
-                            ))
-                        ) : (
-                            <p> <TranslateText text='Loading...' /></p>
-                        )}
-                    </div> */}
-                <div className="w-full lg:w-1/4 bg-white shadow-md rounded p-6">
-                    <h2 className="text-2xl font-bold mb-4"><TranslateText text='Order List' /></h2>
-                    <div className="divide-y divide-gray-200">
-                        {order.length > 0 ? (
-                            order.map((item, index) => (
-                                <div key={item.id} className="py-4 flex justify-between items-center">
-                                    <div>
-                                        <p className="text-gray-800"><TranslateText text={item.itemName} /></p>
-                                        <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <button
-                                            onClick={() => addToOrder(item)}
-                                            className="text-sm bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-l"
-                                        >
-                                            +
-                                        </button>
-                                        <button
-                                            onClick={() => removeFromOrder(index)}
-                                            className="text-sm bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-r"
-                                        >
-                                            -
-                                        </button>
-                                    </div>
-                                </div>
-                            ))) : (<p className="text-center text-gray-500"><TranslateText text='No items in order.' /></p>)}
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-xl font-semibold"><TranslateText text='Total:' /></h3>
-                            <p className="text-xl font-semibold">
-                                ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
-                            </p>
                         </div>
-                        <button
-                            onClick={handlePaymentClick}
-                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-                        >
-                            <TranslateText text='Go to Payment' />
-                        </button>
-                    </div>
-                    <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-                        <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
-                        {inventoryData.length > 0 ? (
-                            inventoryData.map(item => (
-                                <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
-                            ))
-                        ) : (
-                            <p>Loading inventory...</p>
-                        )}
-                    </Modal>
-                </div>
+                    ))) : (<p className="text-center text-gray-500">
+                    {
+                        getStaticWord('No items in order.')
+                    }
+                </p>)}
             </div>
+            <div className="mt-6 pt-4 border-t border-gray-200" style={{ height: '25vh' }}>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-semibold">
+                        {
+                            getStaticWord('Total:')
+                        }
+                    </h3>
+                    <p className="text-xl font-semibold">
+                        ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
+                    </p>
+                </div>
+                <button
+                    onClick={handlePaymentClick}
+                    className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                >
+                    {
+                        getStaticWord('Go to Payment')
+                    }
+                </button>
+                
+            </div>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+                <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
+                {inventoryData.length > 0 ? (
+                    inventoryData.map(item => (
+                        <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
+                    ))
+                ) : (
+                    <p>
+                       {
+                        getStaticWord('Loading Inventory...')
+                       } 
+                    </p>
+                )}
+            </Modal>
         </div>
-    );
+    </div>
+    </div>
+);
 };
 
 export default Customer;

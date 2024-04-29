@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { StaticOrderingWords } from "../customer/CustomerConstants";
 
 const Navbar = ({handleRecommendedItemClick}) => {
   const [weather, setWeather] = useState('');
@@ -7,6 +8,17 @@ const Navbar = ({handleRecommendedItemClick}) => {
   const [recommendedItem, setRecommendedItem] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
+  const [invertButton, setInvertButton] = useState(false);
+  const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
+
+  const getStaticWord = (word) => {
+    return (
+    <span>
+        {
+            staticTranslations[StaticOrderingWords.indexOf(word)]
+        }
+    </span>);
+};
 
   useEffect(() => {
     getWeather();
@@ -78,7 +90,7 @@ const Navbar = ({handleRecommendedItemClick}) => {
 
   const RecommendedItemModal = (props) => (
     <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
-      <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-gray-200 text-black rounded hover:bg-gray-300 transition duration-300 ease-in-out font-bold text-lg"> {recommendedItem.itemName} </button>
+      <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-gray-200 text-black rounded hover:bg-gray-300 transition duration-300 ease-in-out font-bold text-lg" > {recommendedItem.itemName} </button>
       <p>Click to add this delicious item to your order!</p>
       <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] my-4'/></button>
     </div>
@@ -116,10 +128,17 @@ const Navbar = ({handleRecommendedItemClick}) => {
   };
 
   return (
-    <nav className="flex justify-between items-center p-5 bg-white border-b border-gray-200">
+    <nav className="flex justify-between items-center p-1 bg-white border-b border-gray-200">
       <div className="text-xl font-semibold text-gray-700">REV'S American Grill</div>
       <div className="flex items-center">
         <span className='mx-4'>{weather}</span>
+        <button className="w-1/4 h-10 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded mb-2" onClick={()=> {
+                document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+                setInvertButton(!invertButton)}}>
+                    {
+                        getStaticWord('Invert')
+                    }
+                </button>
         <button onClick={handleOpenRecommendedItemModal} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
           Recommended Item
         </button>
