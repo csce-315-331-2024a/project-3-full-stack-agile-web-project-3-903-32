@@ -2,20 +2,116 @@
   "short_name": "React App",
   "name": "Create React App Sample",
   "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "x-solid.svg",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "trash-solid.svg",
-      "sizes": "40x40",
-      "type": "image/svg+xml"
-    }
+      {
+        "src": "favicon.ico",
+        "sizes": "64x64 32x32 24x24 16x16",
+        "type": "image/x-icon"
+      },
+      {
+        "src": "x-solid.svg",
+        "type": "image/svg+xml"
+      },
+      {
+        "src": "trash-solid.svg",
+        "sizes": "40x40",
+        "type": "image/svg+xml"
+      },
+      {
+        "src": "Background.mp4",
+        "type": "video/mp4"
+      },
+      {
+        "src": "shake.png",
+        "type": "image/png"
+      },
+      {
+        "src": "cheeseburger.png",
+        "type": "image/png"
+      },
+      {
+        "src": "baconCheeseburger.png",
+        "type": "image/png"
+      },
+      {
+        "src": "blackBeanBurger.png",
+        "type": "image/png"
+      },
+      {
+        "src": "caesarSalad.png",
+        "type": "image/png"
+      },
+      {
+        "src": "chickenClub.png",
+        "type": "image/png"
+      },
+      {
+        "src": "chickenWrap.png",
+        "type": "image/png"
+      },
+      {
+        "src": "cookieIceCream.png",
+        "type": "image/png"
+      },
+      {
+        "src": "corndog.png",
+        "type": "image/png"
+      },
+      {
+        "src": "fishSandwich.png",
+        "type": "image/png"
+      },
+      {
+        "src": "fountainDrink.png",
+        "type": "image/png"
+      },
+      {
+        "src": "fries.png",
+        "type": "image/png"
+      },
+      {
+        "src": "grilledChickenSandwich.png",
+        "type": "image/png"
+      },
+      {
+        "src": "hamburger.png",
+        "type": "image/png"
+      },
+      {
+        "src": "hotdog.png",
+        "type": "image/png"
+      },
+      {
+        "src": "iceCreamScoop.png",
+        "type": "image/png"
+      },
+      {
+        "src": "pattymelt.png",
+        "type": "image/png"
+      },
+      {
+        "src": "rootBeerFloat.png",
+        "type": "image/png"
+      },
+      {
+        "src": "spicyChickenSandwich.png",
+        "type": "image/png"
+      },
+      {
+        "src": "tenders.png",
+        "type": "image/png"
+      },
+      {
+        "src": "tunaMelt.png",
+        "type": "image/png"
+      },
+      {
+        "src": "waterBottle.png",
+        "type": "image/png"
+      },
+      {
+        "src": "tamu-logo.png",
+        "type": "image/png"
+      }
   ],
   "start_url": ".",
   "display": "standalone",

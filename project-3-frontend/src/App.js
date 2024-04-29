@@ -4,8 +4,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import { gapi } from 'gapi-script';
 import { jwtDecode } from "jwt-decode";
 
-import videoBG from "./imgs/Background.mp4";
-import cheeseburgerImg from "./imgs/cheeseburger.png";
+
+const imageMapping = {
+  'video': "Background.mp4",
+  'shakeImg': 'shake.png',
+  'cheeseburgerImg': "cheeseburger.png"
+}
+
 
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
 
@@ -70,12 +75,12 @@ function App() {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-between">
-      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-60" src={videoBG} ref={videoRef}></video>
+      <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-60" src={imageMapping["video"]} ref={videoRef}></video>
       <div className="flex flex-col items-center justify-center z-10">
         <h1 className="text-white p-10 text-center text-9xl mb-8" style={{ backgroundColor: 'rgba(139, 0, 0, .8)', width: '100%', marginBottom: 0 }}>Rev's American Grill</h1>
         <div className="flex items-center justify-center flex-col"> {/* Modified this line */}
           <div className="flex items-center mb-4"> {/* Added a div to contain the cheeseburger image and button */}
-            <img src={cheeseburgerImg} alt="Cheeseburger" className="w-40 h-auto mr-4" /> {/* Modified this line */}
+          <img src={imageMapping["cheeseburgerImg"]} alt="Cheeseburger" className="w-40 h-auto mr-4" /> {/* Modified this line */}
             <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={loginCustomer} style={{ fontSize: '2rem' }}>Order Now!</button> {/* Modified this line */}
           </div>
         </div>
