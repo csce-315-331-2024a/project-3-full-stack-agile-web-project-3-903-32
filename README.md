@@ -36,3 +36,26 @@ In this meeting, we discussed how the first week of sprint 2 went for us and whe
 
 Sprint 2 Meeting 3:
 In this meeting, we did our final check-ins for the sprint with each team member and discussed when we could do some final testing. Finally, we got the fist to five, getting all 5s since we have completed nearly all of the tasks with a day to spare.
+
+Sprint 2 Retrospective:
+What went right and wrong during the previous sprint?
+Right - Planning for the sprint, choosing which tasks to do for the sprint, everybody gave updates and checked in
+Wrong - We didn't finish all of the tasks
+What changes (if any) need to be made regarding procedure?
+Split the tasks more evenly.
+What adjustments might need to be made to the product backlog?
+Little changes need to be made besides moving the tasks that were not completed to Sprint 3.
+
+
+Sprint 3 Planning Meeting:
+Sprint Goal
+Making sure all of our pages are accessible, keeping in mind the personas that we have chosen, adding more visuals to our pages, and implementing all final requirements.
+
+Sprint 3 Meeting 1:
+In this meeting, we discussed our remaining tasks for the Sprint and how likely we would be to completing it. All team members felt very confident about completing this Sprint, with everybody giving a 5/5 on how likely we are to complete our tasks. Some team members finished all of their tasks early and we discussed what they could do with their time.
+
+Sprint 3 Meeting 2:
+In this meeting, we discussed how the first week of sprint 3 went for us and whether or not there were any difficulties. For the first week, many team members had finished all of their tasks, but we kept finding more and more possible issues and ways to improve our program which led to more and more tasks being added. We looked through the backlog to make sure we were all were satisfied with our extra workload due to the new tasks.
+
+Sprint 3 Meeting 3:
+In this meeting, we did our final check-ins for the sprint with each team member and discussed if there were any last minute additions that we would like to add to go above and beyond for the final product. We wrote down some of our ideas and voted on which ones were the best suited for our program. We divided the work and made sure each of us were willing to put in the extra work.

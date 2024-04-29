@@ -201,7 +201,7 @@ const CustomerPayment = () => {
                                 <TranslateText text='Confirm'/>
                             </button>
                             <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
-                                <TranslateText text='Clear Order'/>
+                                <TranslateText text='Go Back'/>
                             </button>
                         </div>
                     </div>
