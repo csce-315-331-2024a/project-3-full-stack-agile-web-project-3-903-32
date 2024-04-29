@@ -65,28 +65,12 @@ const Navbar = ({handleRecommendedItemClick}) => {
   }
 
   const handleSpeechAssistance = () => {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
-    const msg = new SpeechSynthesisUtterance();
-    msg.text = "Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, and value meals. Please click a category to hear menu items and prices. ";
-    window.speechSynthesis.speak(msg);
-    setHasSpoken(true);
-  };
-
-  const stopSpeechAssistance = () => {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
-  };
-
-  const turnOnOffSpeechAssistance = () => {
     if (!hasSpoken) {
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
       }
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Speech Assistance Activated. ";
+      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. ";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
     } else {
@@ -98,7 +82,13 @@ const Navbar = ({handleRecommendedItemClick}) => {
       window.speechSynthesis.speak(msg);
       setHasSpoken(false);
     }
-  }
+  };
+
+  const stopSpeechAssistance = () => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+  };
 
   return (
     <nav className="flex justify-between items-center p-1 bg-white border-b border-gray-200">
@@ -106,7 +96,7 @@ const Navbar = ({handleRecommendedItemClick}) => {
       <div className="flex items-center">
         Weather: 
         <span className='mx-4'>{weather}</span>
-        <button className="w-1/4 h-10 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded mb-2" onClick={()=> {
+        <button className="w-1/6 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-2 rounded mb-2" onClick={()=> {
                 document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
                 setInvertButton(!invertButton)}}>
                     {
@@ -114,13 +104,10 @@ const Navbar = ({handleRecommendedItemClick}) => {
                     }
                 </button>
         Speech Assistance:
-        <button onClick={handleSpeechAssistance} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
-          PLAY / REPLAY
-        </button>
-        <button onClick={stopSpeechAssistance} className="mx-4 py-3 px-6 text-lg font-medium text-white hover:bg-red-600 rounded-lg transition-colors bg-red-500" disabled={isButtonDisabled}>
+        <button onClick={stopSpeechAssistance} className="mx-4 py-3 px-2 text-lg font-medium text-white hover:bg-red-600 rounded-lg transition-colors bg-red-500" disabled={isButtonDisabled}>
           STOP
         </button>
-        <button onClick={turnOnOffSpeechAssistance} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
+        <button onClick={handleSpeechAssistance} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
           ON / OFF
         </button>
       </div>
