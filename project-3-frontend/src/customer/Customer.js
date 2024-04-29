@@ -6,6 +6,8 @@ import { StaticOrderingWords } from "./CustomerConstants";
 //import { NavLink } from 'react-router-dom';
 import Navbar from "../components/NavbarCustomer";
 
+
+
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
     const [itemIds, setItemIds] = useState([]);
@@ -264,10 +266,42 @@ const Customer = () => {
         }
         return order;
     };
+    const menuRowStyle = {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        gap: '10px',
+    };
 
-    const imageMapping = {
-        'Burger': 'https://images.unsplash.com/photo-1565299636920-2b1b2b1cbf9f',
-    }
+    const menuItemStyle = {
+        flexGrow: 1,
+        flexBasis: 'calc(33.3333% - 10px)',
+        padding: '10px',
+        backgroundColor: '#f0f0f0',
+        border: '1px solid #ddd',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '10px',
+    };
+
+    const itemNameStyle = {
+        wordWrap: 'break-word',
+        maxWidth: '70%',
+        marginRight: 'auto',
+    };
+
+    const itemPriceStyle = {
+        marginLeft: '10px',
+    };
+
+    const invertColor = {
+        filter : 'invert(1)'
+    };
+
+
+
 
 
     const readSelectedCategory = (category) => {
@@ -297,10 +331,11 @@ const Customer = () => {
     //     filter : 'invert(1)'
     // };
 
+
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
-                backgroundImage: `url(${imageMapping[props.category]})`,
+              //  backgroundImage: `url(${imageMapping[props.category]})`,
             }
 
             return (
