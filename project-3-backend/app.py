@@ -256,13 +256,23 @@ def update_inventory(inventory_id):
 def add_inventory(inventory_id):
     if request.method == 'PUT':
         if(inventory_id.isnumeric() == False):
-            query = text("SELECT id FROM Inventory WHERE name = :name")
+            query = text("SELECT id, stock, capacity FROM Inventory WHERE name = :name")
             result = db.session.execute(query, {'name': inventory_id}).fetchone()
             if result is not None:
                 inventory_id = result[0]
             else:
                 return jsonify({'error': 'No data found'}), 404
+        else:
+            query = text("SELECT stock, capacity FROM Inventory WHERE id = :id")
+            result = db.session.execute(query, {'id': inventory_id}).fetchone()
+            
         data = request.get_json()
+
+        # check if new stock is between 0 and capacity
+        new_stock = result.stock + int(data['add_stock'])
+        if new_stock < 0 or new_stock > result.capacity:
+            return jsonify({'error': 'New stock level out of bounds'}), 400
+
         query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
         db.session.execute(query, {'add_stock': data['add_stock'], 'id': inventory_id})
         db.session.commit()
@@ -819,6 +829,7 @@ def get_warm_inventory():
 @app.route('/api/recommended')
 def get_recommended_item():
     temp = get_temp()
+    # if temp = "Error ..."
     if (float(temp) >= 80):
         hot_item = get_hot_inventory()
         return jsonify({"item": hot_item})
