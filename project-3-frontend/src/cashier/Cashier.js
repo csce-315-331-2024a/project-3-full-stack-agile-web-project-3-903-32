@@ -15,7 +15,7 @@ const withCashierAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
     useEffect(() => {
-      if (isAuthenticatedCashier() == 'false') {
+      if (isAuthenticatedCashier() === 'false') {
         navigate('/'); 
       }
     }, [navigate]);
@@ -143,7 +143,10 @@ const Cashier = () => {
 
     const changeOrder = (index, newQuantity) => {
         const parseQuantity = parseInt(newQuantity)
-        if (isNaN(parseQuantity) || parseQuantity <= 0) {
+        if(isNaN(parseQuantity)) {
+            return;
+        }
+        if (parseQuantity <= 0) {
             const item = order[index];
             const price = parseFloat(item.price);
             setTotal((total) => round(total - price * item.quantity, 2));
@@ -226,10 +229,10 @@ const Cashier = () => {
                         )}
                     </div>
                 </div>
-                <div className="w-[29%]">
+                <div className="w-[30%]">
                     <h2 className="font-semibold text-4xl mb-2">Order List</h2>
                     <div className="p-4 h-[460px] w-full bg-white text-black rounded-lg">
-                        <div className="max-h-[430px] w-full overflow-y-auto">
+                        <div className="max-h-[430px] w-full overflow-y-scroll">
                             {order.length > 0 ? (
                                 <ul>
                                     {order.map((item, index) => (
@@ -238,7 +241,7 @@ const Cashier = () => {
                                                 <div>
                                                     {item.itemName} - ${item.price.toFixed(2)}
                                                 </div>
-                                                <div className="flex items-center">
+                                                <div className="mr-2 flex items-center">
                                                     <button onClick={() => removeFromOrder(index)} style={{ height: 45, width: 30 }} className=" bg-red-500 hover:bg-red-700 rounded-l text-2xl ">-</button>
                                                     <input
                                                         style={{ outline: 'none' }}
