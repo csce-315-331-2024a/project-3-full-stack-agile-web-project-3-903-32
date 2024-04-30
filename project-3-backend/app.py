@@ -37,7 +37,50 @@ def get_data(name):
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
+    
+@app.route('/api/employee/gmail/<email>')
+def get_data_email(email):
+    print("TESTING")
+    query = text("SELECT * FROM Employees WHERE email = :email LIMIT 1")
+    result = db.session.execute(query, {'email': email}).fetchone()
+    print(result)
+    if result is not None:
+        data = {'employeename': result.employeename, 'position': result.position, 'email': result.email}
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'No data found'}), 404
+    
+@app.route('/api/employee/all')
+def get_all_employees():
+    query = text("SELECT * FROM Employees")
+    result = db.session.execute(query).fetchall()
+    if result is not None:
+        employee_list = [{"name": row[1], "position": row[2], "email": row[3]} for row in result]
+        return jsonify(employee_list)
+    else:
+        return jsonify({'error': 'No data found'}), 404
 
+@app.route('/api/employee/change/<email>', methods=['PUT', 'DELETE'])
+def get_employee(email):
+    if request.method == 'PUT':
+        data = request.get_json()
+        query = text("UPDATE Employees SET employeename = :employeename, position = :position,  WHERE email = :email")
+        db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': email})
+        db.session.commit()
+        return jsonify({'message': 'Employee object updated successfully'}), 200
+    elif request.method == 'DELETE':
+        query = text("DELETE FROM Employees WHERE email = :email")
+        db.session.execute(query, {'email': email})
+        db.session.commit()
+        return jsonify({'message': 'Employee object deleted successfully'}), 200
+    
+@app.route('/api/employee/add')
+def add_employee():
+    data = request.get_json()
+    query = text("INSERT INTO employees (employeename, position, email) VALUES (:employeename, :position, :email);")
+    db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
+    db.session.commit()
+    return jsonify({'message': 'Employee object created successfully'}), 201
 
 ###################################
 #             MENU API            #
@@ -839,6 +882,8 @@ def get_recommended_item():
     else:
         warm_item = get_warm_inventory()
         return jsonify({"item": warm_item})
+
+
 
 
 if __name__ == '__main__':
