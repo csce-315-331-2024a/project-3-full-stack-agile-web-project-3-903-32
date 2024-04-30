@@ -96,7 +96,7 @@ function App() {
             const decoded = jwtDecode(credentialResponse?.credential);
             console.log(decoded.email);
             if (decoded.email === "csce315manager@gmail.com") {
-              loginManager();
+             loginManager();
             } else if (decoded.email === "csce315cashier@gmail.com") {
               loginCashier();
             } else {
