@@ -29,6 +29,19 @@ def hello_world():
 ###################################
 @app.route('/api/employee/<name>')
 def get_data(name):
+    """
+    Get employee data by name.
+
+    Parameters:
+        name (str): The name of the employee to retrieve data for.
+
+    Returns:
+        Response: A JSON response containing the employee's data if found, or an error message if not found.
+
+    Example:
+        >>> get_data('John')
+        {'employeename': 'John', 'position': 'Developer'}
+    """
     query = text("SELECT * FROM Employees WHERE employeename = :name LIMIT 1")
     result = db.session.execute(query, {'name': name}).fetchone()
 
@@ -44,6 +57,25 @@ def get_data(name):
 ###################################
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
+    """
+    Get menu items or create a new menu item.
+
+    If the HTTP method is GET:
+    Returns a JSON response containing all menu items sorted by itemName in ascending order.
+    Optionally, if 'translate' parameter is provided in the query string and is not 'EN', 
+    translates the itemName to the specified language.
+
+    If the HTTP method is POST:
+    Creates a new menu item using data from the request body and returns a JSON response.
+
+    Returns:
+        Response: A JSON response containing menu items or a success message.
+
+    Example:
+        >>> get_menu_items()
+        [{'id': 1, 'itemName': 'Pizza', 'price': 10.99, 'category': 'Main'},
+         {'id': 2, 'itemName': 'Salad', 'price': 6.99, 'category': 'Side'}]
+    """
     if request.method == 'GET':
         query = text("SELECT * FROM Menu ORDER BY itemName ASC")
         results = db.session.execute(query).fetchall() 
