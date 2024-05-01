@@ -439,11 +439,13 @@ def update_orders():
         order_id = db.session.execute(query, {'customer_name': data['customer_name'], 'time': curr_time, 'paid': data['paid'], 'employee_id': data['employee_id']}).fetchone()[0]
         print('Inserted order for customer: ' + data['customer_name'] + " successfully with ID: " + str(order_id))
         
-        # Insert order menu items
-        for menu_id in data['menu_items']:
-            query = text("INSERT INTO OMJunc (menuID, orderID) VALUES (:menu_id, :order_id)")
-            db.session.execute(query, {'menu_id': menu_id, 'order_id': order_id})
+        # Insert into OMJunc
+        items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for menu_id in data['menu_items']]
+        insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
 
+        # Execute the query in batch mode
+        db.session.execute(insert_query, items_to_insert)
+        
         # Decreasing the stock from the menu items
         query = text("SELECT itemID, itemAmount FROM MIJunc WHERE menuID IN :menu_items")
         results = db.session.execute(query, {'menu_items': tuple(data['menu_items'])}).fetchall() #Returns it in the form of (itemID, itemAmount)
@@ -583,17 +585,144 @@ def delete_order_omjunc_batch(order_id):
 def update_order(order_id):
     try:
         data = request.get_json()  
-        is_complete = data['isComplete']  # Expected to receive {"isComplete": true} or {"isComplete": false}
+        is_complete = data.get('isComplete')  # Expected to receive {"isComplete": true} or {"isComplete": false}
+        customer_name = data.get('customerName')
+        add_item = data.get('addItem')
+        delete_item = data.get('deleteItem')
+        update_item = data.get('updateItem')
 
-        # Update the completion status in the database
-        query = text("UPDATE Orders SET isComplete = :is_complete WHERE id = :order_id")
-        db.session.execute(query, {'is_complete': is_complete, 'order_id': order_id})
+        if is_complete is not None:
+            query = text("UPDATE Orders SET isComplete = :is_complete WHERE id = :order_id")
+            db.session.execute(query, {'is_complete': is_complete, 'order_id': order_id})
+
+        if customer_name:
+            query = text("UPDATE Orders SET customerName = :customer_name WHERE id = :order_id")
+            db.session.execute(query, {'customer_name': customer_name, 'order_id': order_id})
+        
+        # add items (orderid, menuid, amount)
+        # insert into omjunc (with orderid, menuid <amount> times)
+        # update paid of orders (+ paid with amount * price)
+        if add_item:
+            menu_id = add_item.get('menu_id')
+            amount = add_item.get('amount')
+
+            if menu_id and amount:
+                # Fetch the price from the database
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+                
+                if menu_item:
+                    price = menu_item.price
+
+                    # Insert into OMJunc
+                    items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for _ in range(amount)]
+                    insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
+
+                    # Execute the query in batch mode
+                    db.session.execute(insert_query, items_to_insert)
+                    
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    current_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+                    new_paid = current_paid + amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404
+    
+        
+        # delete items (orderid, menuid, amount)
+        # delete from omjunc (with orderid, menuid <amount> times)
+        # update paid of orders (- paid with amount * price)
+        if delete_item:
+            menu_id = delete_item.get('menu_id')
+            amount = delete_item.get('amount')
+
+            if menu_id and amount:
+                # Fetch the price from the database
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+
+                if menu_item:
+                    price = menu_item.price
+
+                    # Delete items from OMJunc table
+                    delete_query = text("DELETE FROM OMJunc WHERE orderid = :order_id AND menuid = :menu_id")
+                    db.session.execute(delete_query, {'order_id': order_id, 'menu_id': menu_id})
+                    
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    current_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+                    new_paid = current_paid - amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404
+        
+        # update amount of items (orderid, menuid, new amount)
+        # if new > cur: add new items (new - cur)
+        # if new < cur: delete items (cur - new)
+        if update_item:
+            menu_id = update_item.get('menu_id')
+            old_amount = update_item.get('old_amount')
+            new_amount = update_item.get('new_amount')
+
+            # Check current amount in the database to prevent concurrent updates
+            current_query = text("SELECT COUNT(*) FROM OMJunc WHERE orderID = :order_id AND menuID = :menu_id")
+            current_amount = db.session.execute(current_query, {'order_id': order_id, 'menu_id': menu_id}).scalar()
+
+            if current_amount != old_amount:
+                return jsonify({'error': 'Old amount does not match current amount'}), 40
+
+            if menu_id:
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+
+                if menu_item:
+                    price = menu_item.price
+
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    new_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+
+                    if new_amount > old_amount:
+                        amount = new_amount - old_amount
+                        # Insert into OMJunc
+                        items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for _ in range(amount)]
+                        insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
+
+                        # Execute the query in batch mode
+                        db.session.execute(insert_query, items_to_insert)
+                        new_paid += amount * price
+                    elif new_amount < old_amount:
+                        amount = old_amount - new_amount
+                        delete_query = text("""
+                            DELETE FROM OMJunc
+                            WHERE ctid IN (
+                                SELECT ctid FROM OMJunc
+                                WHERE orderid = :order_id AND menuid = :menu_id
+                                LIMIT :amount
+                            )
+                        """)
+                        db.session.execute(delete_query, {'order_id': order_id, 'menu_id': menu_id, 'amount': amount})
+                        new_paid -= amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404                
+
         db.session.commit()
 
-        return jsonify({'message': 'Order completion status updated successfully'}), 200
+        return jsonify({'message': 'Order updated successfully'}), 200
     except Exception as e:
         db.session.rollback()  # Roll back the transaction in case of error
-        return jsonify({'error': 'Failed to update order completion status', 'exception': str(e)}), 500
+        return jsonify({'error': 'Failed to update order', 'exception': str(e)}), 500
 
 
 @app.route('/api/weather')
