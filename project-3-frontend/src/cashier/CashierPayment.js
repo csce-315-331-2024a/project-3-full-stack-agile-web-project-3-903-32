@@ -47,6 +47,7 @@ const CashierPayment = () => {
     }, [location.state]);
 
     const toCashierSubmit = async () => {
+
         try {
             if (total <= 0.0) {
                 console.log("Empty order");
@@ -59,23 +60,41 @@ const CashierPayment = () => {
                 if (total > 0.0) {
                     setPaymentSubmitted(true);
                 }
-
-                const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
-                    method: "POST",
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "customer_name": name,
-                        "paid": total,
-                        "employee_id": 2,
-                        "menu_items": itemIds,
-                    })
-                });
-
-                const data = await response.json();
-                console.log(data['message']);
+                console.log(name);
+                if(name){
+                    const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
+                        method: "POST",
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "customer_name": name,
+                            "paid": total,
+                            "employee_id": 2,
+                            "menu_items": itemIds,
+                        })
+                    });
+                    const data = await response.json();
+                    console.log(data['message']);
+                } else {
+                    const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
+                        method: "POST",
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "customer_name": 'N/A',
+                            "paid": total,
+                            "employee_id": 2,
+                            "menu_items": itemIds,
+                        })
+                    });
+                    const data = await response.json();
+                    console.log(data['message']);
+                }
+                
                 navigate('/cashier/confirm');
             } else {
                 console.log("Payment already submitted")
@@ -98,7 +117,8 @@ const CashierPayment = () => {
     };
 
     const changeName = (event) => {
-        setName(event.target.value);
+        const newName = event.target.value.trim(); // Trim to remove leading and trailing spaces
+        setName(newName === '' ? 'N/A' : newName);
     };
 
     return (
