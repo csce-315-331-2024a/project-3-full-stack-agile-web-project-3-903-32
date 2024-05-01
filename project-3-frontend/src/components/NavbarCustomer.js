@@ -70,7 +70,7 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
         window.speechSynthesis.cancel();
       }
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. ";
+      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. Once you have finished ordering, please click the go to payment button on the bottom right corner of the screen. ";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
       onSpeechAssistanceChange(false);
@@ -93,7 +93,7 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
   };
 
   return (
-    <nav className="flex justify-between items-center p-1 bg-white border-b border-gray-200 h-[125px]">
+    <nav className="flex justify-between items-center p-1 bg-white border-b border-gray-200 h-[100px]">
       <div className="text-xl font-semibold text-gray-700 ml-4">REV'S American Grill</div>
       <div className="flex items-center">
       <div style={{ border: '1px solid black', padding: '10px', borderRadius: '5px', display: 'inline-block', margin: '20px', width: '275px' }}>

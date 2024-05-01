@@ -1,8 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TranslateText } from '../components/Translate';
 import { StaticPaymentWords } from './CustomerConstants';
 import { LanguageContext } from '../components/Translate';
+import Navbar from "../components/NavbarCustomer";
 
 const CustomerPayment = () => {
     const [itemIds, setItemIds] = useState([]);
@@ -12,7 +13,9 @@ const CustomerPayment = () => {
     const [showEmptyMessage, setShowEmptyMessage] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [staticTranslations, setStaticTranslations] = useState(StaticPaymentWords);
+    const [hasSpoken, setHasSpoken] = useState(true);
     const selectedLanguage = useContext(LanguageContext);
+
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -36,6 +39,10 @@ const CustomerPayment = () => {
                 staticTranslations[StaticPaymentWords.indexOf(word)]
             }
         </span>);
+    };
+
+    const handleSpeechAssistanceChange = (newHasSpoken) => {
+        setHasSpoken(newHasSpoken);
     };
 
     async function postStaticTranslations() {
@@ -106,6 +113,17 @@ const CustomerPayment = () => {
         });
     };
 
+  useEffect(() => {
+    if (!hasSpoken) {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+          }
+          const msg = new SpeechSynthesisUtterance();
+          msg.text = "Please enter your name in the designated area in the center of the screen. To submit your order, please click the blue button on the left side. Once the pop up is open, click the green button on the left to confirm. To go back to the ordering screen, please click the middle button. To clear your order, please click the red button on the right side.";
+          window.speechSynthesis.speak(msg);
+    }
+  }, []);
+
     // Function to handle name change
     const changeName = (event) => {
         setName(event.target.value);
@@ -125,88 +143,91 @@ const CustomerPayment = () => {
     };
 
     return (
-        <div className="mt-5 max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-             {
-                getStaticWord('Payment')
-             }
-            </h1>
-            <div>
-                <h2 className="text-xl font-semibold mt-4 mb-4 text-gray-700">
+        <div> 
+            <Navbar onSpeechAssistanceChange={handleSpeechAssistanceChange}/>
+            <div className="mt-5 max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
+                <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+                {
+                    getStaticWord('Payment')
+                }
+                </h1>
+                <div>
+                    <h2 className="text-xl font-semibold mt-4 mb-4 text-gray-700">
+                        {
+                            getStaticWord('Order List')
+                        }
+                    </h2>
+                    {order.length > 0 ? (
+                    <ul className="list-none">
+                        {order.map((item) => (
+                        <li key={item.id} className="py-2 border-b border-gray-200">
+                            {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
+                        </li>
+                        ))}
+                    </ul>
+                    ) : (
+                    <p className="text-gray-500">
+                        {
+                            getStaticWord('No items in order.')
+                        }
+                    </p>
+                    )}
+                    <h3 className="text-lg font-semibold text-right mt-4">
+                        {
+                            getStaticWord('Total: ')
+                        }
+                        ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
+                    </h3>
+                </div>
+                <label htmlFor="customer_name" className='text-black font-semibold text-2xl'>
                     {
-                        getStaticWord('Order List')
+                        getStaticWord('Customer\'s Name')
                     }
-                </h2>
-                {order.length > 0 ? (
-                <ul className="list-none">
-                    {order.map((item) => (
-                    <li key={item.id} className="py-2 border-b border-gray-200">
-                        {item.itemName} - ${item.price.toFixed(2)} x {item.quantity}
-                    </li>
-                    ))}
-                </ul>
-                ) : (
-                <p className="text-gray-500">
+                </label>
+                <input 
+                    className="w-full mr-4 mb-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded text-2xl"
+                    type="text"
+                    id="customer_name"
+                    placeholder='Enter your name here...'
+                    aria-labelledby='customer_name'
+                    value={name}
+                    onChange={changeName}
+                />
+                <div className="flex justify-center mt-6 space-x-4">
+                    {showEmptyMessage && <div className="text-red-700">Order is empty</div>}
+                    <button onClick={showConfirmationModal} className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                     {
-                        getStaticWord('No items in order.')
+                        getStaticWord('Submit Payment')
                     }
-                </p>
-                )}
-                <h3 className="text-lg font-semibold text-right mt-4">
+                    </button>
+                    <button onClick={toCustomerBack} className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
                     {
-                        getStaticWord('Total: ')
+                        getStaticWord('Back')
                     }
-                    ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
-                </h3>
-            </div>
-            <label htmlFor="customer_name" className='text-black font-semibold text-2xl'>
-                {
-                    getStaticWord('Customer\'s Name')
-                }
-            </label>
-            <input 
-                className="w-full mr-4 mb-4 overflow-y-auto py-2 px-8 bg-gray-50 rounded text-2xl"
-                type="text"
-                id="customer_name"
-                placeholder='Enter your name here...'
-                aria-labelledby='customer_name'
-                value={name}
-                onChange={changeName}
-            />
-            <div className="flex justify-center mt-6 space-x-4">
-                {showEmptyMessage && <div className="text-red-700">Order is empty</div>}
-                <button onClick={showConfirmationModal} className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                {
-                    getStaticWord('Submit Payment')
-                }
-                </button>
-                <button onClick={toCustomerBack} className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
-                {
-                    getStaticWord('Back')
-                }
-                </button>
-                <button onClick={toCustomerCancel} className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-                {
-                    getStaticWord('Clear Order')
-                }
-                </button>
-            </div>
-            {showConfirmation && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded shadow-lg text-center">
-                        <h3 className="mb-4 text-lg font-bold"><TranslateText text='Confirm Payment'/></h3>
-                        <p><TranslateText text='Are you sure you want to submit the payment?'/></p>
-                        <div className="flex justify-around mt-6">
-                            <button onClick={confirmSubmit} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 focus:outline-none">
-                                <TranslateText text='Confirm'/>
-                            </button>
-                            <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
-                                <TranslateText text='Go Back'/>
-                            </button>
+                    </button>
+                    <button onClick={toCustomerCancel} className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                    {
+                        getStaticWord('Clear Order')
+                    }
+                    </button>
+                </div>
+                {showConfirmation && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                        <div className="bg-white p-6 rounded shadow-lg text-center">
+                            <h3 className="mb-4 text-lg font-bold"><TranslateText text='Confirm Payment'/></h3>
+                            <p><TranslateText text='Are you sure you want to submit the payment?'/></p>
+                            <div className="flex justify-around mt-6">
+                                <button onClick={confirmSubmit} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 focus:outline-none">
+                                    <TranslateText text='Confirm'/>
+                                </button>
+                                <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
+                                    <TranslateText text='Go Back'/>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );    
 };
