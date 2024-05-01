@@ -23,6 +23,7 @@ import CustomerConfirm from './customer/CustomerConfirm';
 import Cook from './cook/CookScreen';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import StaticMenu2 from './customer/StaticMenu2';
 
 const router = createBrowserRouter([
   {
@@ -84,10 +85,18 @@ const router = createBrowserRouter([
     element: <StaticMenu />,
     children: [],
   },
+<<<<<<< HEAD
+
+  {
+    path: '/customer/StaticMenu2',
+    element: <StaticMenu2 />,
+    children: [],
+=======
   {
     path: '/cook',
     element: <Cook />,
     childrem: [],  
+>>>>>>> 49f769edf574a2bed68cf4c998bd3cc7cb464505
   }
 ]);
 
