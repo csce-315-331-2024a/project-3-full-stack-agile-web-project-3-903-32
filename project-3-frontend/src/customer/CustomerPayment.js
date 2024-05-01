@@ -73,22 +73,44 @@ const CustomerPayment = () => {
                 return;
             }
 
-            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
-                method: "POST",
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "customer_name": name,
-                    "paid": total,
-                    "employee_id": 2, // This should be updated to the actual employee_id once implemented
-                    "menu_items": itemIds,
-                })
-            });
+            if(name) {
+                const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
+                    method: "POST",
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "customer_name": name,
+                        "paid": total,
+                        "employee_id": 2, // This should be updated to the actual employee_id once implemented
+                        "menu_items": itemIds,
+                    })
+                });
 
-            const data = await response.json();
-            console.log(data['message']);
+                const data = await response.json();
+                console.log(data['message']);
+            }
+            else
+            {
+                const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/order", {
+                    method: "POST",
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "customer_name": 'N/A',
+                        "paid": total,
+                        "employee_id": 2, // This should be updated to the actual employee_id once implemented
+                        "menu_items": itemIds,
+                    })
+                });
+
+                const data = await response.json();
+                console.log(data['message']);
+            }
+            
             navigate('/customer/confirm'); // Navigating to customer confirm
         } catch (err) {
             console.error(err);
