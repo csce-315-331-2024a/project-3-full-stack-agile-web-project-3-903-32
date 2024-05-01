@@ -152,7 +152,7 @@ const CashierPayment = () => {
                 {showEmptyMessage ? (
                     <div className='text-white text-2xl'>Empty Order</div>
                 ) : (
-                    <button onClick={toCashierSubmit} disabled={order.length === 0 || paymentSubmitted || loading} className={`w-full overflow-y-auto py-2 my-2 rounded text-2xl ${order.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-gray-300'}`}>
+                    <button onClick={toCashierSubmit} disabled={order.length === 0 || paymentSubmitted || loading} className={`w-full overflow-y-auto py-2 my-2 rounded text-2xl ${order.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'text-white bg-green-700 hover:bg-green-900'}`}>
                         {loading ? ( // Show loading spinner when loading is true
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <ThreeDots type="ThreeDots" color="#000000" height={30} width={30} />

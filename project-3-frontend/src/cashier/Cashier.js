@@ -232,7 +232,7 @@ const Cashier = () => {
                 <div className="w-[30%]">
                     <h2 className="font-semibold text-4xl mb-2">Order List</h2>
                     <div className="p-4 h-[460px] w-full bg-white text-black rounded-lg">
-                        <div className="max-h-[430px] w-full overflow-y-scroll">
+                        <div className="max-h-[430px] w-full overflow-y-auto">
                             {order.length > 0 ? (
                                 <ul>
                                     {order.map((item, index) => (
