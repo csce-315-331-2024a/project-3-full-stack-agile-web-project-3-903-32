@@ -153,25 +153,33 @@ const Customer = () => {
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
-            setTotal((total) => round(total + price, 2));
             setItemIds((itemIds) => [...itemIds, item.id]);
             setOrder((order) => {
                 const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
                 if (existIndex > -1) {
-                    return order.map((orderItem, idx) =>
+                    const existingItem = order[existIndex];
+                    const newQuantity = existingItem.quantity < 99 ? existingItem.quantity + 1 : existingItem.quantity;
+                    const newOrder = order.map((orderItem, idx) =>
                         idx === existIndex
-                            ? { ...orderItem, quantity: orderItem.quantity + 1 }
+                            ? { ...orderItem, quantity: newQuantity }
                             : orderItem
                     );
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
                 } else {
-                    return [...order, { ...item, price, quantity: 1 }];
+                    const newOrder = [...order, { ...item, price, quantity: 1 }];
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
                 }
             });
         } else {
             console.error('item.price is not a valid number', item);
         }
     };
-
+    
+    
     const removeFromOrder = (index) => {
         if (index >= 0 && index < order.length) {
             const item = order[index];

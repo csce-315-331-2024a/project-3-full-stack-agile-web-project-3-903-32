@@ -116,6 +116,18 @@ def get_menu_items():
 
 @app.route('/api/menu/category', methods=['GET'])
 def get_menu_category():
+    """
+    Get menu categories.
+
+    Returns a JSON response containing the available categories of menu items.
+
+    Returns:
+        Response: A JSON response containing menu categories.
+
+    Example:
+        >>> get_menu_category()
+        ['Main', 'Side', 'Drink']
+    """
     if request.method == 'GET':
         try:
             data = get_category_types()
@@ -125,6 +137,21 @@ def get_menu_category():
 
 
 def get_category_types():
+    """
+    Get menu category types.
+
+    Returns a list of menu category types sorted in ascending order.
+
+    Returns:
+        list: A list containing menu category types.
+
+    Raises:
+        Exception: If no category types are found in the database.
+
+    Example:
+        >>> get_category_types()
+        ['Drink', 'Main', 'Side']
+    """
     query = text("SELECT enumlabel FROM pg_enum ORDER BY enumlabel ASC")
     results = db.session.execute(query).fetchall()
     if not results:
@@ -137,6 +164,15 @@ def get_category_types():
     
 @app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
 def get_menu_item(menu_id):
+    """
+    Helper function for get_category_types().
+
+    Returns a list of menu category types sorted in ascending order.
+
+    Returns:
+        list: A list containing menu category types.
+
+    """
     if request.method == 'PUT':
         data = request.get_json()
         # print(data)

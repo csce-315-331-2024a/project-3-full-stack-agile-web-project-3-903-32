@@ -77,25 +77,33 @@ const Cashier = () => {
 
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
-        if (!isNaN(price)) {
-            setTotal((total) => round(total + price, 2));
+        if (!isNaN(price)) { // Check if the price is a valid number after parsing
             setItemIds((itemIds) => [...itemIds, item.id]);
             setOrder((order) => {
                 const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
                 if (existIndex > -1) {
-                    return order.map((orderItem, idx) =>
+                    const existingItem = order[existIndex];
+                    const newQuantity = existingItem.quantity < 99 ? existingItem.quantity + 1 : existingItem.quantity;
+                    const newOrder = order.map((orderItem, idx) =>
                         idx === existIndex
-                            ? { ...orderItem, quantity: orderItem.quantity + 1 }
+                            ? { ...orderItem, quantity: newQuantity }
                             : orderItem
                     );
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
                 } else {
-                    return [...order, { ...item, price, quantity: 1 }];
+                    const newOrder = [...order, { ...item, price, quantity: 1 }];
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
                 }
             });
         } else {
             console.error('item.price is not a valid number', item);
         }
     };
+    
 
     const removeFromOrder = (index) => {
         if (index >= 0 && index < order.length) {
@@ -142,33 +150,40 @@ const Cashier = () => {
     };
 
     const changeOrder = (index, newQuantity) => {
-        const parseQuantity = parseInt(newQuantity)
+        const parseQuantity = parseInt(newQuantity);
+        
         if(isNaN(parseQuantity)) {
             return;
         }
+        // Check if newQuantity is not a valid number or is less than or equal to 0
         if (parseQuantity <= 0) {
+            // Handle invalid quantity input or when quantity is less than or equal to 0
             const item = order[index];
             const price = parseFloat(item.price);
             setTotal((total) => round(total - price * item.quantity, 2));
             setOrder((order) => order.filter((item, idx) => idx !== index));
             return;
         }
-
+    
+        // Limit the maximum quantity to 99
+        const limitedQuantity = Math.min(parseQuantity, 99);
+    
         const oldItem = order[index];
         const oldQuantity = oldItem.quantity;
         const price = parseFloat(oldItem.price);
-        const diff = newQuantity - oldQuantity;
+        const diff = limitedQuantity - oldQuantity;
         const changeInTotal = price * diff;
-
+        
         setTotal((total) => round(total + changeInTotal, 2));
         setOrder((order) =>
             order.map((item, idx) =>
                 idx === index
-                    ? { ...item, quantity: newQuantity }
+                    ? { ...item, quantity: limitedQuantity }
                     : item
             )
         );
     };
+    
 
 
     // Group buttons into arrays of 5 buttons each
@@ -192,7 +207,7 @@ const Cashier = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-gray-100">
+        <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
             <Navbar /> 
             <div className='flex justify-center gap-20 py-10 w-screen h-screen overflow-x-hidden bg-customMaroon text-white'>
                 <div className="flex-col w-1/2">
