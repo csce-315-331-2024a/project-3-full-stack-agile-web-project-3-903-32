@@ -473,8 +473,8 @@ const Menu = () => {
                 addMenuModal ?
                   <AddMenuModal /> :
                   <tr key={-1} className="bg-white border-b h-12 hover:cursor-pointer" onClick={() => setAddMenuModal(true)}>
-                    <td className="text-right text-2xl border-gray-700 border-dotted border-2 border-r-0">+</td>
-                    <td className="border-gray-700 border-dotted border-2 border-x-0 text-gray-700"></td>
+                    <td className="border-gray-700 border-dotted border-2 border-r-0"></td>
+                    <td className="text-center text-2xl border-gray-700 border-dotted border-2 border-x-0 text-gray-700">+</td>
                     <td className="border-gray-700 border-dotted border-2 border-x-0 text-gray-700"></td>
                     <td className="border-gray-700 border-dotted border-2 border-l-0"></td>
                   </tr>

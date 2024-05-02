@@ -6,6 +6,13 @@ const SellsTogether = () => {
   const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
+
+    if (startTime && endTime && startTime > endTime) {
+      alert("Start time cannot be set later than End time")
+      return; // Exit early to prevent API call
+    } 
+
+    
     if(startTime && endTime){
       fetch(process.env.REACT_APP_BACKEND_URL + `/api/sells_together?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`)
       .then(Response => Response.json())
