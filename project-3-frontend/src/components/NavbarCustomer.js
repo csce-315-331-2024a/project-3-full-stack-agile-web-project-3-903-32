@@ -1,11 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { StaticOrderingWords } from "../customer/CustomerConstants";
 
-const Navbar = ({handleRecommendedItemClick}) => {
+const Navbar = ({ onSpeechAssistanceChange }) => {
   const [weather, setWeather] = useState('');
-  const [showRecommendedItemModal, setShowRecommendedItemModal] = useState(false);
-  const [recommendedItem, setRecommendedItem] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [hasSpoken, setHasSpoken] = useState(false);
+  const [invertButton, setInvertButton] = useState(false);
+  const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
+
+  const getStaticWord = (word) => {
+    return (
+    <span>
+        {
+            staticTranslations[StaticOrderingWords.indexOf(word)]
+        }
+    </span>);
+};
+const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    console.log("Logout");
+    navigate('/');
+  };
 
   useEffect(() => {
     getWeather();
@@ -38,23 +55,6 @@ const Navbar = ({handleRecommendedItemClick}) => {
     }
   };
 
-  async function getRecommendedItem() {
-    setIsButtonDisabled(true);
-    try {
-      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/recommended", {
-        mode: 'cors'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setRecommendedItem(data.item);
-      } else {
-        console.error('Failed to fetch recommended items:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching recommended items:', error);
-    }
-  }
-
   const NavComponent = ({ to, text }) => {
     return (
       <NavLink
@@ -70,40 +70,64 @@ const Navbar = ({handleRecommendedItemClick}) => {
     );
   }
 
-  const handleOpenRecommendedItemModal = async () => {
-    await getRecommendedItem();
-    setShowRecommendedItemModal(true);
+  const handleSpeechAssistance = () => {
+    if (!hasSpoken) {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. ";
+      window.speechSynthesis.speak(msg);
+      setHasSpoken(true);
+      onSpeechAssistanceChange(false);
+    } else {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = "Speech assistance off.";
+      window.speechSynthesis.speak(msg);
+      setHasSpoken(false);
+      onSpeechAssistanceChange(true);
+    }
   };
 
-  const RecommendedItemModal = (props) => (
-    <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
-      <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-gray-200 text-black rounded hover:bg-gray-300 transition duration-300 ease-in-out font-bold text-lg"> {recommendedItem.itemName} </button>
-      <p>Click to add this delicious item to your order!</p>
-      <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] my-4'/></button>
-    </div>
-  )
-
-  const handleCloseModal = (event) => {
-    setIsButtonDisabled(false);
-    setShowRecommendedItemModal(false);
-  }
-
-  const handleCloseAndOrderModal = (event) => {
-    setIsButtonDisabled(false);
-    setShowRecommendedItemModal(false);
-    handleRecommendedItemClick(recommendedItem);
-  }
+  const stopSpeechAssistance = () => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+  };
 
   return (
-    <nav className="flex justify-between items-center p-5 bg-white border-b border-gray-200">
-      <div className="text-xl font-semibold text-gray-700">REV'S American Grill</div>
-      <div className="flex items-center">
+    <nav className="flex gap-10 items-center px-5 bg-white border-b border-gray-200 h-[80px]">
+      <div className="flex-1 text-xl font-semibold text-gray-700 ml-4">REV'S American Grill</div>
+      <div className='border-2 border-black rounded inline-block p-4'>
+        <strong>Weather:</strong>
         <span className='mx-4'>{weather}</span>
-        <button onClick={handleOpenRecommendedItemModal} className="mx-4 py-3 px-6 text-lg font-medium text-gray-900 hover:bg-gray-300 rounded-lg transition-colors bg-gray-100" disabled={isButtonDisabled}>
-          Recommended Item
-        </button>
       </div>
-      {showRecommendedItemModal && <RecommendedItemModal />}
+        
+        <div className="border-2 border-black p-2 rounded flex flex-row gap-4 justify-center mr-[310px]">
+          <span className="text-center py-2 align-middle font-bold">Speech Assistance:</span>
+          <button onClick={stopSpeechAssistance} className="p-2 text-medium font-medium text-white hover:bg-red-900 rounded-lg transition-colors bg-red-700" disabled={isButtonDisabled}>
+            STOP
+          </button>
+          <button onClick={handleSpeechAssistance} className="p-2 text-medium font-medium text-gray-900 hover:bg-green-500 rounded-lg transition-colors bg-green-400" disabled={isButtonDisabled}>
+            ON / OFF
+          </button>
+        </div>
+        <button className="px-4 py-1 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold rounded" onClick={()=> {
+          document.getElementById('root').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+          setInvertButton(!invertButton)}}>
+              {
+                  getStaticWord('Invert')
+              }
+        </button>
+        <button
+          onClick={handleLogoutClick}
+          className="text-white font-bold bg-red-700 hover:bg-red-800 px-4 py-1 h-14 rounded"
+        >
+          Logout
+        </button>
     </nav>
   );
 };
