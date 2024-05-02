@@ -177,6 +177,13 @@ def get_menu_items():
             return jsonify({'error': 'No data found'}), 404
     elif request.method == 'POST':
         data = request.get_json()
+
+        # Check if the item name already exists
+        check_query = text("SELECT * FROM Menu WHERE itemName = :itemName")
+        existing_item = db.session.execute(check_query, {'itemName': data['itemName']}).fetchone()
+        if existing_item:
+            return jsonify({'error': 'Item with this name already exists'}), 400
+
         query = text("INSERT INTO menu (itemname, price, category) VALUES (:itemName, :price, :category);")
         db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'category': data['category']})
         db.session.commit()
@@ -695,7 +702,7 @@ def update_orders():
             data.append({ "id": inventory[0], "amount": float(-inventory[1]) })
         if data is not None:
             update_inventory_batch(data)
-            print('Decreased stock for menu item with ID: ' + str(menu_id))
+            # print('Decreased stock for menu item with ID: ' + str(menu_id))
 
         db.session.commit()
         return jsonify({'message': 'Order created successfully'}), 201
