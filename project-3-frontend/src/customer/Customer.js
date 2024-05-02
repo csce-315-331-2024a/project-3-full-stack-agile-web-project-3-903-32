@@ -6,6 +6,33 @@ import { StaticOrderingWords } from "./CustomerConstants";
 import { NavLink } from 'react-router-dom';
 
 
+const imageMapping = {
+    'Bacon Cheeseburger': '../baconCheeseburger.png',
+    'Aggie Shakes': '../shake.png',
+    'Cheeseburger': '../cheeseburger.png',
+    'Black Bean Burger': '../blackBeanBurger.png',
+    'Chicken Caesar Salad': '../caesarSalad.png',
+    'Aggie Chicken Club': '../chickenClub.png',
+    'chickenWrap': '../chickenWrap.png',
+    'Cookie Ice Cream Sundae': '../cookieIceCream.png',
+    'Corn Dog Value Meal': '../corndog.png',
+    'fishSandwich': '../fishSandwich.png',
+    'Pepsi Fountain 20OZ': '../fountainDrink.png',
+    'French Fries': '../fries.png',
+    'Revs Grilled Chicken Sandwich': '../grilledChickenSandwich.png',
+    'Classic Hamburger': '../hamburger.png',
+    '2 Hot Dog Value Meal': '../hotdog.png',
+    'Double Scoop Ice Cream': '../iceCreamScoop.png',
+    'Gig Em Patty Melt': '../pattymelt.png',
+    'Root Beer Float': '../rootBeerFloat.png',
+    'Spicy Chicken Sandwich': '../spicyChickenSandwich.png',
+    'Tender Entree': '../tenders.png',
+    'tunaMelt': '../tunaMelt.png',
+    'Aquafina Water 16OZ': '../waterBottle.png',
+    'Aquafina Water 20OZ': '../waterBottle.png',
+    'tamuLogo': '../tamu-logo.png' // Added TAMU logo mapping
+  };
+
 
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
@@ -295,6 +322,7 @@ const Customer = () => {
                     displayedMenu.map((button, index) => (
                         <button key={index} onClick={() => addToOrder(button)} className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end">
                             <img src="" alt="Image" className="h-30 w-30" />
+
                             <span className="text-xl font-bold">{button.itemName}</span>
                             <span className="text-lg font-bold text-center">${button.price}</span>
                             <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4">
