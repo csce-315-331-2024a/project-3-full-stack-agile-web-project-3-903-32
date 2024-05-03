@@ -67,22 +67,6 @@ def get_data_email(email):
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
-    
-@app.route('/api/employee/all')
-def get_all_employees():
-    """
-    Returns a list of the employees and their information.
-
-    Returns:
-        A JSON of all employees and their info including name, position and email or return an error if no data is found.
-    """
-    query = text("SELECT * FROM Employees")
-    result = db.session.execute(query).fetchall()
-    if result is not None:
-        employee_list = [{"name": row[1], "position": row[2], "email": row[3]} for row in result]
-        return jsonify(employee_list)
-    else:
-        return jsonify({'error': 'No data found'}), 404
 
 @app.route('/api/employee/change/<email>', methods=['PUT', 'DELETE'])
 def get_employee(email):
@@ -124,6 +108,61 @@ def add_employee():
     db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
     db.session.commit()
     return jsonify({'message': 'Employee object created successfully'}), 201
+
+###################################
+#             Employee API        #
+###################################
+@app.route('/api/employees', methods=['POST', 'GET'])
+def http_employee():
+    """
+    Returns a list of the employees and their information.
+
+    Returns:
+        A JSON of all employees and their info including name, position and email or return an error if no data is found.
+    """
+    if request.method == 'GET':
+        query = text("SELECT * FROM Employees Order By employeename ASC")
+        result = db.session.execute(query).fetchall()
+        employees = [{"id": row[0], "name": row[1], "position": row[2], "email": row[3]} for row in result]
+        return jsonify(employees)
+    elif request.method == 'POST':
+        query = text("SELECT id from Employees Order By id DESC LIMIT 1")
+        res = db.session.execute(query).fetchone()
+        if res is None:
+            employee_id = 1
+        else:
+            employee_id = res[0] + 1
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :name, :position, :email)")
+        db.session.execute(query, {'id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
+
+@app.route('/api/employees/<employee_id>', methods=['DELETE', 'PUT'])
+def put_delete_employee(employee_id):
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("UPDATE Employees SET employeename = :name, position = :position, email = :email WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
+    elif request.method == 'DELETE':
+        query = text("DELETE FROM Employees WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id})
+        db.session.commit()
+        return jsonify({'message': 'Employee deleted successfully'}), 200
 
 ###################################
 #             MENU API            #
@@ -1444,53 +1483,5 @@ def get_recommended_item():
         warm_item = get_warm_inventory()
         return jsonify({"item": warm_item})
 
-###################################
-#             Employee API        #
-###################################
-@app.route('/api/employees', methods=['POST', 'GET'])
-def http_employee():
-    if request.method == 'GET':
-        query = text("SELECT * FROM Employees Order By employeename ASC")
-        result = db.session.execute(query).fetchall()
-        employees = [{"id": row[0], "name": row[1], "position": row[2], "email": row[3]} for row in result]
-        return jsonify(employees)
-    elif request.method == 'POST':
-        query = text("SELECT id from Employees Order By id DESC LIMIT 1")
-        res = db.session.execute(query).fetchone()
-        if res is None:
-            employee_id = 1
-        else:
-            employee_id = res[0] + 1
-        data = request.get_json()
-        if 'name' not in data:
-            return jsonify({'error': 'Name is required'}), 400
-        if 'position' not in data:
-            return jsonify({'error': 'Position is required'}), 400
-        if 'email' not in data:
-            return jsonify({'error': 'Email is required'}), 400
-        query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :name, :position, :email)")
-        db.session.execute(query, {'id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
-        db.session.commit()
-        return jsonify({'message': 'Employee updated successfully'}), 200
-
-@app.route('/api/employees/<employee_id>', methods=['DELETE', 'PUT'])
-def put_delete_employee(employee_id):
-    if request.method == 'PUT':
-        data = request.get_json()
-        if 'name' not in data:
-            return jsonify({'error': 'Name is required'}), 400
-        if 'position' not in data:
-            return jsonify({'error': 'Position is required'}), 400
-        if 'email' not in data:
-            return jsonify({'error': 'Email is required'}), 400
-        query = text("UPDATE Employees SET employeename = :name, position = :position, email = :email WHERE id = :employee_id")
-        db.session.execute(query, {'employee_id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
-        db.session.commit()
-        return jsonify({'message': 'Employee updated successfully'}), 200
-    elif request.method == 'DELETE':
-        query = text("DELETE FROM Employees WHERE id = :employee_id")
-        db.session.execute(query, {'employee_id': employee_id})
-        db.session.commit()
-        return jsonify({'message': 'Employee deleted successfully'}), 200
 if __name__ == '__main__':
     app.run(debug=True)
