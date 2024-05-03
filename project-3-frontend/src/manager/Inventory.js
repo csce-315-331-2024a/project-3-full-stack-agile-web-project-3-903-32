@@ -312,7 +312,7 @@ const Inventory = () => {
         .then((data) => {
             getInventory();
             getShortage();
-            console.log(data['message']);
+            alert('Inventory '+ document.querySelector('select[name=restock_selector]').value +' restocked');
         }).catch((err) => {
             console.log(err);
         });

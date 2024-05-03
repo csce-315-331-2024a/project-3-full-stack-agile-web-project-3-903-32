@@ -297,7 +297,7 @@ const Customer = () => {
             }
 
             return (
-                <button className={"w-full border-gray-500 rounded border-2 h-[6.5%] font-semibold hover:bg-red-200 " + (props.color && "bg-red-400")} key={props.category} style={sideBarImage} onClick={()=> {
+                <button className={"w-full border-gray-500 rounded bg-white border-2 h-[6.5%] font-semibold hover:bg-red-200 " + (props.color && "bg-red-400")} key={props.category} style={sideBarImage} onClick={()=> {
                     setSelectedCategory(props.category);
                     readSelectedCategory(props.category);
                     } }>
@@ -322,7 +322,7 @@ const Customer = () => {
             transition: 'background-color 0.3s ease',
         };
         return (
-            <div className="w-1/6 flex flex-col gap-4 p-3 h-full">
+            <div className="w-1/6 flex bg-white flex-col gap-4 p-3 h-full">
                 {categories.map((category) => {
                     return sidebarButton({ category: category, color: category === selectedCategory });
                 })
@@ -358,7 +358,7 @@ const Customer = () => {
         <div className="flex h-[89%] w-full" id="MenuContainer" >
             <MenuSideBar />
         
-            <div className="h-full w-2/3 bg-white shadow-md rounded p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
+            <div className="h-full w-2/3 bg-white shadow-md p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
                 {displayedMenu.length > 0 ? (
                     displayedMenu.map((button, index) => (
                         <button key={index} onClick={() => addToOrder(button)} className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end">
@@ -380,7 +380,7 @@ const Customer = () => {
                     </p>
                 )}
             </div>
-            <div className="w-1/4 bg-white shadow-md rounded p-6 flex flex-col h-full">
+            <div className="w-1/4 bg-white shadow-md p-6 flex flex-col h-full">
                 <div className="w-full border my-2 border-black rounded"></div>
                 <h2 className="text-2xl font-bold mb-4">
                     {
