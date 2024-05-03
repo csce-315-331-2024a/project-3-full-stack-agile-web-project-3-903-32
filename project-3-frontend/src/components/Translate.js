@@ -81,8 +81,8 @@ export const TranslateInput = () => {
     }
 
     return (
-        <div className="absolute top-2 right-4 flex flex-col">
-            <label id="select-language-label">Select Language:</label>
+        <div className="absolute top-[10px] right-[255px] flex flex-row border-2 border-black p-2 rounded">
+            <label id="select-language-label" className="font-bold align-middle py-2 mr-4">Select Language:</label>
             <select id='translate-input' aria-labelledby="select-language-label" onChange={submitTranslation} className="p-2 rounded hover:cursor-pointer border border-gray-500">
                 {
                     languages.map((lang) => {

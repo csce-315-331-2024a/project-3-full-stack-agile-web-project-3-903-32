@@ -14,7 +14,6 @@ const withManagerAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
     useEffect(() => {
-      console.log("HERE");
       if (isAuthenticatedManager() === 'false') {
         navigate('/'); 
       }
@@ -27,22 +26,59 @@ const withManagerAuthentication = (WrappedComponent) => {
   return AuthenticatedComponent;
 };
 
+function EditableName({ name, onUpdate }) {
+  const [editMode, setEditMode] = useState(false);
+  const [editedName, setEditedName] = useState(name);
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      onUpdate(editedName);
+      setEditMode(false);  
+    }
+  };
+
+  const handleNameClick = () => {
+    setEditMode(true);
+  };
+
+  const handleChange = (event) => {
+    setEditedName(event.target.value);
+  };
+
+  return (
+    <div>
+      {editMode ? (
+        <input
+          type="text"
+          value={editedName}
+          onChange={handleChange}
+          onKeyDown ={handleKeyPress}
+          autoFocus
+          onBlur={() => setEditMode(false)}  
+          style={{ paddingLeft: '10px', width: '150px' }}
+        />
+      ) : (
+        <span onClick={handleNameClick}>{name}</span>
+      )}
+    </div>
+  );
+}
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const [ascending, setAscending] = useState(false);
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
-    //use when changing the ascending state
     getOrders();
-  }, [ascending]);
+  }, [ascending, startTime, endTime]);
 
   useEffect(() => {
-    // Call getOrders function whenever startTime or endTime changes
-    getOrders(startTime, endTime);
-  }, [startTime, endTime]);
+    getMenu();
+  }, []);
 
   async function getOrders() {
     try {
@@ -97,7 +133,6 @@ const Orders = () => {
       });
   
       if (response.ok) {
-        // Update the orders state to reflect the change
         setOrders(orders.map(order => {
           if (order.orderID === orderId) {
             return { ...order, isComplete };
@@ -112,6 +147,144 @@ const Orders = () => {
       console.error('Error updating order completion status:', error);
     }
   };
+
+  const updateCustomerName = async (orderId, customerName) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerName })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Name updated successfully:', data);
+        
+        setOrders(orders.map(order => {
+          if (order.orderID === orderId) {
+            return { ...order, customerName };
+          }
+          return order;
+        }));
+        
+        alert("Customer name of order " + orderId + " is updated successfully!");
+        return data; 
+      } else {
+        console.error('Failed to update customer name:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating name:', error);
+      throw error; 
+    }
+  };
+
+  const addNewItem = async (orderId, e) => {
+    e.preventDefault();
+    const newItemName = e.target.newItemName.value;
+    const newItemAmount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+
+    const selectedItem = menuItems.find(item => item.itemName === newItemName);
+    if (!selectedItem) {
+      alert('Item not found');
+      return;
+    } 
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          addItem: { menu_id: selectedItem.id, amount: newItemAmount }
+        })
+      });
+
+      if (response.ok) {
+        alert('Item added successfully!');
+        getOrders(); // Refresh orders to show updated info
+      } else {
+        console.error('Failed to add item:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error updating name:', error);
+      throw error; 
+    }
+  };
+
+  const deleteItem = async (orderId, itemName, itemCount) => {
+    const selectedItem = menuItems.find(item => item.itemName === itemName);
+    if (!selectedItem) {
+      alert('Item not found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deleteItem: { menu_id: selectedItem.id, amount: itemCount }
+        })
+      });
+  
+      if (response.ok) {
+        alert('Item deleted successfully!');
+        getOrders(); // Refresh orders to show updated info
+      } else {
+        console.error('Failed to delete item:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      throw error; 
+    }
+  };
+
+  const updateAmountItem = async (orderId, itemName, oldCount, e) => {
+    e.preventDefault();
+    const newCount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+
+    const selectedItem = menuItems.find(item => item.itemName === itemName);
+    if (!selectedItem) {
+      alert('Item not found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          updateItem: { menu_id: selectedItem.id, old_amount: oldCount, new_amount: newCount }
+        })
+      });
+
+      if (response.ok) {
+        alert('Item updated successfully!');
+        getOrders(); // Refresh orders to show updated info
+      } else {
+        console.error('Failed to update item:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      throw error; 
+    }
+};
+
+  async function getMenu() {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
+        method: "GET",
+        mode: 'cors'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setMenuItems(data);
+      } else {
+        console.error('Failed to fetch menu:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error);
+    }
+  }
 
   const toggleItemsView = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
@@ -129,7 +302,7 @@ const Orders = () => {
       }
     });
   
-    return Array.from(itemMap.values());
+    return Array.from(itemMap.values()).sort((a, b) => a.itemName.localeCompare(b.itemName));;
   }
 
   return (
@@ -202,8 +375,13 @@ const Orders = () => {
                 <React.Fragment key={index}>
                   <tr className="bg-white border-b">
                     <td className="p-4 text-base text-gray-700">{order.orderID}</td>
-                    <td className="p-4 text-base text-gray-700">{order.customerName}</td>
-                    <td classN-grame="p-4 text-base text-gray-700">{order.time}</td>
+                    <td className="p-4 text-base text-gray-700">
+                      <EditableName
+                        name={order.customerName}
+                        onUpdate={(newName) => updateCustomerName(order.orderID, newName)}                    
+                      />
+                    </td>
+                    <td className="p-4 text-base text-gray-700">{order.time}</td>
                     <td className="p-4 text-base text-gray-700">${order.totalPrice.toFixed(2)}</td>
                     <td className="p-4 text-base text-gray-700">
                       <button
@@ -236,17 +414,60 @@ const Orders = () => {
                   </tr>
                   {expandedOrderId === order.orderID && (
                     <tr className="bg-gray-100 border-b">
-                      <td colSpan="5" className="p-4">
-                        <div className="max-h-40 overflow-auto">
+                      <td colSpan="7">
+                        <div className="p-4">
                           <table className="min-w-full">
                             <tbody>
                               {aggregateItems(order.items).map((item, itemIndex) => (
                                 <tr key={itemIndex} className="bg-white">
                                   <td className="p-2 text-base text-gray-700">{item.itemName}</td>
                                   <td className="p-2 text-base text-gray-700">${item.price.toFixed(2)}</td>
-                                  <td className="p-2 text-base text-gray-700">x {item.count}</td>
+                                  <td className="p-2 text-base text-gray-700">
+                                    <form onSubmit={(e) => updateAmountItem(order.orderID, item.itemName, item.count, e)}>
+                                      <input
+                                        type="number"
+                                        name="newItemAmount"
+                                        placeholder="Amount"
+                                        defaultValue={item.count}
+                                        required
+                                        min="1"  // Ensure input is always a positive number
+                                        className="w-1/4 mt-2 border-2 border-gray-300 p-1 rounded-lg"
+                                      />
+                                    </form>
+                                  </td>
+                                  <td className="p-2">
+                                    <button
+                                      type="button"
+                                      className="text-red-600 hover:text-red-700"
+                                      onClick={() => deleteItem(order.orderID, item.itemName, item.count)}
+                                    >
+                                      Delete
+                                    </button>
+                                  </td>
                                 </tr>
                               ))}
+                              <tr>
+                                <td colSpan="4">
+                                  <form onSubmit={(e) => addNewItem(order.orderID, e)}>
+                                    <select name="newItemName" required className="mt-2 mr-4 border-2 border-gray-300 p-1 rounded-lg">
+                                      {menuItems.map(item => (
+                                        <option key={item.id} value={item.itemName}>{item.itemName}</option>
+                                      ))}
+                                    </select>
+                                    <input
+                                      type="number"
+                                      name="newItemAmount"
+                                      placeholder="Amount"
+                                      required
+                                      min="1"  // Ensure input is always a positive number
+                                      className="mt-2 mr-4 border-2 border-gray-300 p-1 rounded-lg"
+                                    />
+                                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                                      Add Item
+                                    </button>
+                                  </form>
+                                </td>
+                              </tr>
                             </tbody>
                           </table>
                         </div>

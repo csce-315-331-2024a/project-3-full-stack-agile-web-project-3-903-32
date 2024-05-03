@@ -29,6 +29,19 @@ def hello_world():
 ###################################
 @app.route('/api/employee/<name>')
 def get_data(name):
+    """
+    Get employee data by name.
+
+    Parameters:
+        name (str): The name of the employee to retrieve data for.
+
+    Returns:
+        Response: A JSON response containing the employee's data if found, or an error message if not found.
+
+    Example:
+        >>> get_data('John')
+        {'employeename': 'John', 'position': 'Developer'}
+    """
     query = text("SELECT * FROM Employees WHERE employeename = :name LIMIT 1")
     result = db.session.execute(query, {'name': name}).fetchone()
 
@@ -37,13 +50,75 @@ def get_data(name):
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
+    
+@app.route('/api/employee/gmail/<email>')
+def get_data_email(email):
+    print("TESTING")
+    query = text("SELECT * FROM Employees WHERE email = :email LIMIT 1")
+    result = db.session.execute(query, {'email': email}).fetchone()
+    print(result)
+    if result is not None:
+        data = {'employeename': result.employeename, 'position': result.position, 'email': result.email}
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'No data found'}), 404
+    
+@app.route('/api/employee/all')
+def get_all_employees():
+    query = text("SELECT * FROM Employees")
+    result = db.session.execute(query).fetchall()
+    if result is not None:
+        employee_list = [{"name": row[1], "position": row[2], "email": row[3]} for row in result]
+        return jsonify(employee_list)
+    else:
+        return jsonify({'error': 'No data found'}), 404
 
+@app.route('/api/employee/change/<email>', methods=['PUT', 'DELETE'])
+def get_employee(email):
+    if request.method == 'PUT':
+        data = request.get_json()
+        query = text("UPDATE Employees SET employeename = :employeename, position = :position,  WHERE email = :email")
+        db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': email})
+        db.session.commit()
+        return jsonify({'message': 'Employee object updated successfully'}), 200
+    elif request.method == 'DELETE':
+        query = text("DELETE FROM Employees WHERE email = :email")
+        db.session.execute(query, {'email': email})
+        db.session.commit()
+        return jsonify({'message': 'Employee object deleted successfully'}), 200
+    
+@app.route('/api/employee/add')
+def add_employee():
+    data = request.get_json()
+    query = text("INSERT INTO employees (employeename, position, email) VALUES (:employeename, :position, :email);")
+    db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
+    db.session.commit()
+    return jsonify({'message': 'Employee object created successfully'}), 201
 
 ###################################
 #             MENU API            #
 ###################################
 @app.route('/api/menu', methods=['GET', 'POST'])
 def get_menu_items():
+    """
+    Get menu items or create a new menu item.
+
+    If the HTTP method is GET:
+    Returns a JSON response containing all menu items sorted by itemName in ascending order.
+    Optionally, if 'translate' parameter is provided in the query string and is not 'EN', 
+    translates the itemName to the specified language.
+
+    If the HTTP method is POST:
+    Creates a new menu item using data from the request body and returns a JSON response.
+
+    Returns:
+        Response: A JSON response containing menu items or a success message.
+
+    Example:
+        >>> get_menu_items()
+        [{'id': 1, 'itemName': 'Pizza', 'price': 10.99, 'category': 'Main'},
+         {'id': 2, 'itemName': 'Salad', 'price': 6.99, 'category': 'Side'}]
+    """
     if request.method == 'GET':
         query = text("SELECT * FROM Menu ORDER BY itemName ASC")
         results = db.session.execute(query).fetchall() 
@@ -84,6 +159,18 @@ def get_menu_items():
 
 @app.route('/api/menu/category', methods=['GET'])
 def get_menu_category():
+    """
+    Get menu categories.
+
+    Returns a JSON response containing the available categories of menu items.
+
+    Returns:
+        Response: A JSON response containing menu categories.
+
+    Example:
+        >>> get_menu_category()
+        ['Main', 'Side', 'Drink']
+    """
     if request.method == 'GET':
         try:
             data = get_category_types()
@@ -93,6 +180,21 @@ def get_menu_category():
 
 
 def get_category_types():
+    """
+    Get menu category types.
+
+    Returns a list of menu category types sorted in ascending order.
+
+    Returns:
+        list: A list containing menu category types.
+
+    Raises:
+        Exception: If no category types are found in the database.
+
+    Example:
+        >>> get_category_types()
+        ['Drink', 'Main', 'Side']
+    """
     query = text("SELECT enumlabel FROM pg_enum ORDER BY enumlabel ASC")
     results = db.session.execute(query).fetchall()
     if not results:
@@ -105,6 +207,15 @@ def get_category_types():
     
 @app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
 def get_menu_item(menu_id):
+    """
+    Helper function for get_category_types().
+
+    Returns a list of menu category types sorted in ascending order.
+
+    Returns:
+        list: A list containing menu category types.
+
+    """
     if request.method == 'PUT':
         data = request.get_json()
         # print(data)
@@ -364,11 +475,13 @@ def update_orders():
         order_id = db.session.execute(query, {'customer_name': data['customer_name'], 'time': curr_time, 'paid': data['paid'], 'employee_id': data['employee_id']}).fetchone()[0]
         print('Inserted order for customer: ' + data['customer_name'] + " successfully with ID: " + str(order_id))
         
-        # Insert order menu items
-        for menu_id in data['menu_items']:
-            query = text("INSERT INTO OMJunc (menuID, orderID) VALUES (:menu_id, :order_id)")
-            db.session.execute(query, {'menu_id': menu_id, 'order_id': order_id})
+        # Insert into OMJunc
+        items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for menu_id in data['menu_items']]
+        insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
 
+        # Execute the query in batch mode
+        db.session.execute(insert_query, items_to_insert)
+        
         # Decreasing the stock from the menu items
         query = text("SELECT itemID, itemAmount FROM MIJunc WHERE menuID IN :menu_items")
         results = db.session.execute(query, {'menu_items': tuple(data['menu_items'])}).fetchall() #Returns it in the form of (itemID, itemAmount)
@@ -508,17 +621,144 @@ def delete_order_omjunc_batch(order_id):
 def update_order(order_id):
     try:
         data = request.get_json()  
-        is_complete = data['isComplete']  # Expected to receive {"isComplete": true} or {"isComplete": false}
+        is_complete = data.get('isComplete')  # Expected to receive {"isComplete": true} or {"isComplete": false}
+        customer_name = data.get('customerName')
+        add_item = data.get('addItem')
+        delete_item = data.get('deleteItem')
+        update_item = data.get('updateItem')
 
-        # Update the completion status in the database
-        query = text("UPDATE Orders SET isComplete = :is_complete WHERE id = :order_id")
-        db.session.execute(query, {'is_complete': is_complete, 'order_id': order_id})
+        if is_complete is not None:
+            query = text("UPDATE Orders SET isComplete = :is_complete WHERE id = :order_id")
+            db.session.execute(query, {'is_complete': is_complete, 'order_id': order_id})
+
+        if customer_name:
+            query = text("UPDATE Orders SET customerName = :customer_name WHERE id = :order_id")
+            db.session.execute(query, {'customer_name': customer_name, 'order_id': order_id})
+        
+        # add items (orderid, menuid, amount)
+        # insert into omjunc (with orderid, menuid <amount> times)
+        # update paid of orders (+ paid with amount * price)
+        if add_item:
+            menu_id = add_item.get('menu_id')
+            amount = add_item.get('amount')
+
+            if menu_id and amount:
+                # Fetch the price from the database
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+                
+                if menu_item:
+                    price = menu_item.price
+
+                    # Insert into OMJunc
+                    items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for _ in range(amount)]
+                    insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
+
+                    # Execute the query in batch mode
+                    db.session.execute(insert_query, items_to_insert)
+                    
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    current_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+                    new_paid = current_paid + amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404
+    
+        
+        # delete items (orderid, menuid, amount)
+        # delete from omjunc (with orderid, menuid <amount> times)
+        # update paid of orders (- paid with amount * price)
+        if delete_item:
+            menu_id = delete_item.get('menu_id')
+            amount = delete_item.get('amount')
+
+            if menu_id and amount:
+                # Fetch the price from the database
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+
+                if menu_item:
+                    price = menu_item.price
+
+                    # Delete items from OMJunc table
+                    delete_query = text("DELETE FROM OMJunc WHERE orderid = :order_id AND menuid = :menu_id")
+                    db.session.execute(delete_query, {'order_id': order_id, 'menu_id': menu_id})
+                    
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    current_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+                    new_paid = current_paid - amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404
+        
+        # update amount of items (orderid, menuid, new amount)
+        # if new > cur: add new items (new - cur)
+        # if new < cur: delete items (cur - new)
+        if update_item:
+            menu_id = update_item.get('menu_id')
+            old_amount = update_item.get('old_amount')
+            new_amount = update_item.get('new_amount')
+
+            # Check current amount in the database to prevent concurrent updates
+            current_query = text("SELECT COUNT(*) FROM OMJunc WHERE orderID = :order_id AND menuID = :menu_id")
+            current_amount = db.session.execute(current_query, {'order_id': order_id, 'menu_id': menu_id}).scalar()
+
+            if current_amount != old_amount:
+                return jsonify({'error': 'Old amount does not match current amount'}), 40
+
+            if menu_id:
+                price_query = text("SELECT price FROM Menu WHERE id = :menu_id")
+                menu_item = db.session.execute(price_query, {'menu_id': menu_id}).fetchone()
+
+                if menu_item:
+                    price = menu_item.price
+
+                    # Calculate new paid amount
+                    new_paid_query = text("SELECT paid FROM Orders WHERE id = :order_id")
+                    new_paid = db.session.execute(new_paid_query, {'order_id': order_id}).fetchone().paid
+
+                    if new_amount > old_amount:
+                        amount = new_amount - old_amount
+                        # Insert into OMJunc
+                        items_to_insert = [{'order_id': order_id, 'menu_id': menu_id} for _ in range(amount)]
+                        insert_query = text("INSERT INTO OMJunc (orderID, menuID) VALUES (:order_id, :menu_id)")
+
+                        # Execute the query in batch mode
+                        db.session.execute(insert_query, items_to_insert)
+                        new_paid += amount * price
+                    elif new_amount < old_amount:
+                        amount = old_amount - new_amount
+                        delete_query = text("""
+                            DELETE FROM OMJunc
+                            WHERE ctid IN (
+                                SELECT ctid FROM OMJunc
+                                WHERE orderid = :order_id AND menuid = :menu_id
+                                LIMIT :amount
+                            )
+                        """)
+                        db.session.execute(delete_query, {'order_id': order_id, 'menu_id': menu_id, 'amount': amount})
+                        new_paid -= amount * price
+
+                    # Update the paid amount in the Orders table
+                    update_paid_query = text("UPDATE Orders SET paid = :new_paid WHERE id = :order_id")
+                    db.session.execute(update_paid_query, {'new_paid': new_paid, 'order_id': order_id})
+                else:
+                    return jsonify({'error': 'Menu item not found'}), 404                
+
         db.session.commit()
 
-        return jsonify({'message': 'Order completion status updated successfully'}), 200
+        return jsonify({'message': 'Order updated successfully'}), 200
     except Exception as e:
         db.session.rollback()  # Roll back the transaction in case of error
-        return jsonify({'error': 'Failed to update order completion status', 'exception': str(e)}), 500
+        return jsonify({'error': 'Failed to update order', 'exception': str(e)}), 500
 
 
 @app.route('/api/weather')
@@ -839,6 +1079,8 @@ def get_recommended_item():
     else:
         warm_item = get_warm_inventory()
         return jsonify({"item": warm_item})
+
+
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { StaticOrderingWords } from "../customer/CustomerConstants";
 
 const Navbar = ({ onSpeechAssistanceChange }) => {
@@ -17,6 +17,12 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
         }
     </span>);
 };
+const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    console.log("Logout");
+    navigate('/');
+  };
 
   useEffect(() => {
     getWeather();
@@ -93,34 +99,35 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
   };
 
   return (
-    <nav className="flex justify-between items-center p-1 bg-white border-b border-gray-200 h-[100px]">
-      <div className="text-xl font-semibold text-gray-700 ml-4">REV'S American Grill</div>
-      <div className="flex items-center">
-      <div style={{ border: '1px solid black', padding: '10px', borderRadius: '5px', display: 'inline-block', margin: '20px', width: '275px' }}>
+    <nav className="flex gap-10 items-center px-5 bg-white border-b border-gray-200 h-[80px]">
+      <div className="flex-1 text-xl font-semibold text-gray-700 ml-4">REV'S American Grill</div>
+      <div className='border-2 border-black rounded inline-block p-4'>
         <strong>Weather:</strong>
         <span className='mx-4'>{weather}</span>
       </div>
-        <button className="w-1/6 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-2 rounded mb-2" style={{margin: '20px'}} onClick={()=> {
-          document.getElementById('MenuContainer').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
+        
+        <div className="border-2 border-black p-2 rounded flex flex-row gap-4 justify-center mr-[310px]">
+          <span className="text-center py-2 align-middle font-bold">Speech Assistance:</span>
+          <button onClick={stopSpeechAssistance} className="p-2 text-medium font-medium text-white hover:bg-red-900 rounded-lg transition-colors bg-red-700" disabled={isButtonDisabled}>
+            STOP
+          </button>
+          <button onClick={handleSpeechAssistance} className="p-2 text-medium font-medium text-gray-900 hover:bg-green-500 rounded-lg transition-colors bg-green-400" disabled={isButtonDisabled}>
+            ON / OFF
+          </button>
+        </div>
+        <button className="px-4 py-1 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold rounded" onClick={()=> {
+          document.getElementById('root').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
           setInvertButton(!invertButton)}}>
               {
                   getStaticWord('Invert')
               }
         </button>
-        <div className="border border-black p-4 rounded inline-block mx-4 my-4" style={{ width: '500px' }}>
-          <strong className="mr-4">Speech Assistance:</strong>
-          <button onClick={stopSpeechAssistance} className="mr-4 py-3 px-4 text-lg font-medium text-white hover:bg-red-600 rounded-lg transition-colors bg-red-500" disabled={isButtonDisabled}>
-            STOP
-          </button>
-          <button onClick={handleSpeechAssistance} className="py-3 px-6 text-lg font-medium text-gray-900 hover:bg-green-500 rounded-lg transition-colors bg-green-400" disabled={isButtonDisabled}>
-            ON / OFF
-          </button>
-        </div>
-
-        <button className="bg-white hover:bg-white text-white border-white w-200px">
-          akdjfslkjfkldsjflkdsjfkl
+        <button
+          onClick={handleLogoutClick}
+          className="text-white font-bold bg-red-700 hover:bg-red-800 px-4 py-1 h-14 rounded"
+        >
+          Logout
         </button>
-      </div>
     </nav>
   );
 };
