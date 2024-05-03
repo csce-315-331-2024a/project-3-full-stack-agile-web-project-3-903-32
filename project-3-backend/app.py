@@ -1033,7 +1033,9 @@ def update_order(order_id):
         db.session.rollback()  # Roll back the transaction in case of error
         return jsonify({'error': 'Failed to update order', 'exception': str(e)}), 500
 
-
+###################################
+#          Weather API            #
+###################################
 @app.route('/api/weather')
 def show_Weather():   
     """
@@ -1070,7 +1072,9 @@ def show_Weather():
 
     return jsonify(result)
 
-
+###################################
+#             Reports API         #
+###################################
 '''
 Usage: /api/sales_by_time?start_time=2023-01-01%2000:00:00&end_time=2023-01-01%2023:59:59
 %20 is used as a space in the URL so, the above start time is: 2023-01-01 00:00:00
@@ -1252,7 +1256,10 @@ def what_sells_together():
                         
     return jsonify(pair_item_list)
     
-    
+###################################
+#          Translation API        #
+###################################
+
 auth_key = os.getenv('DEEPL_API_KEY')
 translator = deepl.Translator(auth_key)
 class Language:
@@ -1437,8 +1444,53 @@ def get_recommended_item():
         warm_item = get_warm_inventory()
         return jsonify({"item": warm_item})
 
+###################################
+#             Employee API        #
+###################################
+@app.route('/api/employees', methods=['POST', 'GET'])
+def http_employee():
+    if request.method == 'GET':
+        query = text("SELECT * FROM Employees Order By employeename ASC")
+        result = db.session.execute(query).fetchall()
+        employees = [{"id": row[0], "name": row[1], "position": row[2], "email": row[3]} for row in result]
+        return jsonify(employees)
+    elif request.method == 'POST':
+        query = text("SELECT id from Employees Order By id DESC LIMIT 1")
+        res = db.session.execute(query).fetchone()
+        if res is None:
+            employee_id = 1
+        else:
+            employee_id = res[0] + 1
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :name, :position, :email)")
+        db.session.execute(query, {'id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
 
-
-
+@app.route('/api/employees/<employee_id>', methods=['DELETE', 'PUT'])
+def put_delete_employee(employee_id):
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("UPDATE Employees SET employeename = :name, position = :position, email = :email WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
+    elif request.method == 'DELETE':
+        query = text("DELETE FROM Employees WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id})
+        db.session.commit()
+        return jsonify({'message': 'Employee deleted successfully'}), 200
 if __name__ == '__main__':
     app.run(debug=True)
