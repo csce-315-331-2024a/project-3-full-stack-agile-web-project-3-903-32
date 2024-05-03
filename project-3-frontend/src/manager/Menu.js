@@ -186,7 +186,13 @@ const Menu = () => {
         getMenu();
         alert('New menu item added successfully!');
       } else {
-        console.error('Failed to fetch menu:', response.status, response.statusText);
+        const errorData = await response.json();
+        if (response.status === 400) {
+          alert(errorData.error); // Display error message for duplication
+        } else {
+          console.error('Failed to fetch menu:', response.status, response.statusText);
+          alert('Failed to add the menu item. Please try again.'); // Generic error for other cases
+        }
       }
     } catch (error) {
       console.error('Error fetching menu:', error);
