@@ -228,6 +228,48 @@ def get_menu_items():
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
 
+@app.route('/api/menu/ordering', methods=['GET'])
+def get_menu_items_ordering():
+    """
+    Get menu items for ordering with ingredients.
+
+    Returns a JSON response containing all menu items sorted by itemName with ingredients in ascending order.
+
+    Returns:
+        A JSON response containing menu items.
+
+    Raises:
+        Exception: If there is an error retrieving the menu items.
+
+    """
+    query = text("Select DISTINCT m.id, m.itemname, m.price, m.category FROM menu as m JOIN mijunc as j On m.id = j.menuid Order By m.itemname ASC")
+    results = db.session.execute(query).fetchall()
+    if not results:
+        raise Exception('No data found')
+    data = []
+    if 'translate' in request.args and request.args.get("translate") != 'EN':
+        texts = []
+        for row in results:
+            texts.append(str(row[1]))
+        names = translator.translate_text(text=texts, target_lang=request.args.get("translate"))
+        for i, row in enumerate(results):
+            item = {
+                'id' : row[0],
+                'itemName' : names[i].text,
+                'price' : row[2],
+                'category' : row[3]
+            }
+            data.append(item)
+    else:
+        for row in results:
+            item = {
+                'id' : row[0],
+                'itemName' : row[1],
+                'price' : row[2],
+                'category' : row[3]
+            }
+            data.append(item)
+    return jsonify(data)
 
 @app.route('/api/menu/category', methods=['GET'])
 def get_menu_category():

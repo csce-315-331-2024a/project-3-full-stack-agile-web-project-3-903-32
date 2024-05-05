@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import { LanguageContext } from "../components/Translate";
 import Modal from "../components/ModalCustomer";
 import { StaticOrderingWords } from "./CustomerConstants";
@@ -11,34 +11,36 @@ import Navbar from "../components/NavbarCustomer";
  * @returns the Customer Menu Page
  */
 const Customer = () => {
-    const [fullMenu, setFullMenu] = useState([]);
-    const [itemIds, setItemIds] = useState([]);
-    const [order, setOrder] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [inventoryData, setInventoryData] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('All');
-    const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
-    const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
-    const [hasSpoken, setHasSpoken] = useState(true);
-    const [showRecommendedItemModal, setShowRecommendedItemModal] = useState(false);
-    const [recommendedItem, setRecommendedItem] = useState(null);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [fullMenu, setFullMenu] = useState([]);
+  const [itemIds, setItemIds] = useState([]);
+  const [order, setOrder] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inventoryData, setInventoryData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [displayedMenu, setDisplayedMenu] = useState(fullMenu);
+  const [staticTranslations, setStaticTranslations] =
+    useState(StaticOrderingWords);
+  const [hasSpoken, setHasSpoken] = useState(true);
+  const [showRecommendedItemModal, setShowRecommendedItemModal] =
+    useState(false);
+  const [recommendedItem, setRecommendedItem] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-    const selectedLanguage = useContext(LanguageContext);
-    
-    const navigate = useNavigate();
-    const location = useLocation();
+  const selectedLanguage = useContext(LanguageContext);
 
-    const handlePaymentClick = () => {
-        navigate('/customer/payment', { state: { order, total, itemIds } });
-    };
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const handleSpeechAssistanceChange = (newHasSpoken) => {
-        setHasSpoken(newHasSpoken);
-    };
+  const handlePaymentClick = () => {
+    navigate("/customer/payment", { state: { order, total, itemIds } });
+  };
+
+  const handleSpeechAssistanceChange = (newHasSpoken) => {
+    setHasSpoken(newHasSpoken);
+  };
 
     const handleViewIngredients = (event, item) => {
         if (!hasSpoken) {
@@ -59,31 +61,26 @@ const Customer = () => {
         setSelectedItem(item);
     };
 
-    const getStaticWord = (word) => {
-        return (
-        <span>
-            {
-                staticTranslations[StaticOrderingWords.indexOf(word)]
-            }
-        </span>);
-    };
+  const getStaticWord = (word) => {
+    return <span>{staticTranslations[StaticOrderingWords.indexOf(word)]}</span>;
+  };
 
-    useEffect(() => {
-        postStaticTranslations();
-        getMenu();
+  useEffect(() => {
+    postStaticTranslations();
+    getMenu();
 
-        if (location.state) {
-            const { orderBack, totalBack, itemIdsBack } = location.state;
-            setOrder(orderBack);
-            setTotal(totalBack);
-            setItemIds(itemIdsBack);
-        }
-    }, [location.state, selectedLanguage]);
+    if (location.state) {
+      const { orderBack, totalBack, itemIdsBack } = location.state;
+      setOrder(orderBack);
+      setTotal(totalBack);
+      setItemIds(itemIdsBack);
+    }
+  }, [location.state, selectedLanguage]);
 
-    useEffect(() => {
-        getCategory();
-        setDisplayedMenu(fullMenu);
-    }, [fullMenu]);
+  useEffect(() => {
+    getCategory();
+    setDisplayedMenu(fullMenu);
+  }, [fullMenu]);
 
     useEffect(() => {
         setDisplayedMenu([]);
@@ -306,41 +303,41 @@ const Customer = () => {
                 if (!isNaN(price)) {
                     setTotal((total) => round(total - price, 2));
 
-                    setOrder((order) => {
-                        if (item.quantity > 1) {
-                            return order.map((orderItem, idx) =>
-                                idx === index
-                                    ? { ...orderItem, quantity: orderItem.quantity - 1 }
-                                    : orderItem
-                            );
-                        } else {
-                            return order.filter((_, idx) => idx !== index);
-                        }
-                    });
-
-                    setItemIds((itemIds) => {
-                        const item = order[index];
-                        if (item) {
-                            const lastIndex = itemIds.lastIndexOf(item.id);
-                            if (lastIndex > -1) {
-                                const newItemIds = [...itemIds];
-                                newItemIds.splice(lastIndex, 1);
-                                return newItemIds;
-                            }
-                        }
-                        return itemIds;
-                    });
-                } else {
-                    console.error('item.price is not a valid number', item);
-                }
+          setOrder((order) => {
+            if (item.quantity > 1) {
+              return order.map((orderItem, idx) =>
+                idx === index
+                  ? { ...orderItem, quantity: orderItem.quantity - 1 }
+                  : orderItem
+              );
             } else {
-                console.error('No item found at the given index', index);
+              return order.filter((_, idx) => idx !== index);
             }
+          });
+
+          setItemIds((itemIds) => {
+            const item = order[index];
+            if (item) {
+              const lastIndex = itemIds.lastIndexOf(item.id);
+              if (lastIndex > -1) {
+                const newItemIds = [...itemIds];
+                newItemIds.splice(lastIndex, 1);
+                return newItemIds;
+              }
+            }
+            return itemIds;
+          });
         } else {
-            console.error('Invalid index', index);
+          console.error("item.price is not a valid number", item);
         }
-        return order;
-    };
+      } else {
+        console.error("No item found at the given index", index);
+      }
+    } else {
+      console.error("Invalid index", index);
+    }
+    return order;
+  };
 
     const readSelectedCategory = (category) => {
         const categoryItems = fullMenu.filter(item => item.category === category);
@@ -365,58 +362,66 @@ const Customer = () => {
         }
     };
 
-    const MenuSideBar = () => {
-        const sidebarButton = (props) => {
-            const sideBarImage = {
-              //  backgroundImage: `url(${imageMapping[props.category]})`,
-            }
-
-            return (
-                <button className={"w-full border-gray-500 rounded bg-white border-2 h-[6.5%] font-semibold hover:bg-red-200 " + (props.color && "bg-red-400")} key={props.category} style={sideBarImage} onClick={()=> {
-                    setSelectedCategory(props.category);
-                    readSelectedCategory(props.category);
-                    } }>
-                    <p>
-                        {
-                            getStaticWord(props.category)
-                        }
-                    </p>
-                </button>
-            )
-        }
-        const recommendedItemStyle = {
-            backgroundColor: '#2DA3EB',
-            color: '#333',
-            border: '1px solid #ccc',
-            height: '3rem',
-            borderRadius: '0.25rem',
-            fontSize: '1rem',
-            fontWeight: '500',
-            textAlign: 'center',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-        };
-        return (
-            <div className="w-1/6 flex bg-white flex-col gap-4 p-3 h-full">
-                {categories.map((category) => {
-                    return sidebarButton({ category: category, color: category === selectedCategory });
-                })
-                }
-                <button
-                    onClick={handleOpenRecommendedItemModal}
-                    style={recommendedItemStyle}
-                    disabled={isButtonDisabled}
-                > Recommended item
-                </button>
-            </div>
-        );
-    }
-    
-    const handleRecommendedItemClick = (recommendedItem) => {
-        addToOrder(recommendedItem);
+  const MenuSideBar = () => {
+    const sidebarButton = (props) => {
+      const sideBarImage = {
+        //  backgroundImage: `url(${imageMapping[props.category]})`,
       };
 
-    const hasSpokenRef = useRef(false);
+      return (
+        <button
+          className={
+            "w-full border-gray-500 rounded bg-white border-2 h-[6.5%] font-semibold hover:bg-red-200 " +
+            (props.color && "bg-red-400")
+          }
+          key={props.category}
+          style={sideBarImage}
+          onClick={() => {
+            setSelectedCategory(props.category);
+            readSelectedCategory(props.category);
+          }}
+        >
+          <p>{getStaticWord(props.category)}</p>
+        </button>
+      );
+    };
+    const recommendedItemStyle = {
+      backgroundColor: "#2DA3EB",
+      color: "#333",
+      border: "1px solid #ccc",
+      height: "3rem",
+      borderRadius: "0.25rem",
+      fontSize: "1rem",
+      fontWeight: "500",
+      textAlign: "center",
+      cursor: "pointer",
+      transition: "background-color 0.3s ease",
+    };
+    return (
+      <div className="w-1/6 flex bg-white flex-col gap-4 p-3 h-full">
+        {categories.map((category) => {
+          return sidebarButton({
+            category: category,
+            color: category === selectedCategory,
+          });
+        })}
+        <button
+          onClick={handleOpenRecommendedItemModal}
+          style={recommendedItemStyle}
+          disabled={isButtonDisabled}
+        >
+          {" "}
+          Recommended item
+        </button>
+      </div>
+    );
+  };
+
+  const handleRecommendedItemClick = (recommendedItem) => {
+    addToOrder(recommendedItem);
+  };
+
+  const hasSpokenRef = useRef(false);
 
   useEffect(() => {
     if (!hasSpokenRef.current) {
@@ -432,114 +437,115 @@ const Customer = () => {
 
   return (
     <div className="w-screen h-screen overflow-hidden ">
-        <Navbar onSpeechAssistanceChange={handleSpeechAssistanceChange} handleRecommendedItemClick={handleRecommendedItemClick} />
-        <div className="flex h-[89%] w-full" id="MenuContainer" >
-            <MenuSideBar />
-        
-            <div className="h-full w-2/3 bg-white shadow-md p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
-                {displayedMenu.length > 0 ? (
-                    displayedMenu.map((button, index) => (
-                        <button key={index} onClick={() => addToOrder(button)} className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end">
-                            <img src="" alt="Image" className="h-30 w-30" />
-                            <span className="text-xl font-bold">{button.itemName}</span>
-                            <span className="text-lg font-bold text-center">${button.price}</span>
-                            <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4">
-                                {
-                                    getStaticWord("View Ingredients")
-                                }
-                            </button>
-                        </button>
-                    ))
-                ) : (
-                    <p className="text-center text-gray-500">
-                        {
-                            getStaticWord('Loading...')
-                        }
-                    </p>
-                )}
-            </div>
-            <div className="w-1/4 bg-white shadow-md p-6 flex flex-col h-full">
-                <div className="w-full border my-2 border-black rounded"></div>
-                <h2 className="text-2xl font-bold mb-4">
-                    {
-                        getStaticWord('Order List')
-                    }
-                </h2>
-                <div className="divide-y divide-gray-200 flex-1 overflow-y-auto">
-                    {order.length > 0 ? (
-                        order.map((item, index) => (
-                            <div key={item.id} className="py-4 flex justify-between items-center">
-                                <div>
-                                    <p className="text-gray-800">
-                                        {
-                                        item.itemName
-                                        }
-                                    </p>
-                                    <p className="text-gray-600">${item.price.toFixed(2)} x {item.quantity}</p>
-                                </div>
-                                <div className="flex items-center">
-                                    <button
-                                        onClick={() => addToOrder(item)}
-                                        className="text-sm bg-green-700 hover:bg-green-900 text-white font-semibold py-1 px-3 rounded-l"
-                                    >
-                                        +
-                                    </button>
-                                    <button
-                                        onClick={() => removeFromOrder(index)}
-                                        className="text-sm bg-red-700 hover:bg-red-900 text-white font-semibold py-1 px-3 rounded-r"
-                                    >
-                                        -
-                                    </button>
-                                </div>
-                            </div>
-                        ))) : (<p className="text-center text-gray-500">
-                        {
-                            getStaticWord('No items in order.')
-                        }
-                    </p>)}
-                </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-xl font-semibold">
-                            {
-                                getStaticWord('Total:')
-                            }
-                        </h3>
-                        <p className="text-xl font-semibold">
-                            ${typeof total === 'number' ? total.toFixed(2) : '0.00'}
-                        </p>
-                    </div>
-                    <button
-                        onClick={handlePaymentClick}
-                        className="w-full bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4"
-                    >
-                        {
-                            getStaticWord('Go to Payment')
-                        }
-                    </button>
-                    
-                </div>
-                <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-                    <h2 className="text-lg font-bold mb-4 mr-4">Ingredients of {selectedItem?.itemName}</h2>
-                    {inventoryData.length > 0 ? (
-                        inventoryData.map(item => (
-                            <p key={item.itemID} className="mb-2">{item.itemName}: {item.itemAmount}</p>
-                        ))
-                    ) : (
-                        <p>
-                        {
-                            getStaticWord('Loading Inventory...')
-                        } 
-                        </p>
-                    )}
-        
-                </Modal>
-            </div>
-        </div>
-        {showRecommendedItemModal && <RecommendedItemModal />}
-    </div>
+      <Navbar
+        onSpeechAssistanceChange={handleSpeechAssistanceChange}
+        handleRecommendedItemClick={handleRecommendedItemClick}
+      />
+      <div className="flex h-[89%] w-full" id="MenuContainer">
+        <MenuSideBar />
 
-);
+        <div className="h-full w-2/3 bg-white shadow-md p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
+          {displayedMenu.length > 0 ? (
+            displayedMenu.map((button, index) => (
+              <button
+                key={index}
+                onClick={() => addToOrder(button)}
+                className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end"
+              >
+                <img src="" alt="Image" className="h-30 w-30" />
+                <span className="text-xl font-bold">{button.itemName}</span>
+                <span className="text-lg font-bold text-center">
+                  ${button.price}
+                </span>
+                <button
+                  onClick={(event) => handleViewIngredients(event, button)}
+                  className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4"
+                >
+                  {getStaticWord("View Ingredients")}
+                </button>
+              </button>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">
+              {getStaticWord("Loading...")}
+            </p>
+          )}
+        </div>
+        <div className="w-1/4 bg-white shadow-md p-6 flex flex-col h-full">
+          <div className="w-full border my-2 border-black rounded"></div>
+          <h2 className="text-2xl font-bold mb-4">
+            {getStaticWord("Order List")}
+          </h2>
+          <div className="divide-y divide-gray-200 flex-1 overflow-y-auto">
+            {order.length > 0 ? (
+              order.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="py-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="text-gray-800">{item.itemName}</p>
+                    <p className="text-gray-600">
+                      ${item.price.toFixed(2)} x {item.quantity}
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => addToOrder(item)}
+                      className="text-sm bg-green-700 hover:bg-green-900 text-white font-semibold py-1 px-3 rounded-l"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => removeFromOrder(index)}
+                      className="text-sm bg-red-700 hover:bg-red-900 text-white font-semibold py-1 px-3 rounded-r"
+                    >
+                      -
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">
+                {getStaticWord("No items in order.")}
+              </p>
+            )}
+          </div>
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-semibold">
+                {getStaticWord("Total:")}
+              </h3>
+              <p className="text-xl font-semibold">
+                ${typeof total === "number" ? total.toFixed(2) : "0.00"}
+              </p>
+            </div>
+            <button
+              onClick={handlePaymentClick}
+              className="w-full bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4"
+            >
+              {getStaticWord("Go to Payment")}
+            </button>
+          </div>
+          <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+            <h2 className="text-lg font-bold mb-4 mr-4">
+              Ingredients of {selectedItem?.itemName}
+            </h2>
+            {inventoryData.length > 0 ? (
+              inventoryData.map((item) => (
+                <p key={item.itemID} className="mb-2">
+                  {item.itemName}: {item.itemAmount}
+                </p>
+              ))
+            ) : (
+              <p>{getStaticWord("Loading Inventory...")}</p>
+            )}
+          </Modal>
+        </div>
+      </div>
+      {showRecommendedItemModal && <RecommendedItemModal />}
+    </div>
+  );
 };
 
 export default Customer;
