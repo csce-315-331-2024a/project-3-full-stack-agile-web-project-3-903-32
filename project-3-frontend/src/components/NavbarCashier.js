@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-
+/**
+ * This navbar is tailored for the cashier which links to the menu board, kitchen, and customer pages
+ * @returns navbar for the cashier
+ */
 const Navbar = () => {
   const navigate = useNavigate();
 

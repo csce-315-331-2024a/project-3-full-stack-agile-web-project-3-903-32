@@ -1,7 +1,10 @@
 import { GoogleLogin } from 'react-google-login';
 
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
-
+/**
+ * 
+ * @returns The Google Authenticator
+ */
 function Login() {
 
     const onSuccess = (res) => {

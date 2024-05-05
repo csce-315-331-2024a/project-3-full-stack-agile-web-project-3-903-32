@@ -1,9 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 
+/**
+ * Helper function - This will return any stored language inside the local cache
+ * @returns the cached languge if any or English
+ */
 const getCacheLanguage = () => {
     return localStorage.getItem("language") || "EN";
 }
 
+/**
+ * Helper function - This will store any new langauge into a local cache
+ * @param {*} language 
+ */
 const setCacheLanguage = (language) => {
     localStorage.setItem("language", language);
 }
@@ -31,6 +39,11 @@ const setCacheLanguage = (language) => {
 export const LanguageContext = React.createContext();
 const LanguageUpdateContext = React.createContext();
 
+/**
+ * 
+ * @param {*} param0 
+ * @returns This will set the language as well as store the language into local storage for faster load times
+ */
 export const TranslateContext = ({ children }) => {
     const [language, setLanguage] = useState(getCacheLanguage());
 
@@ -48,11 +61,16 @@ export const TranslateContext = ({ children }) => {
         </LanguageContext.Provider>
     );
 }
-
+/**
+ * This will translate the page
+ * @returns The page in the selected language
+ */
 export const TranslateInput = () => {
     const [languages, setLanguages] = useState([]);
     const setSelectedLanguage = useContext(LanguageUpdateContext);
-
+    /**
+     * This will reload page to with the selected language
+     */
     async function submitTranslation() {
         window.location.reload();
         const text = document.getElementById("translate-input").value;
@@ -63,6 +81,9 @@ export const TranslateInput = () => {
         getLanguages();
     }, []);
 
+    /**
+     * This will call the backend function for the language api
+     */
     async function getLanguages() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
@@ -95,7 +116,11 @@ export const TranslateInput = () => {
         </div>
     );
 }
-
+/**
+ * 
+ * @param {object} props stores the text variable.
+ * @returns The translation
+ */
 export const TranslateText = (props) => {
     const selectedLanguage = useContext(LanguageContext);
     const [translatedText, setTranslatedText] = useState("");

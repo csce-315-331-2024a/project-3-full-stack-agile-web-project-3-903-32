@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-
+/**
+ * Has links to every page of the frontend
+ * @returns Navbar for Mangager
+ */
 const Navbar = () => {
   const navigate = useNavigate();
   

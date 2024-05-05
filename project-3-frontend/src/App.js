@@ -13,7 +13,10 @@ const imageMapping = {
 
 
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
-
+/**
+ * The Landing Page, this is where every user start on when loading the app.
+ * @returns The apps land page
+ */
 function App() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');

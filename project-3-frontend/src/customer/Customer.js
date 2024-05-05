@@ -6,7 +6,10 @@ import { StaticOrderingWords } from "./CustomerConstants";
 import Navbar from "../components/NavbarCustomer";
 
 
-
+/**
+ * This contains the customer menu page which cotains the orderlist, categories, buttons, recommendation button, text-to-speech, weather, etc.
+ * @returns the Customer Menu Page
+ */
 const Customer = () => {
     const [fullMenu, setFullMenu] = useState([]);
     const [itemIds, setItemIds] = useState([]);
@@ -93,7 +96,9 @@ const Customer = () => {
             // console.log(fullMenu.filter(item => item.category === selectedCategory));
         }
     }, [selectedCategory]);
-
+    /**
+     * This takes the text and target_language and sends it over to the translation api.
+     */
     async function postStaticTranslations() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
@@ -118,6 +123,9 @@ const Customer = () => {
         }
     }
 
+    /**
+     * This function fetches from the backend function for the recommended items.
+     */
     async function getRecommendedItem() {
         setIsButtonDisabled(true);
         try {
@@ -169,7 +177,9 @@ const Customer = () => {
         setShowRecommendedItemModal(false);
         handleRecommendedItemClick(recommendedItem);
       }
-
+    /**
+    * This calls on the backend fuction to get the menu items.
+    */
     async function getMenu() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/menu?translate=${selectedLanguage}`, {
@@ -186,7 +196,9 @@ const Customer = () => {
             console.error('Error fetching menu:', error);
         }
     }
-
+    /**
+     * This calls on the backend function to get the menu categories
+     */
     async function getCategory() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/api/menu/category', {
@@ -204,7 +216,10 @@ const Customer = () => {
             console.error('Error fetching category:', error);
         }
     }
-
+    /**
+     * 
+     * @param {*} menuId - the id the menu item used in fetching the data in the backend.
+     */
     const getMenuInventory = async (menuId) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/mijunc/${menuId}`);
@@ -225,7 +240,12 @@ const Customer = () => {
             console.error('Error fetching inventory:', error);
         }
     };
-
+    /**
+     * This rounds to a certain decimal point
+     * @param {number} value - the number to round. 
+     * @param {number} decimals - the number of places to round to.
+     * @returns the rounded number
+     */
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }

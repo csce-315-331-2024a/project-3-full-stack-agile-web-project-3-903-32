@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { StaticOrderingWords } from "../customer/CustomerConstants";
-
+/**
+ * Navbar has weather, text-to-speech, log out, and invert colors
+ * @param {*} param0 - used for text to speech
+ * @returns Navbar for customer
+ */
 const Navbar = ({ onSpeechAssistanceChange }) => {
   const [weather, setWeather] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);

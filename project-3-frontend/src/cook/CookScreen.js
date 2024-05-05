@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/NavbarCook";
 import ConfirmModal from "../components/ModalCookConfirm";
 
+/**
+ * This page will have the order list update every few seconds for a new orders. Once a user delete an order it will be marked as complete and removed from the list.
+ * @returns The Kitchen Page
+ */
 const CookScreen = () => {
     const [order, setOrder] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
