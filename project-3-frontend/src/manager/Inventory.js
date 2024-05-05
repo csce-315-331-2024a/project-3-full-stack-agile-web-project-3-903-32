@@ -1,14 +1,23 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/NavbarManager";
-import { useNavigate } from "react-router-dom";
 
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/NavbarManager';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * This will return to a boolean on the position of the user, returns true if the user is a manager, false otherwise.
+ * @returns a boolean, on whether the user is a manager or not.
+ */
 const isAuthenticatedManager = () => {
   const isManager = localStorage.getItem("isManagerLoggedIn");
   console.log(isManager);
   return isManager;
 };
-
+/**
+ * This function will determind if a user is a manager. If the user is not a manager they will be sent back to the landing page.
+ * @param {object} WrappedComponent 
+ * @returns to the landing page if the user is not a manager
+ */
 const withManagerAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
@@ -25,7 +34,10 @@ const withManagerAuthentication = (WrappedComponent) => {
 
   return AuthenticatedComponent;
 };
-
+/**
+ * This function returns the page for inventory which includes the list of inventory items and restock inventory
+ * @returns The Manager's Inventory page
+ */
 const Inventory = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [shortageItems, setShortageItems] = useState([]);
@@ -184,7 +196,9 @@ const Inventory = () => {
       return () => clearTimeout(timeout_id);
     }
   }, [confirmDelete]);
-
+  /**
+   * Fetchs the list of inventory items from the backend 
+   */
   async function getInventory() {
     try {
       const response = await fetch(
@@ -209,6 +223,10 @@ const Inventory = () => {
     }
   }
 
+  /**
+   * This function will take a updated inventory item, put it a JSON, and send to the backend.
+   * @param {object} param0 - the updated inventory item to be place into the database.
+   */
   async function putInventory({
     id,
     name,
@@ -253,7 +271,11 @@ const Inventory = () => {
       console.error("Error posting inventory:", error);
     }
   }
-
+    
+  /**
+   * This function takes a new inventory item and sends it to the backend
+   * @param {object} param0 - The new item to be place in the database. 
+   */
   async function postInventory({
     name,
     stock,
@@ -297,7 +319,10 @@ const Inventory = () => {
       console.error("Error posting inventory:", error);
     }
   }
-
+  /**
+   * This function delete the inventory item entry which is determind by the id.
+   * @param {number} id - the inventory item to be deleted 
+   */
   async function deleteInventory(id) {
     try {
       const response = await fetch(
@@ -321,7 +346,9 @@ const Inventory = () => {
       console.error("Error deleting inventory:", error);
     }
   }
-
+ /**
+  * Get the shortages of items from the backend
+  */
   async function getShortage() {
     await fetch(process.env.REACT_APP_BACKEND_URL + "/api/inventory/shortage", {
       method: "GET",
@@ -336,7 +363,10 @@ const Inventory = () => {
         console.log(err);
       });
   }
-
+  /**
+   * This functions will add the item to the restock 
+   * @param {*} event - event
+   */
   async function restockInventory(event) {
     event.preventDefault();
     try {
@@ -385,6 +415,10 @@ const Inventory = () => {
     );
   }
 
+  /**
+   * This function will all the user to edit inventory items using the fields: Name, Stock, Minimum, Capacity, Location and Suppliers
+   * @returns the edit menu modal
+   */
   const EditInventoryModal = () => (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded">
       <div className="pb-4 px-4 flex flex-col gap-2">
@@ -484,7 +518,10 @@ const Inventory = () => {
       </div>
     </div>
   );
-
+ /**
+  * This funtion will allow the user to add inventory and fill out the approiate fields
+  * @returns Add Inventory Modal.
+  */
   const AddInventoryModal = () => (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded">
       <div className="pb-4 px-4 flex flex-col gap-2">

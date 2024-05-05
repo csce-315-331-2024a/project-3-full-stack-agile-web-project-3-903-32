@@ -5,6 +5,10 @@ import { StaticPaymentWords } from './CustomerConstants';
 import { LanguageContext } from '../components/Translate';
 import Navbar from "../components/NavbarCustomer";
 
+/**
+ * Returns the Customper payment page which cotains an input for name, cancel order, go back on in order and submit payment.
+ * @returns the CustomerPayment page
+ */
 const CustomerPayment = () => {
     const [itemIds, setItemIds] = useState([]);
     const [name, setName] = useState('');
@@ -38,7 +42,9 @@ const CustomerPayment = () => {
             }
         </span>);
     };
-
+    /**
+     * This takes the text and target_language and sends it over to the translation api.
+     */
     async function postStaticTranslations() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
@@ -63,7 +69,9 @@ const CustomerPayment = () => {
         }
     }
 
-    // Function to handle form submission
+    /**
+     * Function to handle form submission
+     */
     const toCustomerSubmit = async () => {
         try {
             if (total <= 0.0) {

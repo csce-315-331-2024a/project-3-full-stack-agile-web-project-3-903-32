@@ -4,13 +4,21 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from "../components/NavbarCashier";
 
 
-
+/**
+ * Check if the credential are of a cashier.
+ * @returns {boolean} If user is Cashier or not 
+ */
 const isAuthenticatedCashier = () => {
   const isCashier = localStorage.getItem("isCashierLoggedIn");
   console.log(isCashier);
   return isCashier;
 };
 
+/**
+ * Returns the user back to the landing page with incorrect credentials
+ * @param {any} WrappedComponent 
+ * @returns user back to landing page when isAuthenticatedCashier is false
+ */
 const withCashierAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
@@ -26,7 +34,6 @@ const withCashierAuthentication = (WrappedComponent) => {
 
   return AuthenticatedComponent;
 };
-
 
 const Cashier = () => {
     const [buttons, setButtons] = useState([]);
@@ -53,6 +60,13 @@ const Cashier = () => {
         }
     }, [location.state]);
 
+    /**
+    * Fetches the menu data from the backend API and updates the component state.
+    * 
+    * @async
+    * @function getMenu
+    * @returns {void}
+    */
     async function getMenu() {
         try {
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/menu", {
@@ -71,10 +85,21 @@ const Cashier = () => {
         }
     }
 
+    /**
+     * Rounds the number up to a speific decimal place
+     * @param {number} value - the number to round
+     * @param {number} decimals - the number of places to round to
+     * @returns The rounded number
+     */
     function round(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }
 
+    /**
+    * Adds to new item or add to an existing items quantity
+    * @param {*} item - the menu item to add to the list or add another one
+    * @returns a new order list 
+    */
     const addToOrder = (item) => {
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
@@ -104,7 +129,11 @@ const Cashier = () => {
         }
     };
     
-
+    /**
+     * Remove an item from the list if there is only 1 item in the list it is removed entirely.
+     * @param {object} index - menu item to remove
+     * @returns the updated order list.
+     */
     const removeFromOrder = (index) => {
         if (index >= 0 && index < order.length) {
             const item = order[index];
@@ -149,6 +178,12 @@ const Cashier = () => {
         return order;
     };
 
+    /**
+     * Changes the amount of the item in the order list based on newQuantity
+     * @param {object} index - the item that being changed
+     * @param {number} newQuantity the number to set the item quantity
+     * @returns nothing
+     */
     const changeOrder = (index, newQuantity) => {
         const parseQuantity = parseInt(newQuantity);
         
@@ -198,10 +233,15 @@ const Cashier = () => {
 
     const totalPages = Math.ceil(buttonGroups.length / 3);
 
+    /**
+     * Changes the next page of buttons stops at max
+     */
     const nextPage = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
     };
-
+    /**
+     * Changes the last page of buttons stops at 0
+     */
     const prevPage = () => {
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
     };

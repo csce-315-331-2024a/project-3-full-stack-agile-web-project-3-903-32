@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+/**
+ * Given a user input it show the stock not used during that day.
+ * @returns a page for excess report
+ */
 const ExcessReport = () => {
   const [excessData, setExcessData] = useState([]);
   const [error, setError] = useState(null);
