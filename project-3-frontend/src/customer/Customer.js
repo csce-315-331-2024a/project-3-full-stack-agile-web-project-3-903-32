@@ -212,6 +212,12 @@ const Customer = () => {
                 const data = await response.json();
                 setInventoryData(data);
                 setModalOpen(true);
+                if (!hasSpoken) {
+                    const itemNames = data.map(item => item.itemName).join(", ");
+                    const msg = new SpeechSynthesisUtterance(itemNames);
+                    msg.lang = selectedLanguage;
+                    window.speechSynthesis.speak(msg);
+                }
             } else {
                 console.error('Failed to fetch inventory:', response.status, response.statusText);
             }
