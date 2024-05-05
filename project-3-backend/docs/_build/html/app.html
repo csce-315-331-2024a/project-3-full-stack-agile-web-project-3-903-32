@@ -46,11 +46,40 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">app.py Module Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#app.add_employee"><code class="docutils literal notranslate"><span class="pre">add_employee()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.add_inventory"><code class="docutils literal notranslate"><span class="pre">add_inventory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.delete_menu_mijunc_batch"><code class="docutils literal notranslate"><span class="pre">delete_menu_mijunc_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.delete_menu_omjunc_batch"><code class="docutils literal notranslate"><span class="pre">delete_menu_omjunc_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.delete_order"><code class="docutils literal notranslate"><span class="pre">delete_order()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.delete_order_omjunc_batch"><code class="docutils literal notranslate"><span class="pre">delete_order_omjunc_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.excess_report"><code class="docutils literal notranslate"><span class="pre">excess_report()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_all_employees"><code class="docutils literal notranslate"><span class="pre">get_all_employees()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#app.get_category_types"><code class="docutils literal notranslate"><span class="pre">get_category_types()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_cold_inventory"><code class="docutils literal notranslate"><span class="pre">get_cold_inventory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#app.get_data"><code class="docutils literal notranslate"><span class="pre">get_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_data_email"><code class="docutils literal notranslate"><span class="pre">get_data_email()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_employee"><code class="docutils literal notranslate"><span class="pre">get_employee()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_hot_inventory"><code class="docutils literal notranslate"><span class="pre">get_hot_inventory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_inventory_items"><code class="docutils literal notranslate"><span class="pre">get_inventory_items()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_inventory_shortage"><code class="docutils literal notranslate"><span class="pre">get_inventory_shortage()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#app.get_menu_category"><code class="docutils literal notranslate"><span class="pre">get_menu_category()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_menu_inventory"><code class="docutils literal notranslate"><span class="pre">get_menu_inventory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#app.get_menu_item"><code class="docutils literal notranslate"><span class="pre">get_menu_item()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#app.get_menu_items"><code class="docutils literal notranslate"><span class="pre">get_menu_items()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_outside_menu_inventory"><code class="docutils literal notranslate"><span class="pre">get_outside_menu_inventory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_recommended_item"><code class="docutils literal notranslate"><span class="pre">get_recommended_item()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_temp"><code class="docutils literal notranslate"><span class="pre">get_temp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.get_warm_inventory"><code class="docutils literal notranslate"><span class="pre">get_warm_inventory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.order_history"><code class="docutils literal notranslate"><span class="pre">order_history()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.product_usage_report"><code class="docutils literal notranslate"><span class="pre">product_usage_report()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.sales_by_time"><code class="docutils literal notranslate"><span class="pre">sales_by_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.show_Weather"><code class="docutils literal notranslate"><span class="pre">show_Weather()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.translate_route"><code class="docutils literal notranslate"><span class="pre">translate_route()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.update_inventory"><code class="docutils literal notranslate"><span class="pre">update_inventory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.update_inventory_batch"><code class="docutils literal notranslate"><span class="pre">update_inventory_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.update_order"><code class="docutils literal notranslate"><span class="pre">update_order()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.update_orders"><code class="docutils literal notranslate"><span class="pre">update_orders()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.what_sells_together"><code class="docutils literal notranslate"><span class="pre">what_sells_together()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -82,19 +111,135 @@
   <section id="module-app">
 <span id="app-py-module-documentation"></span><h1>app.py Module Documentation<a class="headerlink" href="#module-app" title="Permalink to this heading"></a></h1>
 <dl class="py function">
+<dt class="sig sig-object py" id="app.add_employee">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">add_employee</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.add_employee" title="Permalink to this definition"></a></dt>
+<dd><p>Adds a new entry into the employees database</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A JSON containing a success message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.add_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">add_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inventory_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.add_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a list of inventory items where the stock is below the minimum.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict or JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><p>A list of inventory items with details including name, stock, minimum, capacity, location, and supplier.</p></li>
+<li><p>A JSON object with an error message if no items are found.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.delete_menu_mijunc_batch">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">delete_menu_mijunc_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">menu_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.delete_menu_mijunc_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes menu item entries from the MIJunc database associated with the given menu ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>menu_id (int): The ID of the menu item to be deleted.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A JSON object containing a success message if the deletion is successful,
+or an error message if an issue occurs.</p>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there’s an issue with the deletion process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.delete_menu_omjunc_batch">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">delete_menu_omjunc_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">menu_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.delete_menu_omjunc_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes menu item entries from the OMJunc database associated with the given menu ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>menu_id (int): The ID of the menu item to be deleted.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A JSON object containing a success message if the deletion is successful,</dt><dd><p>or an error message if an issue occurs.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there’s an issue with the deletion process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.delete_order">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">delete_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.delete_order" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes an order from the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>order_id (int): The ID of the order to be deleted.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict or JSON: A JSON object with a success message if the order is deleted successfully.</p>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.delete_order_omjunc_batch">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">delete_order_omjunc_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.delete_order_omjunc_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes order menu junction entries associated with the specified order.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>order_id (int): The ID of the order.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict or JSON: A JSON object with a success message if the order menu junction entries are deleted successfully.</p>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an issue with the deletion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.excess_report">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">excess_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.excess_report" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a report of excess menu items based on usage compared to inventory.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing excess menu IDs and names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_all_employees">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_all_employees</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_all_employees" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of the employees and their information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A JSON of all employees and their info including name, position and email or return an error if no data is found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="app.get_category_types">
 <span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_category_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_category_types" title="Permalink to this definition"></a></dt>
 <dd><p>Get menu category types.</p>
 <p>Returns a list of menu category types sorted in ascending order.</p>
-<dl>
+<dl class="simple">
 <dt>Returns:</dt><dd><p>list: A list containing menu category types.</p>
 </dd>
 <dt>Raises:</dt><dd><p>Exception: If no category types are found in the database.</p>
 </dd>
-<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_category_types</span><span class="p">()</span>
-<span class="go">[&#39;Drink&#39;, &#39;Main&#39;, &#39;Side&#39;]</span>
-</pre></div>
-</div>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_cold_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_cold_inventory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_cold_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a random menu item categorized as cold from the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the details of a randomly selected cold menu item,</dt><dd><p>including its ID, name, and price.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -103,15 +248,127 @@
 <dt class="sig sig-object py" id="app.get_data">
 <span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_data" title="Permalink to this definition"></a></dt>
 <dd><p>Get employee data by name.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name (str): The name of the employee to retrieve data for.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A JSON response containing the employee’s data if found, or an error message if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_data_email">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_data_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_data_email" title="Permalink to this definition"></a></dt>
+<dd><p>Gets a empolyees’ name and position from an employee email.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email(str) : The email of the employee to retrieve the relvant data in the database.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A JSON of the employee info containing name, position and email or an error message if no data is found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_employee">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_employee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_employee" title="Permalink to this definition"></a></dt>
+<dd><p>Updates or deletes the an employee information</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email (str): The email of the employee used to identify them in the database.</p>
+</dd>
+<dt>If the HTTP is PUT:</dt><dd><p>it will update given the inputs nescessary.</p>
+</dd>
+<dt>If the HTTP is DELETE:</dt><dd><p>it will delete an employee entry given an email.</p>
+</dd>
+<dt>Returns: </dt><dd><p>A JSON containing a success message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_hot_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_hot_inventory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_hot_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a random menu item categorized as hot from the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the details of a randomly selected hot menu item,</dt><dd><p>including its ID, name, and price.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_inventory_items">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_inventory_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_inventory_items" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a list of inventory items or inserts a new entry into the inventory database.</p>
 <dl>
-<dt>Parameters:</dt><dd><p>name (str): The name of the employee to retrieve data for.</p>
+<dt>If the HTTP method is GET:</dt><dd><p>Retrieves a list of inventory items from the database and returns it as JSON.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: A JSON array containing inventory items, each item includes the following fields:</dt><dd><ul class="simple">
+<li><p>id (int): The unique identifier of the inventory item.</p></li>
+<li><p>name (str): The name of the inventory item.</p></li>
+<li><p>stock (int): The current stock level of the item.</p></li>
+<li><p>location (str): The location where the item is stored.</p></li>
+<li><p>capacity (int): The maximum capacity of the item.</p></li>
+<li><p>supplier (str): The supplier of the item.</p></li>
+<li><p>minimum (int): The minimum stock level required for the item.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>Response: A JSON response containing the employee’s data if found, or an error message if not found.</p>
+</dl>
+<p>If no data is found in the database, returns a JSON object with an error message.</p>
 </dd>
-<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">)</span>
-<span class="go">{&#39;employeename&#39;: &#39;John&#39;, &#39;position&#39;: &#39;Developer&#39;}</span>
-</pre></div>
-</div>
+</dl>
+</dd>
+<dt>If the HTTP method is POST:</dt><dd><p>Inserts a new inventory item entry into the database.</p>
+<dl class="simple">
+<dt>Request Body:</dt><dd><dl class="simple">
+<dt>JSON object containing the following fields:</dt><dd><ul class="simple">
+<li><p>name (str): The name of the inventory item.</p></li>
+<li><p>stock (int): The current stock level of the item.</p></li>
+<li><p>minimum (int): The minimum stock level required for the item.</p></li>
+<li><p>capacity (int): The maximum capacity of the item.</p></li>
+<li><p>location (str): The location where the item is stored.</p></li>
+<li><p>supplier (str): The supplier of the item.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A JSON object containing either a success message or an error message.</p>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the request data is incomplete or malformed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_inventory_shortage">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_inventory_shortage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_inventory_shortage" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of inventory items where the stock is below the minimum.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>A list of inventory items with the following fields:</dt><dd><ul>
+<li><p>id (int): The ID of the inventory item.</p></li>
+<li><p>name (str): The name of the inventory item.</p></li>
+<li><p>stock (int): The current stock level of the item.</p></li>
+<li><p>minimum (int): The minimum stock level required for the item.</p></li>
+<li><p>capacity (int): The maximum capacity of the item.</p></li>
+<li><p>location (str): The location where the item is stored.</p></li>
+<li><p>supplier (str): The supplier of the item.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>A JSON object containing an error message if no items are found.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -121,13 +378,31 @@
 <span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_menu_category</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_menu_category" title="Permalink to this definition"></a></dt>
 <dd><p>Get menu categories.</p>
 <p>Returns a JSON response containing the available categories of menu items.</p>
-<dl>
-<dt>Returns:</dt><dd><p>Response: A JSON response containing menu categories.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A JSON response containing menu categories.</p>
 </dd>
-<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_menu_category</span><span class="p">()</span>
-<span class="go">[&#39;Main&#39;, &#39;Side&#39;, &#39;Drink&#39;]</span>
-</pre></div>
-</div>
+<dt>Raises:</dt><dd><p>Exception: If there is an error retrieving the menu categories.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_menu_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_menu_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">menu_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_menu_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves, creates, updates, or deletes menu inventory items.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>menu_id (int): The ID of the menu associated with the inventory items.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict or JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><p>A list of menu inventory items with details including item ID, item name, and item amount.</p></li>
+<li><p>A JSON object with a success message if an item is created, updated, or deleted.</p></li>
+<li><p>A JSON object with an error message if no data is found or an error occurs during execution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -135,10 +410,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="app.get_menu_item">
 <span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_menu_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">menu_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_menu_item" title="Permalink to this definition"></a></dt>
-<dd><p>Helper function for get_category_types().</p>
-<p>Returns a list of menu category types sorted in ascending order.</p>
+<dd><p>Retrieves or updates a menu item in the database.</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>list: A list containing menu category types.</p>
+<dt>Args:</dt><dd><p>menu_id (int): The ID of the menu item to retrieve or update.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>If the HTTP method is PUT:</dt><dd><p>dict: A JSON object containing a success message if the menu item is updated successfully.</p>
+</dd>
+<dt>If the HTTP method is DELETE:</dt><dd><p>dict: A JSON object containing a success message if the menu item is deleted successfully.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the request method is not PUT or DELETE.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -151,16 +434,208 @@
 Returns a JSON response containing all menu items sorted by itemName in ascending order.
 Optionally, if ‘translate’ parameter is provided in the query string and is not ‘EN’, 
 translates the itemName to the specified language.</p>
-<p>If the HTTP method is POST:
-Creates a new menu item using data from the request body and returns a JSON response.</p>
-<dl>
-<dt>Returns:</dt><dd><p>Response: A JSON response containing menu items or a success message.</p>
+<dl class="simple">
+<dt>If the HTTP method is POST:</dt><dd><p>Creates a new menu item using data from the request body and returns a JSON response.</p>
 </dd>
-<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_menu_items</span><span class="p">()</span>
-<span class="go">[{&#39;id&#39;: 1, &#39;itemName&#39;: &#39;Pizza&#39;, &#39;price&#39;: 10.99, &#39;category&#39;: &#39;Main&#39;},</span>
-<span class="go"> {&#39;id&#39;: 2, &#39;itemName&#39;: &#39;Salad&#39;, &#39;price&#39;: 6.99, &#39;category&#39;: &#39;Side&#39;}]</span>
-</pre></div>
-</div>
+<dt>Returns:</dt><dd><p>A JSON response containing menu items or a success message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_outside_menu_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_outside_menu_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">menu_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.get_outside_menu_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves inventory items that are not included in the specified menu.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>menu_id (int): The ID of the menu.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict or JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><p>A list of inventory items that are not included in the specified menu, with details including item ID and item name.</p></li>
+<li><p>A JSON object with an error message if no data is found or an error occurs during execution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_recommended_item">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_recommended_item</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_recommended_item" title="Permalink to this definition"></a></dt>
+<dd><p>Recommends a menu item based on the current temperature.</p>
+<p>This function checks the current temperature and recommends a menu item 
+categorized as hot if the temperature is 80°F or higher, a cold item if 
+the temperature is below 60°F, and a warm item otherwise.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing the recommended menu item.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_temp">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_temp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_temp" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves the current temperature in Fahrenheit for College Station using the OpenWeatherMap API.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: A string representation of the current temperature in Fahrenheit, rounded to two decimal places.</p>
+</dd>
+<dt>Raises:</dt><dd><p>str: If the weather data is not found or the API request fails, an error message is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.get_warm_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">get_warm_inventory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.get_warm_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a random menu item categorized as warm from the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the details of a randomly selected warm menu item,</dt><dd><p>including its ID, name, and price.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.order_history">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">order_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.order_history" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves order history based on optional query parameters.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict or JSON: A JSON object containing a list of orders, each containing details such as order ID, customer name, time, items, total price, and completion status.</p>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.product_usage_report">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">product_usage_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.product_usage_report" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a report of product usage based on sales within a specified time range.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing product usage data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.sales_by_time">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">sales_by_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.sales_by_time" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves sales data for a specified time range.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing menu sales data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.show_Weather">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">show_Weather</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.show_Weather" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves weather information for a specific city using OpenWeatherMap API.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing temperature in Fahrenheit and weather description.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.translate_route">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">translate_route</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.translate_route" title="Permalink to this definition"></a></dt>
+<dd><p>Translates text into the specified target language using the DeepL API.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing the translated text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.update_inventory">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">update_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inventory_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.update_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Updates, retrieves, or deletes an inventory item.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>inventory_id (int): The ID of the inventory item.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>If the HTTP method is GET:</dt><dd><dl class="simple">
+<dt>JSON: A JSON object containing the inventory item details if found,</dt><dd><p>or a JSON object with an error message if not found.</p>
+</dd>
+</dl>
+</dd>
+<dt>If the HTTP method is PUT:</dt><dd><dl class="simple">
+<dt>JSON: A JSON object containing a success message if the inventory item is updated successfully,</dt><dd><p>or a JSON object with an error message if any required data is missing.</p>
+</dd>
+</dl>
+</dd>
+<dt>If the HTTP method is DELETE:</dt><dd><p>JSON: A JSON object containing a success message if the inventory item is deleted successfully.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>HTTPException: If the request method is not GET, PUT, or DELETE.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.update_inventory_batch">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">update_inventory_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.update_inventory_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves menu categories.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict or JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><p>A list of menu categories.</p></li>
+<li><p>A JSON object with an error message if no data is found.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error retrieving the menu categories.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.update_order">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">update_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.update_order" title="Permalink to this definition"></a></dt>
+<dd><p>Updates an existing order in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>order_id (int): The ID of the order to be updated.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict or JSON: A JSON object with a success message if the order is updated successfully.</p>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an issue with the update process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.update_orders">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">update_orders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.update_orders" title="Permalink to this definition"></a></dt>
+<dd><p>Handles the creation of new orders and retrieval of orders within a specified time range.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict or JSON: A JSON object containing either:</dt><dd><ul class="simple">
+<li><p>A success message if a new order is created successfully.</p></li>
+<li><p>A list of orders within the specified time range, each containing details such as ID, customer name, time, paid status, employee ID, and completion status.</p></li>
+<li><p>A JSON object with an error message if no data is found or an error occurs during execution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>Exception: If there is an error executing the database query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.what_sells_together">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">what_sells_together</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.what_sells_together" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a report of frequently sold menu items together within a specified time range.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: A JSON object containing pairs of menu items and their frequency of being sold together.</p>
 </dd>
 </dl>
 </dd></dl>

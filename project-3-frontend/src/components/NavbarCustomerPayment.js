@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { StaticOrderingWords } from "../customer/CustomerConstants";
 
-const Navbar = ({ onSpeechAssistanceChange }) => {
+const Navbar = ({onSpeechAssistanceChange}) => {
   const [weather, setWeather] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
@@ -25,6 +25,15 @@ const navigate = useNavigate();
 
   useEffect(() => {
     getWeather();
+  }, []);
+
+  useEffect(() => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = "Please press the ON, button to continue with speech assistance.";
+      window.speechSynthesis.speak(msg);
   }, []);
 
   const getWeather = async () => {
@@ -75,7 +84,7 @@ const navigate = useNavigate();
         window.speechSynthesis.cancel();
       }
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. Once you have finished ordering, please click the go to payment button on the bottom right corner of the screen. ";
+      msg.text = "Speech assistance activated. Please enter your name in the text box in the center of the screen. In order from left to right, the buttons on the bottom are for submitting your payment, going back to the ordering screen, and clearing your order. If there are no items in your order, you will not be able to press the submit payment button.";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
       onSpeechAssistanceChange(false);

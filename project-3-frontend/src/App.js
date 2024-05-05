@@ -23,6 +23,9 @@ function App() {
 
   useEffect(() => {
     function start() {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
       localStorage.setItem('isManagerLoggedIn', 'false');
       localStorage.setItem('isCashierLoggedIn', 'false');
       gapi.client.init({
