@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TranslateText } from '../components/Translate';
 import { StaticPaymentWords } from './CustomerConstants';
 import { LanguageContext } from '../components/Translate';
-import Navbar from "../components/NavbarCustomer";
+import Navbar from "../components/NavbarCustomerPayment";
 
 /**
  * Returns the Customper payment page which cotains an input for name, cancel order, go back on in order and submit payment.
@@ -17,7 +17,9 @@ const CustomerPayment = () => {
     const [showEmptyMessage, setShowEmptyMessage] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [staticTranslations, setStaticTranslations] = useState(StaticPaymentWords);
+    const [hasSpoken, setHasSpoken] = useState(true);
     const selectedLanguage = useContext(LanguageContext);
+
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -143,21 +145,39 @@ const CustomerPayment = () => {
     };
 
     const showConfirmationModal = () => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Are you sure you want to submit the payment? Press the left button to confirm and the right button to go back.";
+            window.speechSynthesis.speak(msg);
+        }
         setShowConfirmation(true);
     };
 
     const closeConfirmationModal = () => {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
         setShowConfirmation(false);
     };
 
     const confirmSubmit = async () => {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
         await toCustomerSubmit();
         closeConfirmationModal(); 
     };
 
+    const handleSpeechAssistanceChange = (newHasSpoken) => {
+        setHasSpoken(newHasSpoken);
+    };
+
     return (
-        <div>
-            <Navbar/>
+        <div> 
+            <Navbar onSpeechAssistanceChange={handleSpeechAssistanceChange}/>
         
             <div className="mt-5 max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
@@ -238,28 +258,28 @@ const CustomerPayment = () => {
                                     getStaticWord('Confirm Payment')
                                 }
                             </h3>
-                            <p>
+                                <p>
                                 {
                                     getStaticWord('Are you sure you want to submit the payment?')
                                 }
                             </p>
-                            <div className="flex justify-around mt-6">
-                                <button onClick={confirmSubmit} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 focus:outline-none">
-                                    {
+                                <div className="flex justify-around mt-6">
+                                    <button onClick={confirmSubmit} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900 focus:outline-none">
+                                        {
                                         getStaticWord('Confirm')
                                     }
-                                </button>
-                                <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
-                                    {
+                                    </button>
+                                    <button onClick={closeConfirmationModal} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-900 focus:outline-none">
+                                        {
                                         getStaticWord('Go Back')
                                     }
-                                </button>
-                            </div>
+                                    </button>
+                                </div>
                         </div>
-                    </div>
-                )}
+                        </div>
+                    )}
             </div>
-        </div>
+                </div>
     );    
 };
 

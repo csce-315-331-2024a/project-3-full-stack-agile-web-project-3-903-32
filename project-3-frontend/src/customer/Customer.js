@@ -41,6 +41,19 @@ const Customer = () => {
     };
 
     const handleViewIngredients = (event, item) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            const msg2 = new SpeechSynthesisUtterance();
+            msg.text = item.itemName;
+            msg2.text = "ingredients";
+            msg.lang = selectedLanguage;
+            msg2.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+            window.speechSynthesis.speak(msg2);
+        }
         event.stopPropagation();
         getMenuInventory(item.id);
         setSelectedItem(item);
@@ -135,13 +148,24 @@ const Customer = () => {
         setShowRecommendedItemModal(true);
       };
     
-      const RecommendedItemModal = (props) => (
+      const RecommendedItemModal = (props) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Recommended item..." + recommendedItem.itemName;
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
+        return (
         <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
           <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-blue-300 text-black rounded hover:bg-blue-400 transition duration-300 ease-in-out font-bold text-lg" > {recommendedItem.itemName} </button>
           <p>Click to add this delicious item to your order!</p>
           <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] my-4'/></button>
         </div>
-      )
+        );
+    };
 
       const handleCloseModal = (event) => {
         setIsButtonDisabled(false);
@@ -203,6 +227,12 @@ const Customer = () => {
                 const data = await response.json();
                 setInventoryData(data);
                 setModalOpen(true);
+                if (!hasSpoken) {
+                    const itemNames = data.map(item => item.itemName).join(", ");
+                    const msg = new SpeechSynthesisUtterance(itemNames);
+                    msg.lang = selectedLanguage;
+                    window.speechSynthesis.speak(msg);
+                }
             } else {
                 console.error('Failed to fetch inventory:', response.status, response.statusText);
             }
@@ -221,6 +251,15 @@ const Customer = () => {
     }
 
     const addToOrder = (item) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Added" + item.itemName + "to order";
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
         const price = parseFloat(item.price);
         if (!isNaN(price)) { // Check if the price is a valid number after parsing
             setItemIds((itemIds) => [...itemIds, item.id]);
@@ -251,6 +290,15 @@ const Customer = () => {
     
     
     const removeFromOrder = (index) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Removed" + order[index].itemName + "from order";
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
         if (index >= 0 && index < order.length) {
             const item = order[index];
             if (item) {
@@ -303,13 +351,12 @@ const Customer = () => {
                 }
                 const msg = new SpeechSynthesisUtterance();
                 msg.text = category;
+                msg.lang = selectedLanguage;
                 window.speechSynthesis.speak(msg);
                 categoryItems.forEach((item) => {
                     const msg = new SpeechSynthesisUtterance();
                     msg.text = `${item.itemName} - ${item.price} dollars.`;
                     msg.lang = selectedLanguage;
-                    msg.rate = 1.0;
-                    msg.pitch = 1.0;
                     window.speechSynthesis.speak(msg);
                 });
             }
@@ -373,8 +420,11 @@ const Customer = () => {
 
   useEffect(() => {
     if (!hasSpokenRef.current) {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Welcome to Rev's American Grill. For speech assistance, please click the green, ON, button on the top right-hand side of the screen. Click again at any point to turn speech assistance off.";
+      msg.text = "Welcome to Rev's American Grill. For speech assistance, please click the green, ON, button on the top of the screen. Click again at any point to turn speech assistance off.";
       window.speechSynthesis.speak(msg);
       hasSpokenRef.current = true;
     }
