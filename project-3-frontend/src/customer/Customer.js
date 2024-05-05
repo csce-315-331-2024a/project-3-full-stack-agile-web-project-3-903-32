@@ -5,6 +5,11 @@ import Modal from "../components/ModalCustomer";
 import { StaticOrderingWords } from "./CustomerConstants";
 import Navbar from "../components/NavbarCustomer";
 
+
+/**
+ * This contains the customer menu page which cotains the orderlist, categories, buttons, recommendation button, text-to-speech, weather, etc.
+ * @returns the Customer Menu Page
+ */
 const Customer = () => {
   const [fullMenu, setFullMenu] = useState([]);
   const [itemIds, setItemIds] = useState([]);
@@ -37,11 +42,24 @@ const Customer = () => {
     setHasSpoken(newHasSpoken);
   };
 
-  const handleViewIngredients = (event, item) => {
-    event.stopPropagation();
-    getMenuInventory(item.id);
-    setSelectedItem(item);
-  };
+    const handleViewIngredients = (event, item) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            const msg2 = new SpeechSynthesisUtterance();
+            msg.text = item.itemName;
+            msg2.text = "ingredients";
+            msg.lang = selectedLanguage;
+            msg2.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+            window.speechSynthesis.speak(msg2);
+        }
+        event.stopPropagation();
+        getMenuInventory(item.id);
+        setSelectedItem(item);
+    };
 
   const getStaticWord = (word) => {
     return <span>{staticTranslations[StaticOrderingWords.indexOf(word)]}</span>;
@@ -64,234 +82,226 @@ const Customer = () => {
     setDisplayedMenu(fullMenu);
   }, [fullMenu]);
 
-  useEffect(() => {
-    setDisplayedMenu([]);
-    if (selectedCategory === "All") {
-      console.log("All");
-      setDisplayedMenu(fullMenu);
-    } else {
-      console.log("Category:", selectedCategory);
-      setDisplayedMenu(
-        fullMenu.filter((item) => item.category === selectedCategory)
-      );
-      // console.log(fullMenu.filter(item => item.category === selectedCategory));
-    }
-  }, [selectedCategory]);
-
-  async function postStaticTranslations() {
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "/api/translate",
-        {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: staticTranslations,
-            target_language: selectedLanguage,
-          }),
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setStaticTranslations(data.translated_text);
-      } else {
-        console.error(
-          "Failed to fetch static translations:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching static translations:", error);
-    }
-  }
-
-  async function getRecommendedItem() {
-    setIsButtonDisabled(true);
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "/api/recommended",
-        {
-          mode: "cors",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setRecommendedItem(data.item);
-      } else {
-        console.error(
-          "Failed to fetch recommended items:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching recommended items:", error);
-    }
-  }
-
-  const handleOpenRecommendedItemModal = async () => {
-    await getRecommendedItem();
-    setShowRecommendedItemModal(true);
-  };
-
-  const RecommendedItemModal = (props) => (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded">
-      <button
-        onClick={handleCloseAndOrderModal}
-        className="mt-4 my-4 px-4 py-8 bg-blue-300 text-black rounded hover:bg-blue-400 transition duration-300 ease-in-out font-bold text-lg"
-      >
-        {" "}
-        {recommendedItem.itemName}{" "}
-      </button>
-      <p>Click to add this delicious item to your order!</p>
-      <button onClick={handleCloseModal}>
-        <img
-          src={`${process.env.PUBLIC_URL}/x-solid.svg`}
-          alt="Close"
-          className="h-[20px] my-4"
-        />
-      </button>
-    </div>
-  );
-
-  const handleCloseModal = (event) => {
-    setIsButtonDisabled(false);
-    setShowRecommendedItemModal(false);
-  };
-
-  const handleCloseAndOrderModal = (event) => {
-    setIsButtonDisabled(false);
-    setShowRecommendedItemModal(false);
-    handleRecommendedItemClick(recommendedItem);
-  };
-
-  async function getMenu() {
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL +
-          `/api/menu/ordering?translate=${selectedLanguage}`,
-        {
-          method: "GET",
-          mode: "cors",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setFullMenu(data);
-      } else {
-        console.error(
-          "Failed to fetch menu:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching menu:", error);
-    }
-  }
-
-  async function getCategory() {
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "/api/menu/category",
-        {
-          method: "GET",
-          mode: "cors",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const data_all = ["All", ...data];
-        setCategories(data_all);
-      } else {
-        console.error(
-          "Failed to fetch category:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching category:", error);
-    }
-  }
-
-  const getMenuInventory = async (menuId) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/mijunc/${menuId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setInventoryData(data);
-        setModalOpen(true);
-      } else {
-        console.error(
-          "Failed to fetch inventory:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching inventory:", error);
-    }
-  };
-
-  function round(value, decimals) {
-    return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
-  }
-
-  const addToOrder = (item) => {
-    const price = parseFloat(item.price);
-    if (!isNaN(price)) {
-      // Check if the price is a valid number after parsing
-      setItemIds((itemIds) => [...itemIds, item.id]);
-      setOrder((order) => {
-        const existIndex = order.findIndex(
-          (orderItem) => orderItem.id === item.id
-        );
-        if (existIndex > -1) {
-          const existingItem = order[existIndex];
-          const newQuantity =
-            existingItem.quantity < 99
-              ? existingItem.quantity + 1
-              : existingItem.quantity;
-          const newOrder = order.map((orderItem, idx) =>
-            idx === existIndex
-              ? { ...orderItem, quantity: newQuantity }
-              : orderItem
-          );
-          const newTotal = newOrder.reduce(
-            (acc, cur) => acc + cur.price * cur.quantity,
-            0
-          );
-          setTotal(round(newTotal, 2));
-          return newOrder;
+    useEffect(() => {
+        setDisplayedMenu([]);
+        if (selectedCategory === 'All') {
+            console.log('All');
+            setDisplayedMenu(fullMenu);
         } else {
-          const newOrder = [...order, { ...item, price, quantity: 1 }];
-          const newTotal = newOrder.reduce(
-            (acc, cur) => acc + cur.price * cur.quantity,
-            0
-          );
-          setTotal(round(newTotal, 2));
-          return newOrder;
+            console.log('Category:', selectedCategory);
+            setDisplayedMenu(fullMenu.filter(item => item.category === selectedCategory));
+            // console.log(fullMenu.filter(item => item.category === selectedCategory));
         }
-      });
-    } else {
-      console.error("item.price is not a valid number", item);
+    }, [selectedCategory]);
+    /**
+     * This takes the text and target_language and sends it over to the translation api.
+     */
+    async function postStaticTranslations() {
+        try {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/translate", {
+                method: "POST",
+                mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "text": staticTranslations,
+                    "target_language": selectedLanguage
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setStaticTranslations(data.translated_text);
+            } else {
+                console.error('Failed to fetch static translations:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching static translations:', error);
+        }
     }
-  };
 
-  const removeFromOrder = (index) => {
-    if (index >= 0 && index < order.length) {
-      const item = order[index];
-      if (item) {
+    /**
+     * This function fetches from the backend function for the recommended items.
+     */
+    async function getRecommendedItem() {
+        setIsButtonDisabled(true);
+        try {
+          const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/recommended", {
+            mode: 'cors'
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setRecommendedItem(data.item);
+          } else {
+            console.error('Failed to fetch recommended items:', response.status, response.statusText);
+          }
+        } catch (error) {
+          console.error('Error fetching recommended items:', error);
+        }
+      }
+
+      const handleOpenRecommendedItemModal = async () => {
+        await getRecommendedItem();
+        setShowRecommendedItemModal(true);
+      };
+    
+      const RecommendedItemModal = (props) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Recommended item..." + recommendedItem.itemName;
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
+        return (
+        <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600 bg-gray-50 flex flex-col p-4 rounded'>
+          <button onClick={handleCloseAndOrderModal} className="mt-4 my-4 px-4 py-8 bg-blue-300 text-black rounded hover:bg-blue-400 transition duration-300 ease-in-out font-bold text-lg" > {recommendedItem.itemName} </button>
+          <p>Click to add this delicious item to your order!</p>
+          <button onClick={handleCloseModal}><img src={`${process.env.PUBLIC_URL}/x-solid.svg`} alt="Close" className='h-[20px] my-4'/></button>
+        </div>
+        );
+    };
+
+      const handleCloseModal = (event) => {
+        setIsButtonDisabled(false);
+        setShowRecommendedItemModal(false);
+      }
+    
+      const handleCloseAndOrderModal = (event) => {
+        setIsButtonDisabled(false);
+        setShowRecommendedItemModal(false);
+        handleRecommendedItemClick(recommendedItem);
+      }
+    /**
+    * This calls on the backend fuction to get the menu items.
+    */
+    async function getMenu() {
+        try {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + `/api/menu?translate=${selectedLanguage}`, {
+                method: "GET",
+                mode: 'cors'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFullMenu(data);
+            } else {
+                console.error('Failed to fetch menu:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching menu:', error);
+        }
+    }
+    /**
+     * This calls on the backend function to get the menu categories
+     */
+    async function getCategory() {
+        try {
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/api/menu/category', {
+                method: "GET",
+                mode: 'cors'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const data_all = ['All', ...data];
+                setCategories(data_all);
+            } else {
+                console.error('Failed to fetch category:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching category:', error);
+        }
+    }
+    /**
+     * 
+     * @param {*} menuId - the id the menu item used in fetching the data in the backend.
+     */
+    const getMenuInventory = async (menuId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/mijunc/${menuId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setInventoryData(data);
+                setModalOpen(true);
+                if (!hasSpoken) {
+                    const itemNames = data.map(item => item.itemName).join(", ");
+                    const msg = new SpeechSynthesisUtterance(itemNames);
+                    msg.lang = selectedLanguage;
+                    window.speechSynthesis.speak(msg);
+                }
+            } else {
+                console.error('Failed to fetch inventory:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+        }
+    };
+    /**
+     * This rounds to a certain decimal point
+     * @param {number} value - the number to round. 
+     * @param {number} decimals - the number of places to round to.
+     * @returns the rounded number
+     */
+    function round(value, decimals) {
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    }
+
+    const addToOrder = (item) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Added" + item.itemName + "to order";
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
         const price = parseFloat(item.price);
-        if (!isNaN(price)) {
-          setTotal((total) => round(total - price, 2));
+        if (!isNaN(price)) { // Check if the price is a valid number after parsing
+            setItemIds((itemIds) => [...itemIds, item.id]);
+            setOrder((order) => {
+                const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
+                if (existIndex > -1) {
+                    const existingItem = order[existIndex];
+                    const newQuantity = existingItem.quantity < 99 ? existingItem.quantity + 1 : existingItem.quantity;
+                    const newOrder = order.map((orderItem, idx) =>
+                        idx === existIndex
+                            ? { ...orderItem, quantity: newQuantity }
+                            : orderItem
+                    );
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
+                } else {
+                    const newOrder = [...order, { ...item, price, quantity: 1 }];
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
+                }
+            });
+        } else {
+            console.error('item.price is not a valid number', item);
+        }
+    };
+    
+    
+    const removeFromOrder = (index) => {
+        if (!hasSpoken) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = "Removed" + order[index].itemName + "from order";
+            msg.lang = selectedLanguage;
+            window.speechSynthesis.speak(msg);
+        }
+        if (index >= 0 && index < order.length) {
+            const item = order[index];
+            if (item) {
+                const price = parseFloat(item.price);
+                if (!isNaN(price)) {
+                    setTotal((total) => round(total - price, 2));
 
           setOrder((order) => {
             if (item.quantity > 1) {
@@ -329,29 +339,28 @@ const Customer = () => {
     return order;
   };
 
-  const readSelectedCategory = (category) => {
-    const categoryItems = fullMenu.filter((item) => item.category === category);
-    if ("speechSynthesis" in window) {
-      if (!hasSpoken) {
-        if (window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
+    const readSelectedCategory = (category) => {
+        const categoryItems = fullMenu.filter(item => item.category === category);
+        if ('speechSynthesis' in window) {
+            if (!hasSpoken) {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = category;
+                msg.lang = selectedLanguage;
+                window.speechSynthesis.speak(msg);
+                categoryItems.forEach((item) => {
+                    const msg = new SpeechSynthesisUtterance();
+                    msg.text = `${item.itemName} - ${item.price} dollars.`;
+                    msg.lang = selectedLanguage;
+                    window.speechSynthesis.speak(msg);
+                });
+            }
+        } else {
+            alert('Text-to-speech is not supported in this browser.');
         }
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = category;
-        window.speechSynthesis.speak(msg);
-        categoryItems.forEach((item) => {
-          const msg = new SpeechSynthesisUtterance();
-          msg.text = `${item.itemName} - ${item.price} dollars.`;
-          msg.lang = selectedLanguage;
-          msg.rate = 1.0;
-          msg.pitch = 1.0;
-          window.speechSynthesis.speak(msg);
-        });
-      }
-    } else {
-      alert("Text-to-speech is not supported in this browser.");
-    }
-  };
+    };
 
   const MenuSideBar = () => {
     const sidebarButton = (props) => {
@@ -416,9 +425,11 @@ const Customer = () => {
 
   useEffect(() => {
     if (!hasSpokenRef.current) {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
       const msg = new SpeechSynthesisUtterance();
-      msg.text =
-        "Welcome to Rev's American Grill. For speech assistance, please click the green, ON, button on the top right-hand side of the screen. Click again at any point to turn speech assistance off.";
+      msg.text = "Welcome to Rev's American Grill. For speech assistance, please click the green, ON, button on the top of the screen. Click again at any point to turn speech assistance off.";
       window.speechSynthesis.speak(msg);
       hasSpokenRef.current = true;
     }

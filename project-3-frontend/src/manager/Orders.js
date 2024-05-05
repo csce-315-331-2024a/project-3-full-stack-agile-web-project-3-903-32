@@ -3,13 +3,21 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
 import { useNavigate } from 'react-router-dom';
 
-
+/**
+ * This will return to a boolean on the position of the user, returns true if the user is a manager, false otherwise.
+ * @returns a boolean, on whether the user is a manager or not.
+ */
 const isAuthenticatedManager = () => {
   const isManager = localStorage.getItem("isManagerLoggedIn");
   console.log(isManager);
   return isManager;
 };
 
+/**
+ * This function will determind if a user is a manager. If the user is not a manager they will be sent back to the landing page.
+ * @param {object} WrappedComponent 
+ * @returns to the landing page if the user is not a manager
+ */
 const withManagerAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
@@ -25,10 +33,18 @@ const withManagerAuthentication = (WrappedComponent) => {
 
   return AuthenticatedComponent;
 };
-
+/**
+ * 
+ * @param {*} param0 - contains the new Name and the function to update
+ * @returns the Order new name
+ */
 function EditableName({ name, onUpdate }) {
   const [editMode, setEditMode] = useState(false);
   const [editedName, setEditedName] = useState(name);
+
+  useEffect(() => {
+    setEditedName(name);
+  }, [name]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -63,6 +79,61 @@ function EditableName({ name, onUpdate }) {
     </div>
   );
 }
+/**
+ * Returns the order page which cotains a customer name, total price, items, and completion. It also allows the user to edit some things
+ * @returns The order page
+ */
+function EditCount({ count, onUpdate }) {
+  const [editMode, setEditMode] = useState(false);
+  const [editedCount, setEditedCount] = useState(count);
+
+  useEffect(() => {
+    setEditedCount(count);
+  }, [count]);
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      // Check if the input is a valid integer string
+      if (/^\d+$/.test(editedCount)) {
+        const parsedCount = parseInt(editedCount, 10);
+        if (parsedCount > 0) {
+          onUpdate(parsedCount);
+          setEditMode(false);
+        } else {
+          alert('Error: Please enter a positive integer for the quantity.');
+        }
+      } else {
+        alert('Error: Please enter a valid positive integer for the quantity.');
+      }
+    }
+  };
+
+  const handleClick = () => {
+    setEditMode(true);
+  };
+
+  const handleChange = (event) => {
+    setEditedCount(event.target.value);
+  };
+
+  return (
+    <div>
+      {editMode ? (
+        <input
+          type="number"
+          value={editedCount}
+          onChange={handleChange}
+          onKeyDown ={handleKeyPress}
+          autoFocus
+          onBlur={() => setEditMode(false)}  
+          style={{ paddingLeft: '10px', width: '120px' }}
+        />
+      ) : (
+        <span onClick={handleClick}>{count}</span>
+      )}
+    </div>
+  );
+}
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -84,7 +155,12 @@ const Orders = () => {
     try {
       let url = process.env.REACT_APP_BACKEND_URL + `/api/order_history?ascending=${ascending}`;
       if(startTime && endTime) {
-        url += `&start_time=${startTime}&end_time=${endTime}`; 
+        if(startTime < endTime) {
+          url += `&start_time=${startTime}&end_time=${endTime}`; 
+        } else {
+          alert("Start time cannot be set after the end time.")
+        }
+        
       }
       const option = {
         method: "GET",
@@ -95,7 +171,12 @@ const Orders = () => {
       
       if (response.ok) {
         const data = await response.json();
-        setOrders(data);
+        const aggregatedOrders = data.map(order => ({
+          ...order,
+          items: aggregateItems(order.items)
+        }));
+        setOrders(aggregatedOrders);
+        console.log(orders);
       } else {
         console.error('Failed to fetch order history:', response.status, response.statusText);
       }
@@ -178,10 +259,13 @@ const Orders = () => {
     }
   };
 
-  const addNewItem = async (orderId, e) => {
+  const addNewItem = async (orderId, e, currentAmount) => {
     e.preventDefault();
     const newItemName = e.target.newItemName.value;
-    const newItemAmount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+    let newItemAmount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+
+    // Limit newItemAmount to 99
+    newItemAmount = Math.min(newItemAmount, 99);
 
     const selectedItem = menuItems.find(item => item.itemName === newItemName);
     if (!selectedItem) {
@@ -200,7 +284,8 @@ const Orders = () => {
 
       if (response.ok) {
         alert('Item added successfully!');
-        getOrders(); // Refresh orders to show updated info
+        getOrders();
+        console.log(orders);
       } else {
         console.error('Failed to add item:', await response.json());
       }
@@ -208,7 +293,8 @@ const Orders = () => {
       console.error('Error updating name:', error);
       throw error; 
     }
-  };
+};
+
 
   const deleteItem = async (orderId, itemName, itemCount) => {
     const selectedItem = menuItems.find(item => item.itemName === itemName);
@@ -238,9 +324,10 @@ const Orders = () => {
     }
   };
 
-  const updateAmountItem = async (orderId, itemName, oldCount, e) => {
-    e.preventDefault();
-    const newCount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+  const updateAmountItem = async (orderId, itemName, oldCount, newCount) => {
+    newCount = Math.abs(parseInt(newCount, 10)); // Ensure positive integer
+
+    newCount = Math.min(99,newCount);
 
     const selectedItem = menuItems.find(item => item.itemName === itemName);
     if (!selectedItem) {
@@ -267,7 +354,7 @@ const Orders = () => {
       console.error('Error updating item:', error);
       throw error; 
     }
-};
+  };
 
   async function getMenu() {
     try {
@@ -417,23 +504,24 @@ const Orders = () => {
                       <td colSpan="7">
                         <div className="p-4">
                           <table className="min-w-full">
+                            <thead>
+                              <tr className="bg-gray-200">
+                                <th className="p-2 text-center text-base font-medium text-gray-700">Item Name</th>
+                                <th className="p-2 text-center text-base font-medium text-gray-700">Price</th>
+                                <th className="p-2 text-center text-base font-medium text-gray-700">Quantity</th>
+                                <th className="p-2 text-center text-base font-medium text-gray-700">Actions</th>
+                              </tr>
+                            </thead>
                             <tbody>
-                              {aggregateItems(order.items).map((item, itemIndex) => (
+                              {order.items.map((item, itemIndex) => (
                                 <tr key={itemIndex} className="bg-white">
                                   <td className="p-2 text-base text-gray-700">{item.itemName}</td>
                                   <td className="p-2 text-base text-gray-700">${item.price.toFixed(2)}</td>
                                   <td className="p-2 text-base text-gray-700">
-                                    <form onSubmit={(e) => updateAmountItem(order.orderID, item.itemName, item.count, e)}>
-                                      <input
-                                        type="number"
-                                        name="newItemAmount"
-                                        placeholder="Amount"
-                                        defaultValue={item.count}
-                                        required
-                                        min="1"  // Ensure input is always a positive number
-                                        className="w-1/4 mt-2 border-2 border-gray-300 p-1 rounded-lg"
-                                      />
-                                    </form>
+                                    <EditCount
+                                      count={item.count}
+                                      onUpdate={(newCount) => updateAmountItem(order.orderID, item.itemName, item.count, newCount)}                    
+                                    />
                                   </td>
                                   <td className="p-2">
                                     <button
@@ -459,7 +547,7 @@ const Orders = () => {
                                       name="newItemAmount"
                                       placeholder="Amount"
                                       required
-                                      min="1"  // Ensure input is always a positive number
+                                      min="1"
                                       className="mt-2 mr-4 border-2 border-gray-300 p-1 rounded-lg"
                                     />
                                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
@@ -471,7 +559,7 @@ const Orders = () => {
                             </tbody>
                           </table>
                         </div>
-                      </td>
+                      </td>        
                     </tr>
                   )}
                 </React.Fragment>

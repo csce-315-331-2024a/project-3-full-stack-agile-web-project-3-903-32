@@ -2,12 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/NavbarCashier";
 
+
+/**
+ * Check if the credential are of a cashier.
+ * @returns {boolean} If user is Cashier or not 
+ */
 const isAuthenticatedCashier = () => {
   const isCashier = localStorage.getItem("isCashierLoggedIn");
   console.log(isCashier);
   return isCashier;
 };
 
+/**
+ * Returns the user back to the landing page with incorrect credentials
+ * @param {any} WrappedComponent 
+ * @returns user back to landing page when isAuthenticatedCashier is false
+ */
 const withCashierAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
@@ -49,6 +59,13 @@ const Cashier = () => {
     }
   }, [location.state]);
 
+    /**
+    * Fetches the menu data from the backend API and updates the component state.
+    * 
+    * @async
+    * @function getMenu
+    * @returns {void}
+    */
   async function getMenu() {
     try {
       const response = await fetch(
@@ -74,58 +91,62 @@ const Cashier = () => {
     }
   }
 
-  function round(value, decimals) {
-    return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
-  }
-
-  const addToOrder = (item) => {
-    const price = parseFloat(item.price);
-    if (!isNaN(price)) {
-      // Check if the price is a valid number after parsing
-      setItemIds((itemIds) => [...itemIds, item.id]);
-      setOrder((order) => {
-        const existIndex = order.findIndex(
-          (orderItem) => orderItem.id === item.id
-        );
-        if (existIndex > -1) {
-          const existingItem = order[existIndex];
-          const newQuantity =
-            existingItem.quantity < 99
-              ? existingItem.quantity + 1
-              : existingItem.quantity;
-          const newOrder = order.map((orderItem, idx) =>
-            idx === existIndex
-              ? { ...orderItem, quantity: newQuantity }
-              : orderItem
-          );
-          const newTotal = newOrder.reduce(
-            (acc, cur) => acc + cur.price * cur.quantity,
-            0
-          );
-          setTotal(round(newTotal, 2));
-          return newOrder;
-        } else {
-          const newOrder = [...order, { ...item, price, quantity: 1 }];
-          const newTotal = newOrder.reduce(
-            (acc, cur) => acc + cur.price * cur.quantity,
-            0
-          );
-          setTotal(round(newTotal, 2));
-          return newOrder;
-        }
-      });
-    } else {
-      console.error("item.price is not a valid number", item);
+    /**
+     * Rounds the number up to a speific decimal place
+     * @param {number} value - the number to round
+     * @param {number} decimals - the number of places to round to
+     * @returns The rounded number
+     */
+    function round(value, decimals) {
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }
-  };
 
-  const removeFromOrder = (index) => {
-    if (index >= 0 && index < order.length) {
-      const item = order[index];
-      if (item) {
+    /**
+    * Adds to new item or add to an existing items quantity
+    * @param {*} item - the menu item to add to the list or add another one
+    * @returns a new order list 
+    */
+    const addToOrder = (item) => {
         const price = parseFloat(item.price);
-        if (!isNaN(price)) {
-          setTotal((total) => round(total - price, 2));
+        if (!isNaN(price)) { // Check if the price is a valid number after parsing
+            setItemIds((itemIds) => [...itemIds, item.id]);
+            setOrder((order) => {
+                const existIndex = order.findIndex((orderItem) => orderItem.id === item.id);
+                if (existIndex > -1) {
+                    const existingItem = order[existIndex];
+                    const newQuantity = existingItem.quantity < 99 ? existingItem.quantity + 1 : existingItem.quantity;
+                    const newOrder = order.map((orderItem, idx) =>
+                        idx === existIndex
+                            ? { ...orderItem, quantity: newQuantity }
+                            : orderItem
+                    );
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
+                } else {
+                    const newOrder = [...order, { ...item, price, quantity: 1 }];
+                    const newTotal = newOrder.reduce((acc, cur) => acc + cur.price * cur.quantity, 0);
+                    setTotal(round(newTotal, 2));
+                    return newOrder;
+                }
+            });
+        } else {
+            console.error('item.price is not a valid number', item);
+        }
+    };
+    
+    /**
+     * Remove an item from the list if there is only 1 item in the list it is removed entirely.
+     * @param {object} index - menu item to remove
+     * @returns the updated order list.
+     */
+    const removeFromOrder = (index) => {
+        if (index >= 0 && index < order.length) {
+            const item = order[index];
+            if (item) {
+                const price = parseFloat(item.price);
+                if (!isNaN(price)) {
+                    setTotal((total) => round(total - price, 2));
 
           setOrder((order) => {
             if (item.quantity > 1) {
@@ -163,38 +184,48 @@ const Cashier = () => {
     return order;
   };
 
-  const changeOrder = (index, newQuantity) => {
-    const parseQuantity = parseInt(newQuantity);
+    /**
+     * Changes the amount of the item in the order list based on newQuantity
+     * @param {object} index - the item that being changed
+     * @param {number} newQuantity the number to set the item quantity
+     * @returns nothing
+     */
+    const changeOrder = (index, newQuantity) => {
+        const parseQuantity = parseInt(newQuantity);
+        
+        if(isNaN(parseQuantity)) {
+            return;
+        }
+        // Check if newQuantity is not a valid number or is less than or equal to 0
+        if (parseQuantity <= 0) {
+            // Handle invalid quantity input or when quantity is less than or equal to 0
+            const item = order[index];
+            const price = parseFloat(item.price);
+            setTotal((total) => round(total - price * item.quantity, 2));
+            setOrder((order) => order.filter((item, idx) => idx !== index));
+            return;
+        }
+    
+        // Limit the maximum quantity to 99
+        const limitedQuantity = Math.min(parseQuantity, 99);
+    
+        const oldItem = order[index];
+        const oldQuantity = oldItem.quantity;
+        const price = parseFloat(oldItem.price);
+        const diff = limitedQuantity - oldQuantity;
+        const changeInTotal = price * diff;
+        
+        setTotal((total) => round(total + changeInTotal, 2));
+        setOrder((order) =>
+            order.map((item, idx) =>
+                idx === index
+                    ? { ...item, quantity: limitedQuantity }
+                    : item
+            )
+        );
+    };
+    
 
-    if (isNaN(parseQuantity)) {
-      return;
-    }
-    // Check if newQuantity is not a valid number or is less than or equal to 0
-    if (parseQuantity <= 0) {
-      // Handle invalid quantity input or when quantity is less than or equal to 0
-      const item = order[index];
-      const price = parseFloat(item.price);
-      setTotal((total) => round(total - price * item.quantity, 2));
-      setOrder((order) => order.filter((item, idx) => idx !== index));
-      return;
-    }
-
-    // Limit the maximum quantity to 99
-    const limitedQuantity = Math.min(parseQuantity, 99);
-
-    const oldItem = order[index];
-    const oldQuantity = oldItem.quantity;
-    const price = parseFloat(oldItem.price);
-    const diff = limitedQuantity - oldQuantity;
-    const changeInTotal = price * diff;
-
-    setTotal((total) => round(total + changeInTotal, 2));
-    setOrder((order) =>
-      order.map((item, idx) =>
-        idx === index ? { ...item, quantity: limitedQuantity } : item
-      )
-    );
-  };
 
   // Group buttons into arrays of 5 buttons each
   const buttonGroups = buttons.reduce((acc, button, index) => {
@@ -208,13 +239,18 @@ const Cashier = () => {
 
   const totalPages = Math.ceil(buttonGroups.length / 3);
 
-  const nextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
-  };
+    /**
+     * Changes the next page of buttons stops at max
+     */
+    const nextPage = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
+    };
+    /**
+     * Changes the last page of buttons stops at 0
+     */
+    const prevPage = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+    };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">

@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from 'react';
-
+/**
+ * Sales report takes in a start and end time and creates a table listing what items sold the most 
+ * @returns page for sales report
+ */
 const SalesReport = () => {
   const [salesData, setSalesData] = useState([]);
   const [startTime,setStartTime] = useState('');

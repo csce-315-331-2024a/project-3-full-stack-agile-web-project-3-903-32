@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { StaticOrderingWords } from "../customer/CustomerConstants";
-
+/**
+ * Navbar has weather, text-to-speech, log out, and invert colors
+ * @param {*} param0 - used for text to speech
+ * @returns Navbar for customer
+ */
 const Navbar = ({ onSpeechAssistanceChange }) => {
   const [weather, setWeather] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -77,8 +81,7 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
         window.speechSynthesis.cancel();
       }
       const msg = new SpeechSynthesisUtterance();
-      msg.text =
-        "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. ";
+      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. Once you have finished ordering, please click the go to payment button on the bottom right corner of the screen. ";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
       onSpeechAssistanceChange(false);

@@ -25,7 +25,9 @@ import Users from './manager/Users';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import StaticMenu2 from './customer/StaticMenu2';
-
+/**
+ * Connect the different pages together.
+ */
 const router = createBrowserRouter([
   {
     path: '/',
