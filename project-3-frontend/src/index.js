@@ -21,6 +21,7 @@ import TranslateContext from './components/Translate';
 import StaticMenu from './customer/StaticMenu';
 import CustomerConfirm from './customer/CustomerConfirm';
 import Cook from './cook/CookScreen';
+import Users from './manager/Users';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import StaticMenu2 from './customer/StaticMenu2';
@@ -72,6 +73,11 @@ const router = createBrowserRouter([
   {
     path: '/manager/orders',
     element: <Orders />,
+    children: [],
+  },
+  {
+    path: '/manager/users',
+    element: <Users />,
     children: [],
   },
   {

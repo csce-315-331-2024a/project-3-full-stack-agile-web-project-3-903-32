@@ -10,7 +10,6 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
   const [weather, setWeather] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
-  const [invertButton, setInvertButton] = useState(false);
   const [staticTranslations, setStaticTranslations] = useState(StaticOrderingWords);
 
   const getStaticWord = (word) => {
@@ -102,6 +101,14 @@ const navigate = useNavigate();
     }
   };
 
+  const toggleInvert = () => {
+    if (document.getElementById('root').style.filter === 'invert(1)') {
+      document.getElementById('root').style.filter = 'invert(0)';
+    } else {
+      document.getElementById('root').style.filter = 'invert(1)';
+    }
+  }
+
   return (
     <nav className="flex gap-10 items-center px-5 bg-white border-b border-gray-200 h-[80px]">
       <div className="flex-1 text-xl font-semibold text-gray-700 ml-4">REV'S American Grill</div>
@@ -119,9 +126,7 @@ const navigate = useNavigate();
             ON / OFF
           </button>
         </div>
-        <button className="px-4 py-1 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold rounded" onClick={()=> {
-          document.getElementById('root').style.filter = invertButton ? 'invert(0)' : 'invert(1)'
-          setInvertButton(!invertButton)}}>
+        <button className="px-4 py-1 h-14 bg-gray-700 hover:bg-gray-900 text-white font-bold rounded" onClick={toggleInvert}>
               {
                   getStaticWord('Invert')
               }

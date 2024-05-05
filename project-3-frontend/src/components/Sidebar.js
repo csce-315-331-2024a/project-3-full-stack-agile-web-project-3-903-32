@@ -39,6 +39,9 @@ const Sidebar = () => {
 
       {/* Orders */}
       <NavComponent to="/manager/orders" text='Orders'/>
+
+      {/* Users */}
+      <NavComponent to="/manager/users" text='Users'/>
     </aside>
   );
 };
