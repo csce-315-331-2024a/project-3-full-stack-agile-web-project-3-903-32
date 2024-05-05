@@ -1,5 +1,9 @@
 import React from 'react';
-
+/**
+ * the modal use to notfiy the customer for confirmation
+ * @param {object} param0 - the states of the customer modal
+ * @returns the customer modal
+ */
 const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
 

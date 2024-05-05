@@ -1,5 +1,9 @@
 import React from 'react';
-
+/**
+ * 
+ * @param {object} param0 - the states use to determind the Cook confirm Modal
+ * @returns the modal for cook confirm
+ */
 const ModalCookConfirm = ({ isOpen, message, onConfirm, onCancel }) => {
     return (
         <>

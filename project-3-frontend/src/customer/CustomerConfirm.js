@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CustomerConfirm.css'; // Import CSS file for animation
 
+/**
+ * Returns confirmation page for the customer.
+ * @returns The Customer confirmation page
+ */
 const CustomerConfirm = () => {
     const navigate = useNavigate();
 

@@ -3,13 +3,21 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
 import { useNavigate } from 'react-router-dom';
 
-
+/**
+ * This will return to a boolean on the position of the user, returns true if the user is a manager, false otherwise.
+ * @returns a boolean, on whether the user is a manager or not.
+ */
 const isAuthenticatedManager = () => {
   const isManager = localStorage.getItem("isManagerLoggedIn");
   console.log(isManager);
   return isManager;
 };
 
+/**
+ * This function will determind if a user is a manager. If the user is not a manager they will be sent back to the landing page.
+ * @param {object} WrappedComponent 
+ * @returns to the landing page if the user is not a manager
+ */
 const withManagerAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
@@ -25,7 +33,11 @@ const withManagerAuthentication = (WrappedComponent) => {
 
   return AuthenticatedComponent;
 };
-
+/**
+ * 
+ * @param {*} param0 - contains the new Name and the function to update
+ * @returns the Order new name
+ */
 function EditableName({ name, onUpdate }) {
   const [editMode, setEditMode] = useState(false);
   const [editedName, setEditedName] = useState(name);
@@ -63,7 +75,10 @@ function EditableName({ name, onUpdate }) {
     </div>
   );
 }
-
+/**
+ * Returns the order page which cotains a customer name, total price, items, and completion. It also allows the user to edit some things
+ * @returns The order page
+ */
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
@@ -84,7 +99,12 @@ const Orders = () => {
     try {
       let url = process.env.REACT_APP_BACKEND_URL + `/api/order_history?ascending=${ascending}`;
       if(startTime && endTime) {
-        url += `&start_time=${startTime}&end_time=${endTime}`; 
+        if(startTime < endTime) {
+          url += `&start_time=${startTime}&end_time=${endTime}`; 
+        } else {
+          alert("Start time cannot be set after the end time.")
+        }
+        
       }
       const option = {
         method: "GET",
@@ -178,10 +198,13 @@ const Orders = () => {
     }
   };
 
-  const addNewItem = async (orderId, e) => {
+  const addNewItem = async (orderId, e, currentAmount) => {
     e.preventDefault();
     const newItemName = e.target.newItemName.value;
-    const newItemAmount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+    let newItemAmount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+
+    // Limit newItemAmount to 99
+    newItemAmount = Math.min(newItemAmount, 99);
 
     const selectedItem = menuItems.find(item => item.itemName === newItemName);
     if (!selectedItem) {
@@ -208,7 +231,8 @@ const Orders = () => {
       console.error('Error updating name:', error);
       throw error; 
     }
-  };
+};
+
 
   const deleteItem = async (orderId, itemName, itemCount) => {
     const selectedItem = menuItems.find(item => item.itemName === itemName);
@@ -241,6 +265,8 @@ const Orders = () => {
   const updateAmountItem = async (orderId, itemName, oldCount, e) => {
     e.preventDefault();
     const newCount = Math.abs(parseInt(e.target.newItemAmount.value, 10)); // Ensure positive integer
+
+    newCount = Math.min(99,newCount);
 
     const selectedItem = menuItems.find(item => item.itemName === itemName);
     if (!selectedItem) {

@@ -3,13 +3,21 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/NavbarManager';
 import { useNavigate } from 'react-router-dom';
 
-
+/**
+ * This will return to a boolean on the position of the user, returns true if the user is a manager, false otherwise.
+ * @returns a boolean, on whether the user is a manager or not.
+ */
 const isAuthenticatedManager = () => {
   const isManager = localStorage.getItem("isManagerLoggedIn");
   console.log(isManager);
   return isManager;
 };
 
+/**
+ * This function will determind if a user is a manager. If the user is not a manager they will be sent back to the landing page.
+ * @param {object} WrappedComponent 
+ * @returns to the landing page if the user is not a manager
+ */
 const withManagerAuthentication = (WrappedComponent) => {
   const AuthenticatedComponent = (props) => {
     const navigate = useNavigate();
