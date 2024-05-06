@@ -13,6 +13,7 @@ const imageMapping = {
 
 
 const clientId = "417248299016-d2tdli4igl731cienis995uaaeetb4vt.apps.googleusercontent.com";
+
 /**
  * The Landing Page, this is where every user start on when loading the app.
  * @returns The apps land page
@@ -23,6 +24,9 @@ function App() {
   const [password, setPassword] = useState('');
   const [isVideoPlaying, setIsVideoPlaying] = useState(true); // State to track video playback
   const videoRef = useRef(null); // Ref to access the video element
+  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
+
 
   useEffect(() => {
     function start() {
@@ -44,13 +48,61 @@ function App() {
     gapi.load('client:auth2', start);
   }, []);
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+  const getRole = async (email) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/employee/gmail/${email}`, {
+        method: 'GET',
+        mode: 'cors',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setRole(data);
+        if(data.position == "Cashier"){
+          loginCashier();
+        } else if (data.position == "Manager"){
+          loginManager();
+        }
+      } else if (response.status === 404) {
+        loginCustomer();
+        console.log("not found");
+      } else {
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+        throw new Error('Failed to fetch role data');
+      }
+    } catch (error) {
+
+      console.error('Error fetching role data:', error);
+    }
   };
+  
+  
+/*
+  async function createAccount({ email, role, name }) {
+    try {
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/api/employee/add', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "email": email,
+          "position": role,
+          "employeename": name
+        })
+      });
+      if (response.ok) {
+        console.log("Account created: " + email);
+      } else {
+        console.error('Failed to create account');
+      }
+    } catch (error) {
+      console.error('Error creating account:', error);
+    }
+  }
+  */
+
+
 
   const toggleVideoPlayback = () => {
     const video = videoRef.current;
@@ -100,13 +152,14 @@ function App() {
         <GoogleLogin
           onSuccess={(credentialResponse) => {
             const decoded = jwtDecode(credentialResponse?.credential);
-            console.log(decoded.email);
+            
+            getRole(decoded.email);
             if (decoded.email === "csce315manager@gmail.com") {
-             loginManager();
+             //loginManager();
             } else if (decoded.email === "csce315cashier@gmail.com") {
-              loginCashier();
+            //  loginCashier();
             } else {
-              loginCustomer();
+           //   loginCustomer();
             }
           }}
           onError={(error) => {
