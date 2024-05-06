@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * The navbar that is the basis for the other navbars
+ * @returns The general Navbar
+ */
 const Navbar = () => {
   const navigate = useNavigate();
 

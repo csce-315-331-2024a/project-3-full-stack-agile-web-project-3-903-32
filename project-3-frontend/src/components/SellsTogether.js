@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-
+/**
+ * sells Together will take a start and end time and create a table of the pair and their frequency
+ * @returns the sellsTogether Page
+ */
 const SellsTogether = () => {
   const [sellData, setSellData] = useState([]);
   const [startTime, setStartTime] = useState('');

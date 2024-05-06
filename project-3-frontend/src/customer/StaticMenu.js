@@ -25,7 +25,10 @@ const imageMapping = {
   'waterBottle': '../waterBottle.png',
   'tamuLogo': '../tamu-logo.png' 
 };
-
+/**
+ * Returns the first half of the page.
+ * @returns Static page 1
+ */
 const StaticMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [maxItemsPerCategory, setMaxItemsPerCategory] = useState(0);

@@ -26,7 +26,10 @@ const imageMapping = {
   'Aquafina Water 20OZ': '../waterBottle.png',
   'tamuLogo': '../tamu-logo.png' 
 };
-
+/**
+ * Returns the second half the menu page.
+ * @returns Stat menu page 2
+ */
 const StaticMenu2 = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [maxItemsPerCategory, setMaxItemsPerCategory] = useState(0);

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-
+/**
+ * Very basic navbar for kitchen only has log out button
+ * @returns Navbar of Kitchen
+ */
 const Navbar = () => {
   const navigate = useNavigate();
 

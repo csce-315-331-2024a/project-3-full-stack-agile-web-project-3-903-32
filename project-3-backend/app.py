@@ -32,15 +32,12 @@ def get_data(name):
     """
     Get employee data by name.
 
-    Parameters:
+    Args:
         name (str): The name of the employee to retrieve data for.
 
     Returns:
-        Response: A JSON response containing the employee's data if found, or an error message if not found.
+        A JSON response containing the employee's data if found, or an error message if not found.
 
-    Example:
-        >>> get_data('John')
-        {'employeename': 'John', 'position': 'Developer'}
     """
     query = text("SELECT * FROM Employees WHERE employeename = :name LIMIT 1")
     result = db.session.execute(query, {'name': name}).fetchone()
@@ -53,6 +50,14 @@ def get_data(name):
     
 @app.route('/api/employee/gmail/<email>')
 def get_data_email(email):
+    """
+    Gets a empolyees' name and position from an employee email.
+
+    Args:
+        email(str) : The email of the employee to retrieve the relvant data in the database.
+    Returns:
+        A JSON of the employee info containing name, position and email or an error message if no data is found.
+    """
     print("TESTING")
     query = text("SELECT * FROM Employees WHERE email = :email LIMIT 1")
     result = db.session.execute(query, {'email': email}).fetchone()
@@ -62,19 +67,22 @@ def get_data_email(email):
         return jsonify(data)
     else:
         return jsonify({'error': 'No data found'}), 404
-    
-@app.route('/api/employee/all')
-def get_all_employees():
-    query = text("SELECT * FROM Employees")
-    result = db.session.execute(query).fetchall()
-    if result is not None:
-        employee_list = [{"name": row[1], "position": row[2], "email": row[3]} for row in result]
-        return jsonify(employee_list)
-    else:
-        return jsonify({'error': 'No data found'}), 404
 
 @app.route('/api/employee/change/<email>', methods=['PUT', 'DELETE'])
 def get_employee(email):
+    """
+    Updates or deletes the an employee information
+
+    Args:
+        email (str): The email of the employee used to identify them in the database.
+
+    If the HTTP is PUT:
+        it will update given the inputs nescessary.
+    If the HTTP is DELETE:
+        it will delete an employee entry given an email.
+    Returns: 
+        A JSON containing a success message.
+    """
     if request.method == 'PUT':
         data = request.get_json()
         query = text("UPDATE Employees SET employeename = :employeename, position = :position,  WHERE email = :email")
@@ -89,17 +97,81 @@ def get_employee(email):
     
 @app.route('/api/employee/add', methods = ['POST'])
 def add_employee():
+<<<<<<< HEAD
     query = text("SELECT id from Employees Order By id DESC LIMIT 1")
     res = db.session.execute(query).fetchone()
     if res is None:
         employee_id = 1
     else:
         employee_id = res[0] + 1
+=======
+    """
+    Adds a new entry into the employees database
+
+    Returns:
+        A JSON containing a success message
+    """
+>>>>>>> d3e09e745b01c9555c1c9dc2066ed2caacd6861c
     data = request.get_json()
     query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :employeename, :position, :email)")
     db.session.execute(query, {'id': employee_id, 'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
     db.session.commit()
     return jsonify({'message': 'Employee object created successfully'}), 201
+
+###################################
+#             Employee API        #
+###################################
+@app.route('/api/employees', methods=['POST', 'GET'])
+def http_employee():
+    """
+    Returns a list of the employees and their information.
+
+    Returns:
+        A JSON of all employees and their info including name, position and email or return an error if no data is found.
+    """
+    if request.method == 'GET':
+        query = text("SELECT * FROM Employees Order By employeename ASC")
+        result = db.session.execute(query).fetchall()
+        employees = [{"id": row[0], "name": row[1], "position": row[2], "email": row[3]} for row in result]
+        return jsonify(employees)
+    elif request.method == 'POST':
+        query = text("SELECT id from Employees Order By id DESC LIMIT 1")
+        res = db.session.execute(query).fetchone()
+        if res is None:
+            employee_id = 1
+        else:
+            employee_id = res[0] + 1
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :name, :position, :email)")
+        db.session.execute(query, {'id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
+
+@app.route('/api/employees/<employee_id>', methods=['DELETE', 'PUT'])
+def put_delete_employee(employee_id):
+    if request.method == 'PUT':
+        data = request.get_json()
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        if 'position' not in data:
+            return jsonify({'error': 'Position is required'}), 400
+        if 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        query = text("UPDATE Employees SET employeename = :name, position = :position, email = :email WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id, 'name': data['name'], 'position': data['position'], 'email': data['email']})
+        db.session.commit()
+        return jsonify({'message': 'Employee updated successfully'}), 200
+    elif request.method == 'DELETE':
+        query = text("DELETE FROM Employees WHERE id = :employee_id")
+        db.session.execute(query, {'employee_id': employee_id})
+        db.session.commit()
+        return jsonify({'message': 'Employee deleted successfully'}), 200
 
 ###################################
 #             MENU API            #
@@ -115,15 +187,11 @@ def get_menu_items():
     translates the itemName to the specified language.
 
     If the HTTP method is POST:
-    Creates a new menu item using data from the request body and returns a JSON response.
+        Creates a new menu item using data from the request body and returns a JSON response.
 
     Returns:
-        Response: A JSON response containing menu items or a success message.
+        A JSON response containing menu items or a success message.
 
-    Example:
-        >>> get_menu_items()
-        [{'id': 1, 'itemName': 'Pizza', 'price': 10.99, 'category': 'Main'},
-         {'id': 2, 'itemName': 'Salad', 'price': 6.99, 'category': 'Side'}]
     """
     if request.method == 'GET':
         query = text("SELECT * FROM Menu ORDER BY itemName ASC")
@@ -157,11 +225,60 @@ def get_menu_items():
             return jsonify({'error': 'No data found'}), 404
     elif request.method == 'POST':
         data = request.get_json()
+
+        # Check if the item name already exists
+        check_query = text("SELECT * FROM Menu WHERE itemName = :itemName")
+        existing_item = db.session.execute(check_query, {'itemName': data['itemName']}).fetchone()
+        if existing_item:
+            return jsonify({'error': 'Item with this name already exists'}), 400
+
         query = text("INSERT INTO menu (itemname, price, category) VALUES (:itemName, :price, :category);")
         db.session.execute(query, {'itemName': data['itemName'], 'price': data['price'], 'category': data['category']})
         db.session.commit()
         return jsonify({'message': 'Menu item created successfully'}), 201
 
+@app.route('/api/menu/ordering', methods=['GET'])
+def get_menu_items_ordering():
+    """
+    Get menu items for ordering with ingredients.
+
+    Returns a JSON response containing all menu items sorted by itemName with ingredients in ascending order.
+
+    Returns:
+        A JSON response containing menu items.
+
+    Raises:
+        Exception: If there is an error retrieving the menu items.
+
+    """
+    query = text("Select DISTINCT m.id, m.itemname, m.price, m.category FROM menu as m JOIN mijunc as j On m.id = j.menuid Order By m.itemname ASC")
+    results = db.session.execute(query).fetchall()
+    if not results:
+        raise Exception('No data found')
+    data = []
+    if 'translate' in request.args and request.args.get("translate") != 'EN':
+        texts = []
+        for row in results:
+            texts.append(str(row[1]))
+        names = translator.translate_text(text=texts, target_lang=request.args.get("translate"))
+        for i, row in enumerate(results):
+            item = {
+                'id' : row[0],
+                'itemName' : names[i].text,
+                'price' : row[2],
+                'category' : row[3]
+            }
+            data.append(item)
+    else:
+        for row in results:
+            item = {
+                'id' : row[0],
+                'itemName' : row[1],
+                'price' : row[2],
+                'category' : row[3]
+            }
+            data.append(item)
+    return jsonify(data)
 
 @app.route('/api/menu/category', methods=['GET'])
 def get_menu_category():
@@ -171,12 +288,12 @@ def get_menu_category():
     Returns a JSON response containing the available categories of menu items.
 
     Returns:
-        Response: A JSON response containing menu categories.
+        A JSON response containing menu categories.
 
-    Example:
-        >>> get_menu_category()
-        ['Main', 'Side', 'Drink']
+    Raises:
+        Exception: If there is an error retrieving the menu categories.
     """
+
     if request.method == 'GET':
         try:
             data = get_category_types()
@@ -196,10 +313,6 @@ def get_category_types():
 
     Raises:
         Exception: If no category types are found in the database.
-
-    Example:
-        >>> get_category_types()
-        ['Drink', 'Main', 'Side']
     """
     query = text("SELECT enumlabel FROM pg_enum ORDER BY enumlabel ASC")
     results = db.session.execute(query).fetchall()
@@ -214,12 +327,20 @@ def get_category_types():
 @app.route('/api/menu/<menu_id>', methods=['PUT', 'DELETE'])
 def get_menu_item(menu_id):
     """
-    Helper function for get_category_types().
+    Retrieves or updates a menu item in the database.
 
-    Returns a list of menu category types sorted in ascending order.
+    Args:
+        menu_id (int): The ID of the menu item to retrieve or update.
 
     Returns:
-        list: A list containing menu category types.
+        If the HTTP method is PUT:
+            dict: A JSON object containing a success message if the menu item is updated successfully.
+
+        If the HTTP method is DELETE:
+            dict: A JSON object containing a success message if the menu item is deleted successfully.
+
+    Raises:
+        HTTPException: If the request method is not PUT or DELETE.
 
     """
     if request.method == 'PUT':
@@ -239,6 +360,21 @@ def get_menu_item(menu_id):
 
     
 def delete_menu_omjunc_batch(menu_id):
+    """
+    Deletes menu item entries from the OMJunc database associated with the given menu ID.
+
+    Args:
+        menu_id (int): The ID of the menu item to be deleted.
+
+    Returns:
+        dict: A JSON object containing a success message if the deletion is successful,
+              or an error message if an issue occurs.
+
+    Raises:
+        Exception: If there's an issue with the deletion process.
+
+
+    """
     try:
         query = text("DELETE FROM OMJunc WHERE menuid = :menu_id")
         db.session.execute(query, {'menu_id': menu_id})
@@ -250,6 +386,21 @@ def delete_menu_omjunc_batch(menu_id):
 
 #Deleting all inventory items attached to the menu item
 def delete_menu_mijunc_batch(menu_id):
+    """
+    Deletes menu item entries from the MIJunc database associated with the given menu ID.
+
+    Args:
+        menu_id (int): The ID of the menu item to be deleted.
+
+    Returns:
+        dict: A JSON object containing a success message if the deletion is successful,
+        or an error message if an issue occurs.
+
+    Raises:
+        Exception: If there's an issue with the deletion process.
+
+
+    """
     try:
         query = text("DELETE FROM MIJunc WHERE menuid = :menu_id")
         db.session.execute(query, {'menu_id': menu_id})
@@ -264,6 +415,42 @@ def delete_menu_mijunc_batch(menu_id):
 ###################################
 @app.route('/api/inventory', methods=['GET', 'POST'])
 def get_inventory_items():
+    """
+    Retrieves a list of inventory items or inserts a new entry into the inventory database.
+
+    If the HTTP method is GET:
+        Retrieves a list of inventory items from the database and returns it as JSON.
+
+        Returns:
+            list: A JSON array containing inventory items, each item includes the following fields:
+                - id (int): The unique identifier of the inventory item.
+                - name (str): The name of the inventory item.
+                - stock (int): The current stock level of the item.
+                - location (str): The location where the item is stored.
+                - capacity (int): The maximum capacity of the item.
+                - supplier (str): The supplier of the item.
+                - minimum (int): The minimum stock level required for the item.
+
+            If no data is found in the database, returns a JSON object with an error message.
+
+    If the HTTP method is POST:
+        Inserts a new inventory item entry into the database.
+
+        Request Body:
+            JSON object containing the following fields:
+                - name (str): The name of the inventory item.
+                - stock (int): The current stock level of the item.
+                - minimum (int): The minimum stock level required for the item.
+                - capacity (int): The maximum capacity of the item.
+                - location (str): The location where the item is stored.
+                - supplier (str): The supplier of the item.
+
+        Returns:
+            dict: A JSON object containing either a success message or an error message.
+
+        Raises:
+            HTTPException: If the request data is incomplete or malformed.
+    """
     if request.method == 'GET':
         query = text("SELECT * FROM Inventory ORDER BY name ASC")
         results = db.session.execute(query).fetchall()
@@ -307,6 +494,25 @@ def get_inventory_items():
 # GET: Find all low stock items
 @app.route('/api/inventory/shortage', methods=['GET'])
 def get_inventory_shortage():
+    """
+    Returns a list of inventory items where the stock is below the minimum.
+
+    Returns:
+        JSON: A JSON object containing either:
+            - A list of inventory items with the following fields:
+                - id (int): The ID of the inventory item.
+                - name (str): The name of the inventory item.
+                - stock (int): The current stock level of the item.
+                - minimum (int): The minimum stock level required for the item.
+                - capacity (int): The maximum capacity of the item.
+                - location (str): The location where the item is stored.
+                - supplier (str): The supplier of the item.
+            - A JSON object containing an error message if no items are found.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     query = text("SELECT * FROM Inventory WHERE stock < minimum ORDER BY name ASC")
     results = db.session.execute(query).fetchall()
     if results:
@@ -329,6 +535,28 @@ def get_inventory_shortage():
 
 @app.route('/api/inventory/<inventory_id>', methods=['PUT', "GET", "DELETE", "POST"])
 def update_inventory(inventory_id):
+    """
+    Updates, retrieves, or deletes an inventory item.
+
+    Args:
+        inventory_id (int): The ID of the inventory item.
+
+    Returns:
+        If the HTTP method is GET:
+            JSON: A JSON object containing the inventory item details if found,
+                         or a JSON object with an error message if not found.
+
+        If the HTTP method is PUT:
+            JSON: A JSON object containing a success message if the inventory item is updated successfully,
+                         or a JSON object with an error message if any required data is missing.
+
+        If the HTTP method is DELETE:
+            JSON: A JSON object containing a success message if the inventory item is deleted successfully.
+
+    Raises:
+        HTTPException: If the request method is not GET, PUT, or DELETE.
+
+    """
     if request.method == 'GET':
         data = []
         if(inventory_id.isnumeric() == False):
@@ -371,6 +599,18 @@ def update_inventory(inventory_id):
 
 @app.route('/api/inventory/<inventory_id>/add', methods=['PUT'])
 def add_inventory(inventory_id):
+    """
+    Retrieves a list of inventory items where the stock is below the minimum.
+
+    Returns:
+        dict or JSON: A JSON object containing either:
+            - A list of inventory items with details including name, stock, minimum, capacity, location, and supplier.
+            - A JSON object with an error message if no items are found.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     if request.method == 'PUT':
         if(inventory_id.isnumeric() == False):
             query = text("SELECT id, stock, capacity FROM Inventory WHERE name = :name")
@@ -396,6 +636,18 @@ def add_inventory(inventory_id):
         return jsonify({'message': 'Stock updated successfully'}), 200
 
 def update_inventory_batch(data):
+    """
+    Retrieves menu categories.
+
+    Returns:
+        dict or JSON: A JSON object containing either:
+            - A list of menu categories.
+            - A JSON object with an error message if no data is found.
+
+    Raises:
+        Exception: If there is an error retrieving the menu categories.
+
+    """
     query = text("UPDATE Inventory SET stock = stock + :add_stock WHERE id = :id")
     params = [{'add_stock': item['amount'], 'id': item['id']} for item in data]
     db.session.execute(query, params)
@@ -407,6 +659,22 @@ def update_inventory_batch(data):
 ###################################
 @app.route('/api/mijunc/<menu_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
 def get_menu_inventory(menu_id):
+    """
+    Retrieves, creates, updates, or deletes menu inventory items.
+
+    Args:
+        menu_id (int): The ID of the menu associated with the inventory items.
+
+    Returns:
+        dict or JSON: A JSON object containing either:
+            - A list of menu inventory items with details including item ID, item name, and item amount.
+            - A JSON object with a success message if an item is created, updated, or deleted.
+            - A JSON object with an error message if no data is found or an error occurs during execution.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     if(request.method == 'GET'):
         query = text("SELECT m.itemid, i.name, m.itemamount FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id  ORDER BY i.name ASC")
         try:
@@ -447,6 +715,21 @@ def get_menu_inventory(menu_id):
 #Needed to get all the inventory items that are not in the list of a menu item
 @app.route('/api/mijunc/outside/<menu_id>', methods=['GET'])
 def get_outside_menu_inventory(menu_id):
+    """
+    Retrieves inventory items that are not included in the specified menu.
+
+    Args:
+        menu_id (int): The ID of the menu.
+
+    Returns:
+        dict or JSON: A JSON object containing either:
+            - A list of inventory items that are not included in the specified menu, with details including item ID and item name.
+            - A JSON object with an error message if no data is found or an error occurs during execution.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     query = text("SELECT DISTINCT inv.id, inv.name FROM Inventory as inv WHERE inv.id NOT IN (SELECT i.id FROM mijunc as m JOIN Inventory as i On m.itemid = i.id WHERE menuid = :menu_id) ORDER BY inv.name ASC")
     try:
         results = db.session.execute(query, {'menu_id': menu_id}).fetchall()
@@ -468,6 +751,19 @@ def get_outside_menu_inventory(menu_id):
 ###################################
 @app.route('/api/order', methods=['POST', 'GET'])
 def update_orders():
+    """
+    Handles the creation of new orders and retrieval of orders within a specified time range.
+
+    Returns:
+        dict or JSON: A JSON object containing either:
+            - A success message if a new order is created successfully.
+            - A list of orders within the specified time range, each containing details such as ID, customer name, time, paid status, employee ID, and completion status.
+            - A JSON object with an error message if no data is found or an error occurs during execution.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     if(request.method == 'POST'):
         data = request.get_json() #turns the JSON into a python dict
 
@@ -496,7 +792,7 @@ def update_orders():
             data.append({ "id": inventory[0], "amount": float(-inventory[1]) })
         if data is not None:
             update_inventory_batch(data)
-            print('Decreased stock for menu item with ID: ' + str(menu_id))
+            # print('Decreased stock for menu item with ID: ' + str(menu_id))
 
         db.session.commit()
         return jsonify({'message': 'Order created successfully'}), 201
@@ -525,6 +821,16 @@ def update_orders():
 
 @app.route('/api/order_history')
 def order_history():
+    """
+    Retrieves order history based on optional query parameters.
+
+    Returns:
+        dict or JSON: A JSON object containing a list of orders, each containing details such as order ID, customer name, time, items, total price, and completion status.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     # Get the query parameter for sorting order; default is descending
     ascending = request.args.get('ascending', 'false').lower() == 'true'
     
@@ -603,9 +909,34 @@ def order_history():
 
 @app.route('/api/order/<order_id>', methods=['DELETE'])
 def delete_order(order_id):
+    """
+    Deletes an order from the database.
+
+    Args:
+        order_id (int): The ID of the order to be deleted.
+
+    Returns:
+        dict or JSON: A JSON object with a success message if the order is deleted successfully.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     #Deletes the order menu junction
     delete_order_omjunc_batch(order_id)
-    
+    """
+    Deletes order menu junction entries associated with the specified order.
+
+    Args:
+        order_id (int): The ID of the order.
+
+    Returns:
+        dict or JSON: A JSON object with a success message if the order menu junction entries are deleted successfully.
+
+    Raises:
+        Exception: If there is an error executing the database query.
+
+    """
     #Deletes the order
     query = text("DELETE FROM Orders WHERE id = :order_id")
     db.session.execute(query, {'order_id': order_id})
@@ -614,6 +945,19 @@ def delete_order(order_id):
 
 
 def delete_order_omjunc_batch(order_id):
+    """
+    Deletes order menu junction entries associated with the specified order.
+
+    Args:
+        order_id (int): The ID of the order.
+
+    Returns:
+        dict or JSON: A JSON object with a success message if the order menu junction entries are deleted successfully.
+
+    Raises:
+        Exception: If there is an issue with the deletion.
+
+    """
     try:
         query = text("DELETE FROM OMJunc WHERE orderid = :order_id")
         db.session.execute(query, {'order_id': order_id})
@@ -625,6 +969,19 @@ def delete_order_omjunc_batch(order_id):
 
 @app.route('/api/order/<order_id>', methods=['PUT'])
 def update_order(order_id):
+    """
+    Updates an existing order in the database.
+
+    Args:
+        order_id (int): The ID of the order to be updated.
+
+    Returns:
+        dict or JSON: A JSON object with a success message if the order is updated successfully.
+
+    Raises:
+        Exception: If there is an issue with the update process.
+
+    """
     try:
         data = request.get_json()  
         is_complete = data.get('isComplete')  # Expected to receive {"isComplete": true} or {"isComplete": false}
@@ -766,9 +1123,18 @@ def update_order(order_id):
         db.session.rollback()  # Roll back the transaction in case of error
         return jsonify({'error': 'Failed to update order', 'exception': str(e)}), 500
 
-
+###################################
+#          Weather API            #
+###################################
 @app.route('/api/weather')
-def show_Weather():
+def show_Weather():   
+    """
+    Retrieves weather information for a specific city using OpenWeatherMap API.
+
+    Returns:
+        dict: A JSON object containing temperature in Fahrenheit and weather description.
+
+    """
     api_key = os.getenv('weather_api_key')
     city_name = "College Station"
     Weather_URL = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + api_key
@@ -796,7 +1162,9 @@ def show_Weather():
 
     return jsonify(result)
 
-
+###################################
+#             Reports API         #
+###################################
 '''
 Usage: /api/sales_by_time?start_time=2023-01-01%2000:00:00&end_time=2023-01-01%2023:59:59
 %20 is used as a space in the URL so, the above start time is: 2023-01-01 00:00:00
@@ -805,6 +1173,13 @@ Returns menu id : number of times ordered
 '''
 @app.route('/api/sales_by_time')
 def sales_by_time():
+    """
+    Retrieves sales data for a specified time range.
+
+    Returns:
+        dict: A JSON object containing menu sales data.
+
+    """
     # Parse start_time and end_time from request arguments
     start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
     end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
@@ -834,6 +1209,13 @@ def sales_by_time():
 # Returns excess menu ids
 @app.route('/api/excess_report')
 def excess_report():
+    """
+    Generates a report of excess menu items based on usage compared to inventory.
+
+    Returns:
+        dict: A JSON object containing excess menu IDs and names.
+
+    """
     start_time = request.args.get('start_time')  # Example format: '2023-01-01 00:00:00'
     end_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -881,6 +1263,13 @@ def excess_report():
 
 @app.route('/api/product_usage')
 def product_usage_report():
+    """
+    Generates a report of product usage based on sales within a specified time range.
+
+    Returns:
+        dict: A JSON object containing product usage data.
+
+    """
     # Parse start_time and end_time from request arguments
     start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
     end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
@@ -905,6 +1294,13 @@ def product_usage_report():
 
 @app.route('/api/sells_together')
 def what_sells_together():
+    """
+    Generates a report of frequently sold menu items together within a specified time range.
+
+    Returns:
+        dict: A JSON object containing pairs of menu items and their frequency of being sold together.
+
+    """
     # Parse start_time and end_time from request arguments
     start_time = request.args.get('start_time')  # e.g., '2023-01-01 00:00:00'
     end_time = request.args.get('end_time')  # e.g., '2023-01-02 23:59:59'
@@ -950,7 +1346,10 @@ def what_sells_together():
                         
     return jsonify(pair_item_list)
     
-    
+###################################
+#          Translation API        #
+###################################
+
 auth_key = os.getenv('DEEPL_API_KEY')
 translator = deepl.Translator(auth_key)
 class Language:
@@ -966,6 +1365,13 @@ class Language:
 
 @app.route('/api/translate', methods=['POST', 'GET'])
 def translate_route():
+    """
+    Translates text into the specified target language using the DeepL API.
+
+    Returns:
+        dict: A JSON object containing the translated text.
+
+    """
     if request.method == 'GET':
         data = []
         for lang in translator.get_source_languages():
@@ -1008,6 +1414,15 @@ def translate_route():
 ###################################
 
 def get_temp():
+    """
+    Retrieves the current temperature in Fahrenheit for College Station using the OpenWeatherMap API.
+
+    Returns:
+        str: A string representation of the current temperature in Fahrenheit, rounded to two decimal places.
+
+    Raises:
+        str: If the weather data is not found or the API request fails, an error message is returned.
+    """
     api_key = os.getenv('weather_api_key')
     city_name = "College Station"
     Weather_URL = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + api_key
@@ -1030,6 +1445,13 @@ def get_temp():
         return "Error: Weather not found. COD was not 200"
     
 def get_hot_inventory():
+    """
+    Retrieves a random menu item categorized as hot from the database.
+
+    Returns:
+        dict: A dictionary containing the details of a randomly selected hot menu item,
+              including its ID, name, and price.
+    """
     query = text('''SELECT Menu.id, Menu.itemName, Menu.price
         FROM Menu
         JOIN MIJunc ON Menu.id = MIJunc.menuID
@@ -1044,6 +1466,13 @@ def get_hot_inventory():
     return random_menu_item
 
 def get_cold_inventory(): 
+    """
+    Retrieves a random menu item categorized as cold from the database.
+
+    Returns:
+        dict: A dictionary containing the details of a randomly selected cold menu item,
+              including its ID, name, and price.
+    """
     query = text('''SELECT Menu.id, Menu.itemName, Menu.price
         FROM Menu
         JOIN MIJunc ON Menu.id = MIJunc.menuID
@@ -1058,6 +1487,13 @@ def get_cold_inventory():
     return random_menu_item
 
 def get_warm_inventory():
+    """
+    Retrieves a random menu item categorized as warm from the database.
+
+    Returns:
+        dict: A dictionary containing the details of a randomly selected warm menu item,
+              including its ID, name, and price.
+    """
     query = text('''SELECT Menu.id, Menu.itemName, Menu.price
         FROM Menu
         JOIN MIJunc ON Menu.id = MIJunc.menuID
@@ -1074,6 +1510,18 @@ def get_warm_inventory():
 
 @app.route('/api/recommended')
 def get_recommended_item():
+    """
+    Recommends a menu item based on the current temperature.
+
+    This function checks the current temperature and recommends a menu item 
+    categorized as hot if the temperature is 80°F or higher, a cold item if 
+    the temperature is below 60°F, and a warm item otherwise.
+
+    Returns:
+        dict: A JSON object containing the recommended menu item. 
+            
+              
+    """
     temp = get_temp()
     # if temp = "Error ..."
     if (float(temp) >= 80):
@@ -1085,9 +1533,6 @@ def get_recommended_item():
     else:
         warm_item = get_warm_inventory()
         return jsonify({"item": warm_item})
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
