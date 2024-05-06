@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-
+/**
+ * The colors used in the pie chart
+ */
 const COLORS = [
   '#0088FE', // Bright blue
   '#00C49F', // Bright teal
@@ -18,7 +20,11 @@ const COLORS = [
   '#EFC050', // Marigold
   '#5B5EA6'  // Indigo
 ];
-
+/**
+ * Displays the name, amount and perecentage in the pie chart
+ * @param {*} param0 - the state of the Tooltip and payload
+ * @returns the tooltip
+ */
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -32,6 +38,10 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
+/**
+ * Takes in a user input for start and end times and displays the amount of inventory used in that span of time.
+ * @returns the page for Product usages
+ */
 const ProductUsage = () => {
   const [data, setData] = useState([]);
   const [startTime, setStartTime] = useState('');

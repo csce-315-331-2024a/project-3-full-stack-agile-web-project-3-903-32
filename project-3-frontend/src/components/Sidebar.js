@@ -1,5 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+/**
+ * 
+ * @param {*} props inputs for the linke and text
+ * @returns The button to navigate to the sidebar
+ */
 const NavComponent = ( props ) => {
   return (
     <div className='px-2 mt-12'>
@@ -16,7 +21,10 @@ const NavComponent = ( props ) => {
     </div>
   )
 }
-
+/**
+ * This element will contain buttions to navigate to the Inventory, Menu, Trends and Orders
+ * @returns the sidebar for manager pages to navigate
+ */
 const Sidebar = () => {
   return (
     <aside className="w-48 h-screen mr-3" aria-label="Sidebar"> 
@@ -31,6 +39,9 @@ const Sidebar = () => {
 
       {/* Orders */}
       <NavComponent to="/manager/orders" text='Orders'/>
+
+      {/* Users */}
+      <NavComponent to="/manager/users" text='Users'/>
     </aside>
   );
 };
