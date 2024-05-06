@@ -102,8 +102,8 @@ const StaticMenu2 = () => {
           ))}
         </div>
       </div>
-      <div className="absolute top-0 right-0 h-full w-3/5 bg-red-900 z-0"></div>
-      <div className="absolute top-0 left-0 h-full w-1/2 bg-white z-0"></div>
+      <div className="fixed top-0 right-0 h-full w-3/5 bg-red-900 z-0"></div>
+      <div className="fixed top-0 left-0 h-full w-1/2 bg-white z-0"></div>
       {/* Added TAMU logo */}
       <div className="absolute top-0 left-0 h-full w-1/2 z-0">
         <img src={imageMapping['tamuLogo']} alt="TAMU Logo" className="w-full h-full object-cover opacity-80" style={{ opacity: 0.2 }} />

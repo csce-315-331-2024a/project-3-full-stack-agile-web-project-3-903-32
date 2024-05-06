@@ -81,27 +81,26 @@ const StaticMenu = () => {
             <div key={index} className={category === 'Burgers' ? 'md:col-span-2' : ''}>
               <h2 className={`text-2xl font-semibold mb-2 underline ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>{category}</h2>
               <div className={`grid grid-cols-1 ${category === 'Burgers' ? 'md:grid-cols-2' : ''} gap-4`}>
-              {categoryItems.map((item, itemIndex) => (
-  <div key={itemIndex} className="p-2 flex">
-    <img 
-      src={imageMapping[item.itemName] || imageMapping['tamuLogo']} // Check if image exists, otherwise default to Cheeseburger
-      alt={item.itemName} 
-      className="w-40 h-40 mr-4 object-cover" 
-    />
-    <div>
-      <h3 className={`text-xl font-semibold mb-1 ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>{item.itemName}</h3>
-      <p className={`text-xl font-bold ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>${item.price}</p>
-    </div>
-  </div>
-))}
-
+                {categoryItems.map((item, itemIndex) => (
+                  <div key={itemIndex} className="p-2 flex">
+                    <img 
+                      src={imageMapping[item.itemName] || imageMapping['tamuLogo']} // Check if image exists, otherwise default to Cheeseburger
+                      alt={item.itemName} 
+                      className="w-40 h-40 mr-4 object-cover" 
+                    />
+                    <div>
+                      <h3 className={`text-xl font-semibold mb-1 ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>{item.itemName}</h3>
+                      <p className={`text-xl font-bold ${category === 'Burgers' ? 'text-white' : 'text-black'}`}>${item.price}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div className="absolute top-0 right-0 h-full w-1/2 bg-red-900 z-0"></div>
-      <div className="absolute top-0 left-0 h-full w-1/2 bg-white z-0"></div>
+      <div className="fixed top-0 right-0 h-full w-1/2 bg-red-900 z-0"></div> {/* Set height to 100vh */}
+      <div className="fixed top-0 left-0 h-full w-1/2 bg-white z-0"></div>
       {/* Added TAMU logo */}
       <div className="absolute top-0 left-0 h-full w-1/2 z-0">
         <img src={imageMapping['tamuLogo']} alt="TAMU Logo" className="w-full h-full object-cover opacity-80" style={{ opacity: 0.2 }} />
