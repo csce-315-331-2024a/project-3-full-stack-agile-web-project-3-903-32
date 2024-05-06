@@ -23,7 +23,7 @@ const imageMapping = {
   'Tender Entree': '../tenders.png',
   'tunaMelt': '../tunaMelt.png',
   'waterBottle': '../waterBottle.png',
-  'tamuLogo': '../tamu-logo.png' // Added TAMU logo mapping
+  'tamuLogo': '../tamu-logo.png' 
 };
 
 const StaticMenu = () => {
@@ -51,8 +51,7 @@ const StaticMenu = () => {
         const groupedItems = groupByCategory(filteredItems);
         const maxItems = Math.max(...Object.values(groupedItems).map(category => category.length));
         setMaxItemsPerCategory(maxItems);
-        // Calculate column height based on maximum number of items
-        setColumnHeight(`${maxItems * 200}px`); // Increased height to accommodate larger images
+        setColumnHeight(`${maxItems * 200}px`); 
         setMenuItems(groupedItems);
       } else {
         console.error('Failed to fetch menu:', response.status, response.statusText);
@@ -84,7 +83,7 @@ const StaticMenu = () => {
                 {categoryItems.map((item, itemIndex) => (
                   <div key={itemIndex} className="p-2 flex">
                     <img 
-                      src={imageMapping[item.itemName] || imageMapping['tamuLogo']} // Check if image exists, otherwise default to Cheeseburger
+                      src={imageMapping[item.itemName] || imageMapping['tamuLogo']} 
                       alt={item.itemName} 
                       className="w-40 h-40 mr-4 object-cover" 
                     />
@@ -99,9 +98,8 @@ const StaticMenu = () => {
           ))}
         </div>
       </div>
-      <div className="fixed top-0 right-0 h-full w-1/2 bg-red-900 z-0"></div> {/* Set height to 100vh */}
+      <div className="fixed top-0 right-0 h-full w-1/2 bg-red-900 z-0"></div> 
       <div className="fixed top-0 left-0 h-full w-1/2 bg-white z-0"></div>
-      {/* Added TAMU logo */}
       <div className="absolute top-0 left-0 h-full w-1/2 z-0">
         <img src={imageMapping['tamuLogo']} alt="TAMU Logo" className="w-full h-full object-cover opacity-80" style={{ opacity: 0.2 }} />
       </div>
