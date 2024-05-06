@@ -405,7 +405,7 @@ const Customer = () => {
             <button
                 key={index}
                 onClick={() => addToOrder(button)}
-                className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left justify-between items-center"
+                className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left justify-between items-center h-[300px]"
             >
                 <div className="h-28 flex justify-center items-center mb-2">
                     <img
