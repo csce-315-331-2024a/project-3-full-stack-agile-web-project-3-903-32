@@ -87,11 +87,17 @@ def get_employee(email):
         db.session.commit()
         return jsonify({'message': 'Employee object deleted successfully'}), 200
     
-@app.route('/api/employee/add')
+@app.route('/api/employee/add', methods = ['POST'])
 def add_employee():
+    query = text("SELECT id from Employees Order By id DESC LIMIT 1")
+    res = db.session.execute(query).fetchone()
+    if res is None:
+        employee_id = 1
+    else:
+        employee_id = res[0] + 1
     data = request.get_json()
-    query = text("INSERT INTO employees (employeename, position, email) VALUES (:employeename, :position, :email);")
-    db.session.execute(query, {'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
+    query = text("INSERT INTO Employees (id, employeename, position, email) VALUES (:id, :employeename, :position, :email)")
+    db.session.execute(query, {'id': employee_id, 'employeename': data['employeename'], 'position': data['position'], 'email': data['email']})
     db.session.commit()
     return jsonify({'message': 'Employee object created successfully'}), 201
 
