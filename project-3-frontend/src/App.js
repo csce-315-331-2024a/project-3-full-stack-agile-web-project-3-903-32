@@ -64,9 +64,13 @@ function App() {
         loginCustomer();
         console.log("not found");
       } else {
+        loginCustomer();
+
         throw new Error('Failed to fetch role data');
       }
     } catch (error) {
+      loginCustomer();
+
       console.error('Error fetching role data:', error);
     }
   };

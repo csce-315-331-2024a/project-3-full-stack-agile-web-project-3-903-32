@@ -328,22 +328,26 @@ const Customer = () => {
     const MenuSideBar = () => {
         const sidebarButton = (props) => {
             const sideBarImage = {
-              //  backgroundImage: `url(${imageMapping[props.category]})`,
-            }
-
+                backgroundImage: `url(${imageMapping[props.category]})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            };
+    
             return (
-                <button className={"w-full border-gray-500 rounded border-2 h-[6.5%] font-semibold hover:bg-red-200 " + (props.color && "bg-red-400")} key={props.category} style={sideBarImage} onClick={()=> {
-                    setSelectedCategory(props.category);
-                    readSelectedCategory(props.category);
-                    } }>
-                    <p>
-                        {
-                            getStaticWord(props.category)
-                        }
-                    </p>
+                <button
+                    className={"w-full border-gray-500 rounded border-2 h-[6.5%] font-semibold hover:bg-red-200 " + (props.color && "bg-red-400")}
+                    key={props.category}
+                    style={sideBarImage}
+                    onClick={() => {
+                        setSelectedCategory(props.category);
+                        readSelectedCategory(props.category);
+                    }}
+                >
+                    <p>{getStaticWord(props.category)}</p>
                 </button>
-            )
-        }
+            );
+        };
+    
         const recommendedItemStyle = {
             backgroundColor: '#2DA3EB',
             color: '#333',
@@ -356,21 +360,23 @@ const Customer = () => {
             cursor: 'pointer',
             transition: 'background-color 0.3s ease',
         };
+    
         return (
             <div className="w-1/6 flex flex-col gap-4 p-3 h-full">
                 {categories.map((category) => {
                     return sidebarButton({ category: category, color: category === selectedCategory });
-                })
-                }
+                })}
                 <button
                     onClick={handleOpenRecommendedItemModal}
                     style={recommendedItemStyle}
                     disabled={isButtonDisabled}
-                > Recommended item
+                >
+                    Recommended item
                 </button>
             </div>
         );
-    }
+    };
+    
     
     const handleRecommendedItemClick = (recommendedItem) => {
         addToOrder(recommendedItem);
@@ -394,28 +400,39 @@ const Customer = () => {
             <MenuSideBar />
         
             <div className="h-full w-2/3 bg-white shadow-md rounded p-6 grid grid-cols-4 gap-4 auto-cols-fr overflow-y-auto">
-                {displayedMenu.length > 0 ? (
-                    displayedMenu.map((button, index) => (
-                        <button key={index} onClick={() => addToOrder(button)} className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-48 justify-end">
-                            <img src="" alt="Image" className="h-30 w-30" />
+    {displayedMenu.length > 0 ? (
+        displayedMenu.map((button, index) => (
+            <button
+                key={index}
+                onClick={() => addToOrder(button)}
+                className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left justify-between items-center"
+            >
+                <div className="h-28 flex justify-center items-center mb-2">
+                    <img
+                        src={imageMapping[button.itemName] || imageMapping['tamuLogo']}
+                        alt={button.itemName}
+                        className="h-full w-auto max-h-full object-contain"
+                    />
+                </div>
+                <div>
+                    <span className="text-xl font-bold">{button.itemName}</span>
+                    <span className="text-lg font-bold text-center">${button.price}</span>
+                </div>
+                <button
+                    onClick={(event) => handleViewIngredients(event, button)}
+                    className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4"
+                >
+                    {getStaticWord("View Ingredients")}
+                </button>
+            </button>
+        ))
+    ) : (
+        <p className="text-center text-gray-500">{getStaticWord('Loading...')}</p>
+    )}
+</div>
 
-                            <span className="text-xl font-bold">{button.itemName}</span>
-                            <span className="text-lg font-bold text-center">${button.price}</span>
-                            <button onClick={(event) => handleViewIngredients(event, button)} className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mt-4">
-                                {
-                                    getStaticWord("View Ingredients")
-                                }
-                            </button>
-                        </button>
-                    ))
-                ) : (
-                    <p className="text-center text-gray-500">
-                        {
-                            getStaticWord('Loading...')
-                        }
-                    </p>
-                )}
-            </div>
+
+
             <div className="w-1/4 bg-white shadow-md rounded p-6 flex flex-col h-full">
                 <div className="w-full border my-2 border-black rounded"></div>
                 <h2 className="text-2xl font-bold mb-4">
