@@ -34,29 +34,29 @@ const Customer = () => {
   const location = useLocation();
 
   const imageMapping = {
-    "Bacon Cheeseburger": "../baconCheeseburger.png",
-    "Aggie Shakes": "../shake.png",
-    Cheeseburger: "../cheeseburger.png",
-    "Black Bean Burger": "../blackBeanBurger.png",
-    "Chicken Caesar Salad": "../caesarSalad.png",
-    "Aggie Chicken Club": "../chickenClub.png",
+    4: "../baconCheeseburger.png",
+    14: "../shake.png",
+    6: "../cheeseburger.png",
+    5: "../blackBeanBurger.png",
+    12: "../caesarSalad.png",
+    9: "../chickenClub.png",
     chickenWrap: "../chickenWrap.png",
-    "Cookie Ice Cream Sundae": "../cookieIceCream.png",
-    "Corn Dog Value Meal": "../corndog.png",
+    15: "../cookieIceCream.png",
+    2: "../corndog.png",
     fishSandwich: "../fishSandwich.png",
-    "Pepsi Fountain 20OZ": "../fountainDrink.png",
-    "French Fries": "../fries.png",
-    "Revs Grilled Chicken Sandwich": "../grilledChickenSandwich.png",
-    "Classic Hamburger": "../hamburger.png",
-    "2 Hot Dog Value Meal": "../hotdog.png",
-    "Double Scoop Ice Cream": "../iceCreamScoop.png",
-    "Gig Em Patty Melt": "../pattymelt.png",
-    "Root Beer Float": "../rootBeerFloat.png",
-    "Spicy Chicken Sandwich": "../spicyChickenSandwich.png",
-    "Tender Entree": "../tenders.png",
+    20: "../fountainDrink.png",
+    17: "../fries.png",
+    10: "../grilledChickenSandwich.png",
+    8: "../hamburger.png",
+    3: "../hotdog.png",
+    13: "../iceCreamScoop.png",
+    7: "../pattymelt.png",
+    16: "../rootBeerFloat.png",
+    11: "../spicyChickenSandwich.png",
+    1: "../tenders.png",
     tunaMelt: "../tunaMelt.png",
-    "Aquafina Water 16OZ": "../waterBottle.png",
-    "Aquafina Water 20OZ": "../waterBottle.png",
+    18: "../waterBottle.png",
+    19: "../waterBottle.png",
     tamuLogo: "../tamu-logo.png", // Added TAMU logo mapping
   };
 
@@ -542,9 +542,7 @@ const Customer = () => {
                 className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-[300px] justify-end"
               >
                 <img
-                  src={
-                    imageMapping[button.itemName] || imageMapping["tamuLogo"]
-                  }
+                  src={imageMapping[button.id] || imageMapping["tamuLogo"]}
                   alt={button.itemName}
                   className="h-full w-auto max-h-full object-contain"
                 />
