@@ -544,7 +544,7 @@ const Customer = () => {
                 <img
                   src={imageMapping[button.id] || imageMapping["tamuLogo"]}
                   alt={button.itemName}
-                  className="h-full w-auto max-h-full object-contain"
+                  className="h-auto w-auto max-h-100px max-w-100px object-contain"
                 />
                 <span className="text-xl font-bold">{button.itemName}</span>
                 <span className="text-lg font-bold text-center">
