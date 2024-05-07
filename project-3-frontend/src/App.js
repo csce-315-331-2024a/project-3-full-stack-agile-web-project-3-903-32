@@ -27,6 +27,9 @@ function App() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
     function start() {
       localStorage.setItem("isManagerLoggedIn", "false");
       localStorage.setItem("isCashierLoggedIn", "false");

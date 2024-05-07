@@ -546,6 +546,7 @@ const Customer = () => {
                 alt={button.itemName}
                 className="h-auto w-auto max-h-100px max-w-100px object-contain"
               />
+
                 <span className="text-xl font-bold">{button.itemName}</span>
                 <span className="text-lg font-bold text-center">
                   ${button.price}
