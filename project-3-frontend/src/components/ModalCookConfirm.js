@@ -12,8 +12,8 @@ const ModalCookConfirm = ({ isOpen, message, onConfirm, onCancel }) => {
                     <div className="h-[150px] bg-white rounded-lg p-8">
                         <p className="text-lg font-semibold">{message}</p>
                         <div className="mt-8 flex justify-center">
-                            <button className="font-semibold bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded mr-2" onClick={onCancel}>Cancel</button>
-                            <button className="font-semibold ml-16 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded" onClick={onConfirm}>Confirm</button>
+                            <button className="font-semibold bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded mr-2" onClick={onConfirm}>Confirm</button>
+                            <button className="font-semibold ml-16 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded" onClick={onCancel}>Cancel</button>
                         </div>
                     </div>
                 </div>
