@@ -36,14 +36,14 @@ const Customer = () => {
   const imageMapping = {
     "Bacon Cheeseburger": "../baconCheeseburger.png",
     "Aggie Shakes": "../shake.png",
-    Cheeseburger: "../cheeseburger.png",
+    "Cheeseburger": "../cheeseburger.png",
     "Black Bean Burger": "../blackBeanBurger.png",
     "Chicken Caesar Salad": "../caesarSalad.png",
     "Aggie Chicken Club": "../chickenClub.png",
-    chickenWrap: "../chickenWrap.png",
+    "chickenWrap": "../chickenWrap.png",
     "Cookie Ice Cream Sundae": "../cookieIceCream.png",
     "Corn Dog Value Meal": "../corndog.png",
-    fishSandwich: "../fishSandwich.png",
+    "fishSandwich": "../fishSandwich.png",
     "Pepsi Fountain 20OZ": "../fountainDrink.png",
     "French Fries": "../fries.png",
     "Revs Grilled Chicken Sandwich": "../grilledChickenSandwich.png",
@@ -54,10 +54,10 @@ const Customer = () => {
     "Root Beer Float": "../rootBeerFloat.png",
     "Spicy Chicken Sandwich": "../spicyChickenSandwich.png",
     "Tender Entree": "../tenders.png",
-    tunaMelt: "../tunaMelt.png",
+    "tunaMelt": "../tunaMelt.png",
     "Aquafina Water 16OZ": "../waterBottle.png",
     "Aquafina Water 20OZ": "../waterBottle.png",
-    tamuLogo: "../tamu-logo.png", // Added TAMU logo mapping
+    "tamuLogo": "../tamu-logo.png", // Added TAMU logo mapping
   };
 
   const handlePaymentClick = () => {
