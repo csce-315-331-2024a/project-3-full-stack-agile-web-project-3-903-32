@@ -234,7 +234,7 @@ const CustomerPayment = () => {
                                 {getStaticWord('Submit Payment')}
                             </button>
                         ) : (
-                            <div className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed">
+                            <div className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 cursor-not-allowed">
                                 {getStaticWord('No items in order')}
                             </div>
                         )
