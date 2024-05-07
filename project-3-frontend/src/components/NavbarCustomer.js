@@ -81,7 +81,7 @@ const Navbar = ({ onSpeechAssistanceChange }) => {
         window.speechSynthesis.cancel();
       }
       const msg = new SpeechSynthesisUtterance();
-      msg.text = "Speech Assistance Activated. Our menu item categories are on the left hand side of the screen. Please click a category to hear the category name as well as menu items and prices. Our recommended item based on the weather is on the bottom left of the screen. Once you have finished ordering, please click the go to payment button on the bottom right corner of the screen. ";
+      msg.text = "Speech Assistance Activated. Our menu item categories are listed on the left hand side of the screen. In order from top to bottom are: all items, appetizers, beverages, burgers, desserts, limited time offers, salids, sandwiches, value meals, and a recommended item based on the weather. Please click a category to hear menu items and prices. Once you have finished ordering, please click the go to payment button on the bottom right corner of the screen. ";
       window.speechSynthesis.speak(msg);
       setHasSpoken(true);
       onSpeechAssistanceChange(false);
