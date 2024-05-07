@@ -541,11 +541,12 @@ const Customer = () => {
                 onClick={() => addToOrder(button)}
                 className="relative bg-gray-200 p-4 rounded-lg flex flex-col text-left h-[300px] justify-end"
               >
-                <img
-                  src={imageMapping[button.id] || imageMapping["tamuLogo"]}
-                  alt={button.itemName}
-                  className="h-full w-auto max-h-full object-contain"
-                />
+              <img
+                src={imageMapping[button.itemName] || imageMapping["tamuLogo"]}
+                alt={button.itemName}
+                className="h-auto w-auto max-h-100px max-w-100px object-contain"
+              />
+
                 <span className="text-xl font-bold">{button.itemName}</span>
                 <span className="text-lg font-bold text-center">
                   ${button.price}
